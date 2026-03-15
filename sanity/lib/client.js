@@ -1,0 +1,27 @@
+import { createClient } from "next-sanity";
+
+const config = {
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+  apiVersion: "2024-01-01",
+};
+
+// Public client — published content, CDN cached
+export const client = createClient({
+  ...config,
+  useCdn: true,
+});
+
+// Server client — bypasses CDN, for fresh data (ISR, on-demand revalidation)
+export const serverClient = createClient({
+  ...config,
+  useCdn: false,
+});
+
+// Preview client — fetches drafts (never expose to browser)
+export const previewClient = createClient({
+  ...config,
+  useCdn: false,
+  token: process.env.SANITY_API_TOKEN,
+  perspective: "previewDrafts",
+});

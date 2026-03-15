@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Light theme — default */
+  --color-bg-primary: #f5f8ee;
+  --color-bg-secondary: #eef4de;
+  --color-bg-card: #ffffff;
+  --color-bg-footer: #e8f2cc;
+
+  --color-text-primary: #0f1a05;
+  --color-text-muted: #5a6e3a;
+  --color-text-subtle: #8fa060;
+
+  --color-accent: #51731a; /* dark olive — readable on light */
+  --color-accent-bright: #a3e635; /* logo lime — hover/highlight */
+  --color-accent-hover: #3a5212;
+  --color-accent-subtle: #d4f07a; /* tag/badge backgrounds */
+
+  --color-border: #dde8c0;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --color-bg-primary: #0a0a0a;
+  --color-bg-secondary: #111111;
+  --color-bg-card: #141414;
+  --color-bg-footer: #0d1b2e;
+
+  --color-text-primary: #ffffff;
+  --color-text-muted: #c8ccd4;
+  --color-text-subtle: #666666;
+
+  --color-accent: #a3e635; /* logo lime — pops on black */
+  --color-accent-bright: #bef264; /* hover state */
+  --color-accent-hover: #bef264;
+  --color-accent-subtle: #1e2e08; /* tag/badge backgrounds */
+
+  --color-border: #1e1e1e;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@layer utilities {
+  .font-body {
+    font-family: var(--font-neue);
+  }
+  .font-display {
+    font-family: var(--font-monolith);
+  }
+  .font-accent {
+    font-family: var(--font-pangram);
+  }
+  .font-big {
+    font-family: var(--font-big-shoulders);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+.dark::view-transition-old(root) {
+  z-index: 9999;
+}
+
+.dark::view-transition-new(root) {
+  z-index: 1;
 }
