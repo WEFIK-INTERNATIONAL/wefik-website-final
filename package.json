@@ -11,8 +11,10 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@calcom/embed-react": "^1.5.3",
     "@gsap/react": "^2.1.2",
     "@sanity/image-url": "^2.0.3",
+    "clsx": "^2.1.1",
     "gsap": "^3.14.2",
     "lucide-react": "^0.577.0",
     "next": "16.1.6",
@@ -20,7 +22,8 @@
     "next-themes": "^0.4.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "sanity": "^5.16.0"
+    "sanity": "^5.16.0",
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@sanity/vision": "^5.16.0",

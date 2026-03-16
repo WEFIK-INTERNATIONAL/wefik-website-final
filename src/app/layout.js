@@ -7,6 +7,7 @@ import {
 } from "./fonts";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
+import { PageTransitionProvider } from "@/components/ui/PageTransitionProvider";
 
 export const metadata = {
   title: "Create Next App",
@@ -25,8 +26,10 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          {children}
+          <PageTransitionProvider>
+            <Navbar />
+            {children}
+          </PageTransitionProvider>
         </ThemeProvider>
       </body>
     </html>

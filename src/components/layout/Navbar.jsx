@@ -4,9 +4,12 @@ import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import gsap from "gsap";
+import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
+import TransitionLink from "../ui/TransitionLink";
+import AnimatedButton from "../ui/AnimatedButton";
+import BookACall from "../ui/BookACall";
 
 gsap.registerPlugin(useGSAP);
 
@@ -24,7 +27,6 @@ function WeFikLogo() {
   return (
     <svg
       viewBox="0 0 155.41 89.43"
-      xmlns="http://www.w3.org/2000/svg"
       style={{ height: "1.5rem", width: "auto", flexShrink: 0 }}
       aria-hidden="true"
     >
@@ -119,7 +121,13 @@ function ArrowUpRight({ size = 11 }) {
 export default function Navbar() {
   const pathname = usePathname();
   const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = !mounted ? true : resolvedTheme === "dark";
 
   const navRef = useRef(null);
   const logoRef = useRef(null);
@@ -145,10 +153,8 @@ export default function Navbar() {
 
   useEffect(() => {
     if (menuOpen) closeMenu();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
-  // ── Navbar entrance animation ──
   useGSAP(
     () => {
       const els = [logoRef.current, navPillRef.current, rightRef.current];
@@ -176,7 +182,6 @@ export default function Navbar() {
     { scope: navRef }
   );
 
-  // ── Mobile overlay timeline ──
   useGSAP(
     () => {
       if (!overlayRef.current || !overlayBgRef.current) return;
@@ -232,8 +237,6 @@ export default function Navbar() {
     if (!menuOpen || isAnimating.current) return;
     isAnimating.current = true;
     document.body.style.overflow = "";
-
-    // ← Set false immediately so hamburger icon starts reverting right away
     setMenuOpen(false);
 
     gsap
@@ -293,7 +296,6 @@ export default function Navbar() {
     gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.5)" });
   }
 
-  // Pure function — no DOM mutation, driven by state only
   function getLinkStyle(i, isActive) {
     const isHovered = hoveredIndex === i;
     return {
@@ -322,7 +324,6 @@ export default function Navbar() {
     };
   }
 
-  // ── Theme-aware glass values ──
   const pillBg = scrolled
     ? isDark
       ? "rgba(10,10,10,0.72)"
@@ -371,7 +372,6 @@ export default function Navbar() {
         }
       `}</style>
 
-      {/* ─── Navbar ─── */}
       <header
         ref={navRef}
         style={{
@@ -384,7 +384,6 @@ export default function Navbar() {
           transition: "padding 0.4s ease",
         }}
       >
-        {/* Glass pill */}
         <div
           style={{
             maxWidth: "76rem",
@@ -408,7 +407,6 @@ export default function Navbar() {
               padding: "0 20px",
             }}
           >
-            {/* ── Logo ── */}
             <Link
               ref={logoRef}
               href="/"
@@ -422,20 +420,7 @@ export default function Navbar() {
               }}
             >
               <WeFikLogo />
-              <span
-                style={{
-                  fontSize: "12px",
-                  fontWeight: 700,
-                  letterSpacing: "0.18em",
-                  color: "var(--color-text-primary)",
-                  textTransform: "uppercase",
-                }}
-              >
-                WEFIK
-              </span>
             </Link>
-
-            {/* ── Desktop nav ── */}
             <nav
               ref={navPillRef}
               className="nav-desktop"
@@ -456,7 +441,7 @@ export default function Navbar() {
                 {NAV_LINKS.map((link, i) => {
                   const isActive = pathname === link.href;
                   return (
-                    <Link
+                    <TransitionLink
                       key={link.href}
                       href={link.href}
                       ref={(el) => (deskLinkRefs.current[i] = el)}
@@ -484,13 +469,11 @@ export default function Navbar() {
                           }}
                         />
                       )}
-                    </Link>
+                    </TransitionLink>
                   );
                 })}
               </div>
             </nav>
-
-            {/* ── Right controls ── */}
             <div
               ref={rightRef}
               style={{
@@ -501,48 +484,16 @@ export default function Navbar() {
               }}
             >
               <ThemeSwitcher />
+              <div className="hidden lg:block">
+                <BookACall>
+                  <AnimatedButton>Book a Call</AnimatedButton>
+                </BookACall>
+              </div>
 
-              {/* CTA — desktop */}
-              <Link
-                href="/contact"
-                className="nav-cta"
-                style={{
-                  alignItems: "center",
-                  gap: "6px",
-                  padding: "8px 18px",
-                  borderRadius: "999px",
-                  fontSize: "13.5px",
-                  fontWeight: 600,
-                  textDecoration: "none",
-                  background: "var(--color-accent)",
-                  color: isDark ? "#0a0a0a" : "#ffffff",
-                  boxShadow: "0 0 20px rgba(163,230,53,0.22)",
-                  transition:
-                    "background 0.2s, box-shadow 0.2s, transform 0.15s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background =
-                    "var(--color-accent-bright)";
-                  e.currentTarget.style.boxShadow =
-                    "0 0 32px rgba(163,230,53,0.45)";
-                  e.currentTarget.style.transform = "scale(1.04)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "var(--color-accent)";
-                  e.currentTarget.style.boxShadow =
-                    "0 0 20px rgba(163,230,53,0.22)";
-                  e.currentTarget.style.transform = "scale(1)";
-                }}
-              >
-                Let&apos;s Talk
-                <ArrowUpRight />
-              </Link>
-
-              {/* Hamburger — mobile */}
               <button
                 className="nav-hamburger"
                 onClick={() => {
-                  if (isAnimating.current) return; // ← prevent double-tap during animation
+                  if (isAnimating.current) return; 
                   menuOpen ? closeMenu() : openMenu();
                 }}
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -577,8 +528,6 @@ export default function Navbar() {
           </div>
         </div>
       </header>
-
-      {/* ─── Mobile Overlay ─── */}
       <div
         ref={overlayRef}
         style={{
@@ -591,7 +540,6 @@ export default function Navbar() {
         }}
         aria-hidden={!menuOpen}
       >
-        {/* Animated bg */}
         <div
           ref={overlayBgRef}
           style={{
@@ -602,8 +550,6 @@ export default function Navbar() {
             transform: "scaleY(0)",
           }}
         />
-
-        {/* Accent gradient line */}
         <div
           style={{
             position: "absolute",
@@ -616,8 +562,6 @@ export default function Navbar() {
               "linear-gradient(90deg, transparent 0%, #a3e635 50%, transparent 100%)",
           }}
         />
-
-        {/* Content */}
         <div
           style={{
             position: "relative",
@@ -628,7 +572,6 @@ export default function Navbar() {
             padding: "96px 24px 32px",
           }}
         >
-          {/* Links */}
           <nav
             style={{
               display: "flex",
@@ -641,7 +584,7 @@ export default function Navbar() {
             {NAV_LINKS.map((link, i) => {
               const isActive = pathname === link.href;
               return (
-                <Link
+                <TransitionLink
                   key={link.href}
                   href={link.href}
                   ref={(el) => (overlayLinksRef.current[i] = el)}
@@ -697,7 +640,7 @@ export default function Navbar() {
                     </span>
                   </div>
                   <ArrowUpRight size={16} />
-                </Link>
+                </TransitionLink>
               );
             })}
           </nav>
@@ -749,26 +692,9 @@ export default function Navbar() {
               </a>
             </div>
 
-            <Link
-              href="/contact"
-              onClick={closeMenu}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "12px 20px",
-                borderRadius: "999px",
-                fontSize: "13.5px",
-                fontWeight: 600,
-                textDecoration: "none",
-                background: "var(--color-accent)",
-                color: isDark ? "#0a0a0a" : "#ffffff",
-                boxShadow: "0 0 24px rgba(163,230,53,0.28)",
-              }}
-            >
-              Let&apos;s Talk
-              <ArrowUpRight />
-            </Link>
+            <BookACall>
+              <AnimatedButton>Book a Call</AnimatedButton>
+            </BookACall>
           </div>
         </div>
       </div>
