@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
         >
           <PageTransitionProvider>
-            <Navbar />
+            {/* <Navbar /> */}
             {children}
           </PageTransitionProvider>
         </ThemeProvider>

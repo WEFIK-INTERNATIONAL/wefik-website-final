@@ -6,6 +6,7 @@ import SphereAnimation from "@/components/home/SphereAnimation";
 import GridBackground from "@/components/home/GridBackground";
 import TrustedAvatar from "@/components/home/TrustedAvatar";
 import TransitionLink from "@/components/ui/TransitionLink";
+import Tag from "@/components/ui/Tag";
 
 function StarIcon() {
   return (
@@ -22,7 +23,7 @@ function StarIcon() {
 export default function HeroSection() {
   return (
     <section
-      className="relative w-full overflow-hidden bg-bg-primary"
+      className="bg-bg-primary relative w-full overflow-hidden"
       style={{ minHeight: "100svh" }}
     >
       <GridBackground />
@@ -53,56 +54,7 @@ export default function HeroSection() {
           className="flex w-full flex-col items-center text-center"
           style={{ maxWidth: "860px", gap: "24px" }}
         >
-          <div
-            className="inline-flex items-center self-center"
-            style={{
-              gap: "8px",
-              padding: "6px 16px",
-              borderRadius: "999px",
-              border: "1px solid rgba(163,230,53,0.15)",
-              background: "rgba(163,230,53,0.04)",
-              backdropFilter: "blur(8px)",
-            }}
-          >
-            <span
-              style={{
-                position: "relative",
-                display: "flex",
-                width: "7px",
-                height: "7px",
-              }}
-            >
-              <span
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  borderRadius: "50%",
-                  backgroundColor: "var(--color-accent)",
-                  opacity: 0.7,
-                  animation: "ping 1.5s cubic-bezier(0,0,0.2,1) infinite",
-                }}
-              />
-              <span
-                style={{
-                  position: "relative",
-                  width: "7px",
-                  height: "7px",
-                  borderRadius: "50%",
-                  backgroundColor: "var(--color-accent)",
-                }}
-              />
-            </span>
-            <span
-              style={{
-                fontSize: "12px",
-                color: "var(--color-text-muted)",
-                letterSpacing: "0.04em",
-                whiteSpace: "nowrap",
-              }}
-            >
-              Available for work
-            </span>
-          </div>
+          <Tag>Available for work</Tag>
           <h1
             style={{
               fontSize: "clamp(2.2rem, 11vw, 6.5rem)",

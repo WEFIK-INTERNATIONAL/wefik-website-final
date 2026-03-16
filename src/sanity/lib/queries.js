@@ -4,7 +4,15 @@ import { client } from "./client";
 export async function getAllBlogs() {
   return client.fetch(
     `*[_type == "blog"] | order(publishedAt desc){
-      title, slug, excerpt, coverImage, publishedAt,
+      title, slug, excerpt, publishedAt,
+      coverImage{
+        asset->{
+          metadata{
+            lqip
+          }
+        },
+        alt
+      },
       "author": author->{ name, image },
       "categories": categories[]->{ title, slug }
     }`
@@ -14,7 +22,15 @@ export async function getAllBlogs() {
 export async function getBlogBySlug(slug) {
   return client.fetch(
     `*[_type == "blog" && slug.current == $slug][0]{
-      title, slug, excerpt, coverImage, publishedAt, body,
+      title, slug, excerpt, publishedAt, body,
+      coverImage{
+        asset->{
+          metadata{
+            lqip
+          }
+        },
+        alt
+      },
       "author": author->{ name, image },
       "categories": categories[]->{ title, slug }
     }`,
@@ -37,6 +53,29 @@ export async function getWorkBySlug(slug) {
       title, slug, coverImage, images, description, tags, projectUrl, completedAt
     }`,
     { slug }
+  );
+}
+
+export async function getHomeFeaturedWorks() {
+  const { client } = await import("./client");
+  
+  // Debug: logs to help identify project mismatch
+  console.log("Using Sanity Config:", {
+    projectId: client.config().projectId,
+    dataset: client.config().dataset
+  });
+
+  return client.fetch(
+    `*[_type == "homeFeaturedWork"] | order(order asc){
+      title, slug, category, coverImage{
+        asset->{
+          metadata{
+            lqip
+          }
+        },
+        alt
+      }, tags, order
+    }`
   );
 }
 

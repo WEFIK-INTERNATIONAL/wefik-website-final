@@ -20,7 +20,7 @@ function Avatar({ className, children, ...props }) {
   return (
     <div
       className={cn(
-        "size-10 overflow-hidden rounded-full border-2 bg-bg-card",
+        "bg-bg-card size-10 overflow-hidden rounded-full border-2",
         className
       )}
       {...props}

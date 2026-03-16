@@ -493,7 +493,7 @@ export default function Navbar() {
               <button
                 className="nav-hamburger"
                 onClick={() => {
-                  if (isAnimating.current) return; 
+                  if (isAnimating.current) return;
                   menuOpen ? closeMenu() : openMenu();
                 }}
                 aria-label={menuOpen ? "Close menu" : "Open menu"}

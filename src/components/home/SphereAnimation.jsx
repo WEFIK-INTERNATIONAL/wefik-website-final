@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import {gsap} from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(useGSAP);

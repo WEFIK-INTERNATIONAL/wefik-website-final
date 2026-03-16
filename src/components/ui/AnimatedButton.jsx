@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 const AnimatedButton = ({ children }) => {
   return (
     <div
-      className="group relative flex w-fit cursor-pointer items-center justify-center gap-1 overflow-hidden rounded-full transition-all duration-300 ease-in-out hover:ring-4 hover:ring-accent/30"
+      className="group hover:ring-accent/30 relative flex w-fit cursor-pointer items-center justify-center gap-1 overflow-hidden rounded-full transition-all duration-300 ease-in-out hover:ring-4"
       style={{
         background: "var(--color-accent)",
         padding: "2px 2px 2px 10px",
