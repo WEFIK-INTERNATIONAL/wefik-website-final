@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -19,7 +19,7 @@ const NAV_LINKS = [
   { label: "Expertise", href: "/expertise" },
   { label: "Works", href: "/works" },
   { label: "Blogs", href: "/blogs" },
-  { label: "Career", href: "/career" },
+  { label: "Careers", href: "/careers" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -124,7 +124,8 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const isDark = !mounted ? true : resolvedTheme === "dark";
@@ -151,9 +152,60 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const closeMenu = useCallback(() => {
+    if (!menuOpen || isAnimating.current) return;
+    isAnimating.current = true;
+    document.body.style.overflow = "";
+    setMenuOpen(false);
+
+    gsap
+      .timeline({
+        onComplete: () => {
+          isAnimating.current = false;
+          menuTl.current?.pause(0);
+          gsap.set(overlayRef.current, { autoAlpha: 0, pointerEvents: "none" });
+        },
+      })
+      .to(
+        overlayFooterRef.current,
+        {
+          autoAlpha: 0,
+          y: 16,
+          duration: 0.22,
+          ease: "power2.in",
+        },
+        0
+      )
+      .to(
+        [...overlayLinksRef.current].reverse(),
+        {
+          autoAlpha: 0,
+          y: 40,
+          skewY: -2,
+          duration: 0.3,
+          ease: "power2.in",
+          stagger: 0.045,
+        },
+        0
+      )
+      .to(
+        overlayBgRef.current,
+        {
+          scaleY: 0,
+          transformOrigin: "top",
+          duration: 0.5,
+          ease: "power4.inOut",
+        },
+        0.25
+      );
+  }, [menuOpen]);
+
   useEffect(() => {
-    if (menuOpen) closeMenu();
-  }, [pathname]);
+    if (menuOpen) {
+      const timer = setTimeout(() => closeMenu(), 0);
+      return () => clearTimeout(timer);
+    }
+  }, [pathname, menuOpen, closeMenu]);
 
   useGSAP(
     () => {
@@ -231,54 +283,6 @@ export default function Navbar() {
     menuTl.current?.play().then(() => {
       isAnimating.current = false;
     });
-  }
-
-  function closeMenu() {
-    if (!menuOpen || isAnimating.current) return;
-    isAnimating.current = true;
-    document.body.style.overflow = "";
-    setMenuOpen(false);
-
-    gsap
-      .timeline({
-        onComplete: () => {
-          isAnimating.current = false;
-          menuTl.current?.pause(0);
-          gsap.set(overlayRef.current, { autoAlpha: 0, pointerEvents: "none" });
-        },
-      })
-      .to(
-        overlayFooterRef.current,
-        {
-          autoAlpha: 0,
-          y: 16,
-          duration: 0.22,
-          ease: "power2.in",
-        },
-        0
-      )
-      .to(
-        [...overlayLinksRef.current].reverse(),
-        {
-          autoAlpha: 0,
-          y: 40,
-          skewY: -2,
-          duration: 0.3,
-          ease: "power2.in",
-          stagger: 0.045,
-        },
-        0
-      )
-      .to(
-        overlayBgRef.current,
-        {
-          scaleY: 0,
-          transformOrigin: "top",
-          duration: 0.5,
-          ease: "power4.inOut",
-        },
-        0.25
-      );
   }
 
   function onLinkMouseMove(e, el) {
@@ -645,7 +649,6 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Footer row */}
           <div
             ref={overlayFooterRef}
             style={{

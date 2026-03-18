@@ -6,19 +6,17 @@ const config = {
   apiVersion: "2024-01-01",
 };
 
-// Public client — published content, CDN cached
 export const client = createClient({
   ...config,
   useCdn: true,
 });
 
-// Server client — bypasses CDN, for fresh data (ISR, on-demand revalidation)
 export const serverClient = createClient({
   ...config,
   useCdn: false,
+  token: process.env.SANITY_API_TOKEN,
 });
 
-// Preview client — fetches drafts (never expose to browser)
 export const previewClient = createClient({
   ...config,
   useCdn: false,

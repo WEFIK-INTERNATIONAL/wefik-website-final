@@ -1,12 +1,12 @@
-import { client } from "./client";
+import { serverClient as client } from "./client";
 
-// Blog
 export async function getAllBlogs() {
   return client.fetch(
     `*[_type == "blog"] | order(publishedAt desc){
       title, slug, excerpt, publishedAt,
       coverImage{
         asset->{
+          _id,
           metadata{
             lqip
           }
@@ -25,6 +25,7 @@ export async function getBlogBySlug(slug) {
       title, slug, excerpt, publishedAt, body,
       coverImage{
         asset->{
+          _id,
           metadata{
             lqip
           }
@@ -38,11 +39,21 @@ export async function getBlogBySlug(slug) {
   );
 }
 
-// Work
 export async function getAllWorks() {
   return client.fetch(
     `*[_type == "work"] | order(completedAt desc){
-      title, slug, coverImage, description, tags, featured
+      _type,
+      title, slug, description, tags, featured,
+      "category": category->{ title, slug },
+      coverImage{
+        asset->{
+          _id,
+          metadata{
+            lqip
+          }
+        },
+        alt
+      }
     }`
   );
 }
@@ -57,18 +68,11 @@ export async function getWorkBySlug(slug) {
 }
 
 export async function getHomeFeaturedWorks() {
-  const { client } = await import("./client");
-  
-  // Debug: logs to help identify project mismatch
-  console.log("Using Sanity Config:", {
-    projectId: client.config().projectId,
-    dataset: client.config().dataset
-  });
-
   return client.fetch(
     `*[_type == "homeFeaturedWork"] | order(order asc){
       title, slug, category, coverImage{
         asset->{
+          _id,
           metadata{
             lqip
           }
@@ -79,11 +83,10 @@ export async function getHomeFeaturedWorks() {
   );
 }
 
-// Jobs
 export async function getOpenJobs() {
   return client.fetch(
     `*[_type == "jobOpening" && isOpen == true] | order(postedAt desc){
-      title, slug, type, location, description, postedAt
+      title, slug, type, location, description, responsibilities, requirements, applyUrl, postedAt
     }`
   );
 }

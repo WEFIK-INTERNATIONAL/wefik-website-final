@@ -5,8 +5,6 @@ import { useTheme } from "next-themes";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(useGSAP);
-
 const paths = [
   "M361.604 361.238c-24.407 24.408-51.119 37.27-59.662 28.727-8.542-8.543 4.319-35.255 28.726-59.663 24.408-24.407 51.12-37.269 59.663-28.726 8.542 8.543-4.319 35.255-28.727 59.662z",
   "M360.72 360.354c-35.879 35.88-75.254 54.677-87.946 41.985-12.692-12.692 6.105-52.067 41.985-87.947 35.879-35.879 75.254-54.676 87.946-41.984 12.692 12.692-6.105 52.067-41.984 87.946z",
@@ -36,7 +34,8 @@ export default function SphereAnimation() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const isDark = !mounted ? true : resolvedTheme === "dark";
@@ -56,9 +55,13 @@ export default function SphereAnimation() {
     ? { r: 80, g: 80, b: 80, a: 0.35 }
     : { r: 120, g: 140, b: 80, a: 0.25 };
 
-  const gradStops = isDark
-    ? ["#373734", "#242423", "#0D0D0C"]
-    : ["#d4e8a0", "#c5dc88", "#a3c45a"];
+  const gradStops = React.useMemo(
+    () =>
+      isDark
+        ? ["#373734", "#242423", "#0D0D0C"]
+        : ["#d4e8a0", "#c5dc88", "#a3c45a"],
+    [isDark]
+  );
 
   useEffect(() => {
     if (grad0Ref.current)
@@ -67,7 +70,7 @@ export default function SphereAnimation() {
       grad1Ref.current.setAttribute("stop-color", gradStops[1]);
     if (grad2Ref.current)
       grad2Ref.current.setAttribute("stop-color", gradStops[2]);
-  }, [isDark]);
+  }, [gradStops, isDark]);
 
   useGSAP(
     () => {

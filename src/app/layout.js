@@ -8,6 +8,8 @@ import {
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import { PageTransitionProvider } from "@/components/ui/PageTransitionProvider";
+import Footer from "@/components/layout/Footer";
+import SmoothScroll from "@/components/ui/SmoothScroll";
 
 export const metadata = {
   title: "Create Next App",
@@ -27,8 +29,11 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
         >
           <PageTransitionProvider>
-            {/* <Navbar /> */}
-            {children}
+            <SmoothScroll>
+              <Navbar />
+              {children}
+              <Footer />
+            </SmoothScroll>
           </PageTransitionProvider>
         </ThemeProvider>
       </body>

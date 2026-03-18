@@ -13,7 +13,6 @@ import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(useGSAP);
 
-// ─── Context ──────────────────────────────────────────────────────────────────
 const TransitionContext = createContext(null);
 
 export function usePageTransition() {
@@ -25,7 +24,6 @@ export function usePageTransition() {
   return ctx;
 }
 
-// ─── Route labels ─────────────────────────────────────────────────────────────
 const ROUTE_LABELS = {
   "/": "Home",
   "/agency": "Agency",
@@ -41,7 +39,6 @@ function getLabel(href) {
   ).toUpperCase();
 }
 
-// ─── Overlay ──────────────────────────────────────────────────────────────────
 function TransitionOverlay({ curtainRef, lineRef, labelRef, subRef }) {
   return (
     <div
@@ -53,7 +50,6 @@ function TransitionOverlay({ curtainRef, lineRef, labelRef, subRef }) {
         overflow: "hidden",
       }}
     >
-      {/* Single dark curtain */}
       <div
         ref={curtainRef}
         style={{
@@ -64,7 +60,6 @@ function TransitionOverlay({ curtainRef, lineRef, labelRef, subRef }) {
           willChange: "transform",
         }}
       >
-        {/* Lime razor line — leading edge of curtain */}
         <div
           ref={lineRef}
           style={{
@@ -80,7 +75,6 @@ function TransitionOverlay({ curtainRef, lineRef, labelRef, subRef }) {
           }}
         />
 
-        {/* Page label */}
         <div
           style={{
             position: "absolute",
@@ -92,7 +86,6 @@ function TransitionOverlay({ curtainRef, lineRef, labelRef, subRef }) {
             padding: "clamp(32px, 6vw, 72px)",
           }}
         >
-          {/* Subtle eyebrow */}
           <div
             ref={subRef}
             style={{
@@ -109,7 +102,6 @@ function TransitionOverlay({ curtainRef, lineRef, labelRef, subRef }) {
             Navigating to
           </div>
 
-          {/* Big page name */}
           <div
             ref={labelRef}
             style={{
@@ -125,7 +117,6 @@ function TransitionOverlay({ curtainRef, lineRef, labelRef, subRef }) {
             }}
           />
 
-          {/* Bottom lime accent bar */}
           <div
             style={{
               width: "48px",
@@ -148,7 +139,6 @@ function TransitionOverlay({ curtainRef, lineRef, labelRef, subRef }) {
   );
 }
 
-// ─── Provider ─────────────────────────────────────────────────────────────────
 export function PageTransitionProvider({ children }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -164,7 +154,6 @@ export function PageTransitionProvider({ children }) {
     return document.getElementById("transition-bar");
   }
 
-  // ── IN: curtain rises from bottom ────────────────────────────────────────
   const playIn = useCallback((href) => {
     return new Promise((resolve) => {
       if (labelRef.current) labelRef.current.textContent = getLabel(href);
@@ -195,7 +184,6 @@ export function PageTransitionProvider({ children }) {
         0
       )
 
-        // 2. Lime line sweeps across the leading edge as curtain rises
         .to(
           line,
           {
@@ -206,7 +194,6 @@ export function PageTransitionProvider({ children }) {
           0.1
         )
 
-        // 3. Eyebrow fades in
         .to(
           sub,
           {
@@ -218,7 +205,6 @@ export function PageTransitionProvider({ children }) {
           0.42
         )
 
-        // 4. Page name rises into view
         .to(
           label,
           {
@@ -230,7 +216,6 @@ export function PageTransitionProvider({ children }) {
           0.48
         )
 
-        // 5. Bottom accent bar expands
         .to(
           bar,
           {
@@ -244,7 +229,6 @@ export function PageTransitionProvider({ children }) {
     });
   }, []);
 
-  // ── OUT: curtain exits upward ─────────────────────────────────────────────
   const playOut = useCallback(() => {
     return new Promise((resolve) => {
       const curtain = curtainRef.current;
@@ -254,7 +238,6 @@ export function PageTransitionProvider({ children }) {
 
       const tl = gsap.timeline({ onComplete: resolve });
 
-      // 1. Content exits fast
       tl.to(
         [label, sub, bar].filter(Boolean),
         {
@@ -266,8 +249,6 @@ export function PageTransitionProvider({ children }) {
         0
       )
 
-        // 2. Curtain slides off to the left — not back down
-        //    This feels like turning a page rather than reversing
         .to(
           curtain,
           {
@@ -278,12 +259,10 @@ export function PageTransitionProvider({ children }) {
           0.12
         )
 
-        // 3. Reset for next use
         .set(curtain, { translateX: "0%", translateY: "100%" });
     });
   }, []);
 
-  // ── Navigate with transition ──────────────────────────────────────────────
   const navigateTo = useCallback(
     async (href) => {
       if (isAnimating.current || href === pathname) return;
@@ -304,12 +283,11 @@ export function PageTransitionProvider({ children }) {
     [pathname, router, playIn, playOut]
   );
 
-  // ── Browser back/forward ──────────────────────────────────────────────────
   useEffect(() => {
     if (pendingHref.current === pathname) return;
     if (isAnimating.current) return;
     playOut();
-  }, [pathname]);
+  }, [pathname, playOut]);
 
   return (
     <TransitionContext.Provider value={{ navigateTo }}>

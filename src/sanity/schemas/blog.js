@@ -11,7 +11,13 @@ const blog = {
       type: "reference",
       to: [{ type: "author" }],
     },
-    { name: "coverImage", title: "Cover Image", type: "image" },
+    {
+      name: "coverImage",
+      title: "Cover Image",
+      type: "image",
+      options: { hotspot: true, metadata: ["lqip"] },
+      fields: [{ name: "alt", type: "string", title: "Alternative Text" }],
+    },
     { name: "publishedAt", title: "Published At", type: "datetime" },
     {
       name: "categories",
@@ -24,7 +30,7 @@ const blog = {
       name: "body",
       title: "Body",
       type: "array",
-      of: [{ type: "block" }], // portable text
+      of: [{ type: "block" }],
     },
   ],
 };

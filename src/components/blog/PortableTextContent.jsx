@@ -15,7 +15,7 @@ const components = {
           />
         </div>
         {value.caption && (
-          <figcaption className="text-text-muted bg-white/2 px-6 py-4 text-center text-sm italic border-t border-white/5">
+          <figcaption className="text-text-muted border-t border-white/5 bg-white/2 px-6 py-4 text-center text-sm italic">
             {value.caption}
           </figcaption>
         )}
@@ -24,12 +24,12 @@ const components = {
   },
   block: {
     h2: ({ children }) => (
-      <h2 className="font-display mt-20 mb-8 text-3xl font-bold tracking-tight text-text-primary md:text-5xl">
+      <h2 className="font-display text-text-primary mt-20 mb-8 text-3xl font-bold tracking-tight md:text-5xl">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="font-display mt-16 mb-6 text-2xl font-bold tracking-tight text-text-primary md:text-3xl">
+      <h3 className="font-display text-text-primary mt-16 mb-6 text-2xl font-bold tracking-tight md:text-3xl">
         {children}
       </h3>
     ),
@@ -39,8 +39,8 @@ const components = {
       </p>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="border-accent/40 bg-accent/5 my-12 border-l-4 py-8 px-8 text-2xl italic text-text-primary">
-        "{children}"
+      <blockquote className="border-accent/40 bg-accent/5 text-text-primary my-12 border-l-4 px-8 py-8 text-2xl italic">
+        &quot;{children}&quot;
       </blockquote>
     ),
   },
@@ -58,22 +58,24 @@ const components = {
   },
   marks: {
     link: ({ children, value }) => {
-      const rel = !value.href.startsWith("/") ? "noreferrer noopener" : undefined;
+      const rel = !value.href.startsWith("/")
+        ? "noreferrer noopener"
+        : undefined;
       return (
         <a
           href={value.href}
           rel={rel}
-          className="text-accent underline decoration-accent/30 underline-offset-4 hover:decoration-accent transition-colors"
+          className="text-accent decoration-accent/30 hover:decoration-accent underline underline-offset-4 transition-colors"
         >
           {children}
         </a>
       );
     },
     strong: ({ children }) => (
-      <strong className="font-bold text-text-primary">{children}</strong>
+      <strong className="text-text-primary font-bold">{children}</strong>
     ),
     code: ({ children }) => (
-      <code className="bg-white/5 border-white/10 rounded-md border px-1.5 py-0.5 font-mono text-sm text-accent">
+      <code className="text-accent rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-sm">
         {children}
       </code>
     ),

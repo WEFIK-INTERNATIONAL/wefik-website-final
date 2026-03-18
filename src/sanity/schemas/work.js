@@ -5,6 +5,12 @@ const work = {
   fields: [
     { name: "title", title: "Title", type: "string" },
     { name: "slug", title: "Slug", type: "slug", options: { source: "title" } },
+    {
+      name: "category",
+      title: "Category",
+      type: "reference",
+      to: [{ type: "category" }],
+    },
     { name: "coverImage", title: "Cover Image", type: "image" },
     {
       name: "images",

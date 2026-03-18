@@ -5,8 +5,6 @@ import { useTheme } from "next-themes";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(useGSAP);
-
 function NextjsIcon({ hovered }) {
   return (
     <svg viewBox="0 0 75 75" width="40" height="40" fill="none">
@@ -234,7 +232,8 @@ export default function TechTicker() {
   const pausedRef = useRef(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
   const isDark = !mounted ? true : resolvedTheme === "dark";
   const borderClass = isDark
@@ -327,7 +326,7 @@ export default function TechTicker() {
       </div>
       <div className="relative flex h-20 items-center overflow-hidden p-0 md:hidden">
         <div
-          className={`border-r pr-4 pl-5 ${borderClass} relative z-50 flex h-full shrink-0 flex-col justify-center`}
+          className={`border-r pr-4 pl-5 ${borderClass} relative z-20 flex h-full shrink-0 flex-col justify-center`}
           style={{
             backgroundColor: isDark ? "#0a0a0a" : "#ffffff",
             boxShadow: isDark
@@ -335,7 +334,7 @@ export default function TechTicker() {
               : "15px 0 25px -10px rgba(0,0,0,0.1)",
           }}
         >
-          <p className="font-big text-text-primary relative z-51 m-0 text-[12px] leading-[1.1] font-black whitespace-nowrap uppercase">
+          <p className="font-big text-text-primary relative z-10 m-0 text-[12px] leading-[1.1] font-black whitespace-nowrap uppercase">
             Your stack,
             <br />
             our expertise.

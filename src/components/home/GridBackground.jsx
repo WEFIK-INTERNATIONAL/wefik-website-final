@@ -5,8 +5,6 @@ import { useTheme } from "next-themes";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(useGSAP);
-
 const NUM_METEORS = 5;
 const LINE_SPACING_DESKTOP = 100;
 const LINE_SPACING_MOBILE = 60;
@@ -99,7 +97,8 @@ export default function GridBackground() {
   const counterRef = useRef(0);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const isDark = !mounted ? true : resolvedTheme === "dark";
@@ -130,9 +129,11 @@ export default function GridBackground() {
   );
   useEffect(() => {
     if (numLines > 0) {
-      setMeteors(
-        Array.from({ length: NUM_METEORS }, (_, i) => createMeteor(i))
+      const initialMeteors = Array.from({ length: NUM_METEORS }, (_, i) =>
+        createMeteor(i)
       );
+      const timer = setTimeout(() => setMeteors(initialMeteors), 0);
+      return () => clearTimeout(timer);
     }
   }, [numLines, createMeteor]);
   const recycleMeteor = useCallback(

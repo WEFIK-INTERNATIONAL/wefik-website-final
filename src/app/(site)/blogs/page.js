@@ -5,7 +5,8 @@ import BlogCard from "@/components/blog/BlogCard";
 
 export const metadata = {
   title: "Blog | Wefik",
-  description: "Explore our latest thoughts on digital innovation, design trends, and the future of web experiences.",
+  description:
+    "Explore our latest thoughts on digital innovation, design trends, and the future of web experiences.",
 };
 
 export default async function BlogListingPage() {
@@ -14,7 +15,7 @@ export default async function BlogListingPage() {
   return (
     <main className="bg-bg-primary min-h-screen">
       <BlogHero />
-      
+
       <section className="relative pb-24 md:pb-32">
         <div className="mx-auto max-w-7xl px-6">
           {posts.length > 0 ? (
@@ -24,17 +25,19 @@ export default async function BlogListingPage() {
               ))}
             </div>
           ) : (
-            <div className="border-border/10 bg-white/2 flex min-h-[400px] flex-col items-center justify-center rounded-3xl border px-6 text-center">
-              <h2 className="text-text-primary text-2xl font-bold">No posts found yet.</h2>
+            <div className="border-border/10 flex min-h-[400px] flex-col items-center justify-center rounded-3xl border bg-white/2 px-6 text-center">
+              <h2 className="text-text-primary text-2xl font-bold">
+                No posts found yet.
+              </h2>
               <p className="text-text-muted mt-4 max-w-md">
-                We're crafting some amazing stories. Check back soon for our latest updates!
+                We&apos;re crafting some amazing stories. Check back soon for
+                our latest updates!
               </p>
             </div>
           )}
         </div>
       </section>
 
-      {/* Grid Ornamentation */}
       <div className="pointer-events-none fixed inset-0 z-0 opacity-20">
         <div className="border-border/10 absolute top-[10%] left-0 h-px w-full border-t" />
         <div className="border-border/10 absolute top-[90%] left-0 h-px w-full border-t" />

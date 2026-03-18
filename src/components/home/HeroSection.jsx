@@ -1,12 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import AnimatedButton from "@/components/ui/AnimatedButton";
 import SphereAnimation from "@/components/home/SphereAnimation";
 import GridBackground from "@/components/home/GridBackground";
 import TrustedAvatar from "@/components/home/TrustedAvatar";
 import TransitionLink from "@/components/ui/TransitionLink";
 import Tag from "@/components/ui/Tag";
+import { gsap } from "@/lib/gsap";
+import { useGSAP } from "@gsap/react";
 
 function StarIcon() {
   return (
@@ -20,9 +22,83 @@ function StarIcon() {
   );
 }
 
+function useCountUp(target, duration = 1.5, startOnMount = false) {
+  const [count, setCount] = useState(0);
+  const countRef = useRef(0);
+  const rafRef = useRef(null);
+
+  useEffect(() => {
+    if (!startOnMount) return;
+    const start = performance.now();
+    const animate = (now) => {
+      const elapsed = (now - start) / (duration * 1000);
+      const progress = Math.min(elapsed, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      countRef.current = Math.round(eased * target);
+      setCount(countRef.current);
+      if (progress < 1) rafRef.current = requestAnimationFrame(animate);
+    };
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [target, duration, startOnMount]);
+
+  return count;
+}
+
 export default function HeroSection() {
+  const containerRef = useRef(null);
+  const tagRef = useRef(null);
+  const headlineRef = useRef(null);
+  const subtitleRef = useRef(null);
+  const ctaRef = useRef(null);
+  const scrollIndicatorRef = useRef(null);
+  const scrollDotRef = useRef(null);
+  const [countStarted, setCountStarted] = useState(false);
+  const clientCount = useCountUp(30, 1.5, countStarted);
+
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+      tl.from(tagRef.current, { y: 20, opacity: 0, duration: 0.7 })
+        .from(
+          headlineRef.current.querySelectorAll(".headline-word"),
+          {
+            y: 60,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.1,
+          },
+          "-=0.3"
+        )
+        .from(
+          subtitleRef.current,
+          { y: 20, opacity: 0, duration: 0.7 },
+          "-=0.4"
+        )
+        .from(ctaRef.current, { y: 20, opacity: 0, duration: 0.7 }, "-=0.5")
+        .from(
+          scrollIndicatorRef.current,
+          { opacity: 0, duration: 0.6 },
+          "-=0.2"
+        )
+        .add(() => setCountStarted(true), "-=0.3");
+
+      gsap.to(scrollDotRef.current, {
+        y: 8,
+        duration: 0.8,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: 1.5,
+      });
+    },
+    { scope: containerRef }
+  );
+
   return (
     <section
+      ref={containerRef}
       className="bg-bg-primary relative w-full overflow-hidden"
       style={{ minHeight: "100svh" }}
     >
@@ -54,8 +130,12 @@ export default function HeroSection() {
           className="flex w-full flex-col items-center text-center"
           style={{ maxWidth: "860px", gap: "24px" }}
         >
-          <Tag>Available for work</Tag>
-          <h1
+          <div ref={tagRef}>
+            <Tag>Available for work</Tag>
+          </div>
+
+          <div
+            ref={headlineRef}
             style={{
               fontSize: "clamp(2.2rem, 11vw, 6.5rem)",
               fontWeight: 800,
@@ -63,16 +143,25 @@ export default function HeroSection() {
               letterSpacing: "-0.025em",
               color: "var(--color-text-primary)",
               margin: 0,
+              overflow: "hidden",
             }}
           >
-            Turning Your Ideas
+            <span className="headline-word inline-block">Turning</span>{" "}
+            <span className="headline-word inline-block">Your</span>{" "}
+            <span className="headline-word inline-block">Ideas</span>
             <br />
-            into <span style={{ color: "var(--color-accent)" }}>
+            <span className="headline-word inline-block">into</span>{" "}
+            <span
+              className="headline-word inline-block"
+              style={{ color: "var(--color-accent)" }}
+            >
               Digital
             </span>{" "}
-            Reality
-          </h1>
+            <span className="headline-word inline-block">Reality</span>
+          </div>
+
           <p
+            ref={subtitleRef}
             style={{
               fontSize: "clamp(0.9rem, 8vw, 1.15rem)",
               color: "var(--color-text-muted)",
@@ -84,7 +173,9 @@ export default function HeroSection() {
             From websites and apps to design, branding, and digital campaigns —
             we turn your vision into experiences that perform.
           </p>
+
           <div
+            ref={ctaRef}
             className="flex flex-col-reverse items-center justify-center sm:flex-row"
             style={{ gap: "16px", width: "100%" }}
           >
@@ -114,14 +205,16 @@ export default function HeroSection() {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  Rated 4.9/5 by 30+ clients
+                  Rated 4.9/5 by {clientCount}+ clients
                 </p>
               </div>
             </div>
           </div>
         </div>
       </div>
+
       <div
+        ref={scrollIndicatorRef}
         className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center"
         style={{ gap: "6px" }}
       >
@@ -148,6 +241,7 @@ export default function HeroSection() {
           }}
         >
           <div
+            ref={scrollDotRef}
             style={{
               width: "3px",
               height: "5px",
@@ -157,6 +251,7 @@ export default function HeroSection() {
           />
         </div>
       </div>
+
       <div
         className="pointer-events-none absolute right-0 bottom-0 left-0 z-5 h-28"
         style={{

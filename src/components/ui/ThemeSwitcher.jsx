@@ -20,7 +20,6 @@ export function ThemeSwitcher() {
     setMounted(true);
   }, []);
 
-  // useGSAP for overlay setup — proper cleanup on unmount
   useGSAP(() => {
     const overlay = document.createElement("div");
     overlay.style.cssText = `
@@ -34,7 +33,6 @@ export function ThemeSwitcher() {
     document.body.appendChild(overlay);
     overlayRef.current = overlay;
 
-    // GSAP context auto-cleans this on unmount
     return () => overlay.remove();
   }, []);
 
@@ -65,7 +63,6 @@ export function ThemeSwitcher() {
       },
     });
 
-    // Button squish
     tl.to(
       buttonRef.current,
       {
@@ -76,7 +73,6 @@ export function ThemeSwitcher() {
       0
     );
 
-    // Ring burst
     tl.fromTo(
       ringRef.current,
       { scale: 1, opacity: 0.6 },
@@ -84,7 +80,6 @@ export function ThemeSwitcher() {
       0
     );
 
-    // Ink drop expand
     tl.fromTo(
       overlay,
       { clipPath: `circle(0px at ${x}px ${y}px)` },
@@ -97,7 +92,6 @@ export function ThemeSwitcher() {
       0.05
     );
 
-    // Button spring back
     tl.to(
       buttonRef.current,
       {
@@ -108,7 +102,6 @@ export function ThemeSwitcher() {
       0.2
     );
 
-    // Overlay fade out
     tl.to(
       overlay,
       {
