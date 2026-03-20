@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import TransitionLink from "../ui/TransitionLink";
 import { urlFor } from "@/sanity/lib/image";
 import { ArrowRight } from "lucide-react";
 import gsap from "gsap";
@@ -54,7 +54,7 @@ export default function WorkCard({ project }) {
   };
 
   return (
-    <Link
+    <TransitionLink
       href={`/works/${project.slug.current}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -114,6 +114,6 @@ export default function WorkCard({ project }) {
           ))}
         </div>
       </div>
-    </Link>
+    </TransitionLink>
   );
 }

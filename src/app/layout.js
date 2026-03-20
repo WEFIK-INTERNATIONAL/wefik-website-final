@@ -1,4 +1,3 @@
-import Navbar from "@/components/layout/Navbar";
 import {
   ppNeueMontreal,
   goodMonolith,
@@ -7,9 +6,6 @@ import {
 } from "./fonts";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
-import { PageTransitionProvider } from "@/components/ui/PageTransitionProvider";
-import Footer from "@/components/layout/Footer";
-import SmoothScroll from "@/components/ui/SmoothScroll";
 
 export const metadata = {
   title: "Create Next App",
@@ -30,13 +26,7 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange
         >
-          <PageTransitionProvider>
-            <SmoothScroll>
-              <Navbar />
-              {children}
-              <Footer />
-            </SmoothScroll>
-          </PageTransitionProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>

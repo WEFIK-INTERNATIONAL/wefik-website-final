@@ -5,6 +5,7 @@ import Image from "next/image";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import { Star } from "lucide-react";
+import Tag from "../ui/Tag";
 
 const testimonials = [
   {
@@ -127,17 +128,12 @@ export default function Testimonials() {
       className="bg-bg-primary border-border/20 overflow-hidden border-t py-24 md:py-32"
     >
       <div className="mx-auto mb-16 max-w-7xl px-6 md:mb-24">
-        <div className="mb-6 flex items-center gap-4">
-          <div className="bg-accent/20 h-px w-16" />
-          <span className="text-accent text-[10px] font-bold tracking-[0.3em] uppercase">
-            Trusted by Visionaries
-          </span>
+        <div className="mb-10">
+          <Tag>Testimonials</Tag>
         </div>
         <h2 className="text-text-primary text-4xl leading-tight font-black tracking-tighter wrap-break-word hyphens-auto whitespace-normal uppercase md:text-6xl lg:text-7xl">
           Client <br />
-          <span className="text-accent decoration-accent/20 underline underline-offset-8">
-            Stories.
-          </span>
+          <span className="text-accent">Stories.</span>
         </h2>
       </div>
 

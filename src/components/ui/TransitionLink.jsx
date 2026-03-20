@@ -1,32 +1,21 @@
 "use client";
 
-import { usePageTransition } from "./PageTransitionProvider";
+import React from "react";
+import { useViewTransition } from "@/hooks/useViewTransition";
 
-export default function TransitionLink({
-  href,
-  children,
-  className,
-  style,
-  onClick,
-  ...props
-}) {
-  const { navigateTo } = usePageTransition();
+const TransitionLink = ({ href, children, className, ...props }) => {
+  const { navigateWithTransition } = useViewTransition();
 
   const handleClick = (e) => {
     e.preventDefault();
-    onClick?.();
-    navigateTo(href);
+    navigateWithTransition(href);
   };
 
   return (
-    <a
-      href={href}
-      onClick={handleClick}
-      className={className}
-      style={style}
-      {...props}
-    >
+    <a href={href} onClick={handleClick} className={className} {...props}>
       {children}
     </a>
   );
-}
+};
+
+export default TransitionLink;

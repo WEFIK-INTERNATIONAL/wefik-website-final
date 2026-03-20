@@ -5,10 +5,11 @@ import AnimatedButton from "@/components/ui/AnimatedButton";
 import SphereAnimation from "@/components/home/SphereAnimation";
 import GridBackground from "@/components/home/GridBackground";
 import TrustedAvatar from "@/components/home/TrustedAvatar";
-import TransitionLink from "@/components/ui/TransitionLink";
 import Tag from "@/components/ui/Tag";
+import TransitionLink from "@/components/ui/TransitionLink";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
+import { useLoader } from "@/components/ui/LoaderProvider";
 
 function StarIcon() {
   return (
@@ -46,6 +47,7 @@ function useCountUp(target, duration = 1.5, startOnMount = false) {
 }
 
 export default function HeroSection() {
+  const { canPlayEntrance } = useLoader();
   const containerRef = useRef(null);
   const tagRef = useRef(null);
   const headlineRef = useRef(null);
@@ -58,6 +60,8 @@ export default function HeroSection() {
 
   useGSAP(
     () => {
+      if (!canPlayEntrance) return;
+
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
       tl.from(tagRef.current, { y: 20, opacity: 0, duration: 0.7 })

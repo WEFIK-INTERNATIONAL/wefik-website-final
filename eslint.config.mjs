@@ -4,14 +4,8 @@ import eslintConfigPrettier from "eslint-config-prettier";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
   eslintConfigPrettier,
 ]);
 

@@ -1,6 +1,6 @@
 import React from "react";
-import Link from "next/link";
 import Image from "next/image";
+import TransitionLink from "../ui/TransitionLink";
 import { format } from "date-fns";
 import { urlFor } from "@/sanity/lib/image";
 import Tag from "@/components/ui/Tag";
@@ -11,7 +11,7 @@ export default function BlogCard({ post }) {
     : new Date();
 
   return (
-    <Link
+    <TransitionLink
       href={`/blogs/${post.slug.current}`}
       className="group bg-bg-card border-border/10 hover:border-accent/30 relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-2"
     >
@@ -63,6 +63,6 @@ export default function BlogCard({ post }) {
 
         <div className="bg-accent/10 absolute -right-12 -bottom-12 h-24 w-24 opacity-0 blur-[60px] transition-opacity duration-300 group-hover:opacity-100" />
       </div>
-    </Link>
+    </TransitionLink>
   );
 }

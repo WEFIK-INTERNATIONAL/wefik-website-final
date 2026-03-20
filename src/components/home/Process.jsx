@@ -14,6 +14,7 @@ import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 
 import MagneticButton from "@/components/ui/MagneticButton";
+import Tag from "../ui/Tag";
 
 const processSteps = [
   {
@@ -121,10 +122,8 @@ export default function Process() {
     >
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-24 text-center">
-          <div className="bg-accent/10 border-accent/20 mb-6 inline-block rounded-full border px-4 py-1.5">
-            <span className="text-accent text-[10px] font-bold tracking-[0.3em] uppercase">
-              Our Process
-            </span>
+          <div className="mb-10">
+            <Tag>Our Process</Tag>
           </div>
           <h2 className="text-text-primary mb-8 text-4xl leading-tight font-black tracking-tighter uppercase md:text-7xl">
             Creative. Strategic. <br />
@@ -178,9 +177,9 @@ export default function Process() {
                       <span className="text-accent/60 text-[10px] font-black tracking-[0.2em] uppercase">
                         {item.title}
                       </span>
-                      <h3 className="text-text-primary mt-1 text-xl font-black tracking-tight break-words uppercase md:text-2xl">
+                      <div className="text-text-primary mt-1 text-2xl leading-none font-black tracking-tight uppercase md:text-4xl">
                         {item.subtitle}
-                      </h3>
+                      </div>
                     </div>
 
                     <p className="text-text-muted text-sm leading-relaxed md:text-base">

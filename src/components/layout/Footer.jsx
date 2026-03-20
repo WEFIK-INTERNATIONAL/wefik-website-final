@@ -28,7 +28,7 @@ const allLinks = [
     ],
   },
   {
-    title: "Expertise",
+    title: "Legal",
     linksTo: [
       { name: "Web Development", url: "/expertise/web-development" },
       {

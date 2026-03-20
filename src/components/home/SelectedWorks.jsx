@@ -82,7 +82,6 @@ export default function SelectedWorks({ projects = [] }) {
     () => {
       if (projects.length === 0) return;
 
-      // 1. Entrance Animations for Header Elements
       gsap.fromTo(
         ".header-animate",
         { y: 30, opacity: 0 },
@@ -99,7 +98,6 @@ export default function SelectedWorks({ projects = [] }) {
         }
       );
 
-      // 2. Simple Slide-up Animations for Project Cards
       const cards = gsap.utils.toArray(".project-card");
       gsap.fromTo(
         cards,
@@ -133,11 +131,8 @@ export default function SelectedWorks({ projects = [] }) {
 
       <div className="relative mx-auto max-w-7xl pt-10">
         <div className="mb-12 px-6 md:mb-20 md:px-0">
-          <div className="header-animate flex items-center gap-4">
-            <div className="bg-accent/20 h-px w-16" />
-            <span className="text-accent text-[10px] font-bold tracking-[0.2em] uppercase sm:text-xs">
-              Selected Works
-            </span>
+          <div className="header-animate mb-10">
+            <Tag>Selected Works</Tag>
           </div>
           <h2 className="header-animate mt-6 max-w-4xl text-3xl leading-[0.95] font-black tracking-tighter sm:text-4xl md:text-6xl lg:text-7xl">
             Transforming Concepts into <br className="hidden sm:block" />

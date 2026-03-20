@@ -6,6 +6,7 @@ import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import MagneticButton from "@/components/ui/MagneticButton";
+import Tag from "../ui/Tag";
 
 export default function CTA() {
   const containerRef = useRef(null);
@@ -64,11 +65,8 @@ export default function CTA() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 text-center">
         <div ref={textRef} className="flex flex-col items-center">
-          <div className="bg-accent/10 border-border/20 mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-1.5">
-            <Sparkles size={14} className="text-accent" />
-            <span className="text-accent text-[10px] font-bold tracking-[0.3em] uppercase">
-              Next Step
-            </span>
+          <div className="mb-10">
+            <Tag>Next Step</Tag>
           </div>
 
           <h2 className="text-text-primary mb-12 text-5xl leading-[0.9] font-black tracking-tighter uppercase md:text-8xl">
