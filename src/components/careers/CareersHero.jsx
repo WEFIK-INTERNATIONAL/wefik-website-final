@@ -1,9 +1,13 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useLoader } from "@/components/ui/LoaderProvider";
+
+import Image from "next/image";
+import { ArrowDown } from "lucide-react";
+import Tag from "../ui/Tag";
 
 export default function CareersHero() {
   const { canPlayEntrance } = useLoader();
@@ -11,19 +15,24 @@ export default function CareersHero() {
   const tagRef = useRef(null);
   const headlineRef = useRef(null);
   const sublineRef = useRef(null);
+  const bgRef = useRef(null);
+  const ghostRef = useRef(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!containerRef.current) return;
+      gsap.set(containerRef.current.querySelectorAll(".anim-el"), {
+        opacity: 1,
+        y: 0,
+        yPercent: 0,
+      });
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useGSAP(
     () => {
-      const elements = [
-        tagRef.current,
-        headlineRef.current?.querySelectorAll(".char-reveal"),
-        sublineRef.current,
-      ].filter(Boolean);
-
-      if (!canPlayEntrance) {
-        gsap.set(elements, { opacity: 0 });
-        return;
-      }
+      if (!canPlayEntrance) return;
 
       const tl = gsap.timeline({
         defaults: { ease: "power4.out" },
@@ -31,26 +40,37 @@ export default function CareersHero() {
       });
 
       tl.fromTo(
-        tagRef.current,
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.7 }
+        bgRef.current,
+        { scale: 1.2, opacity: 0 },
+        { scale: 1, opacity: 0.4, duration: 2, ease: "power2.out" }
       )
         .fromTo(
+          ghostRef.current,
+          { x: 100, opacity: 0 },
+          { x: 0, opacity: 0.05, duration: 2, ease: "power3.out" },
+          "<"
+        )
+        .fromTo(
+          tagRef.current,
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8 },
+          "-=1.2"
+        )
+        .fromTo(
           headlineRef.current.querySelectorAll(".char-reveal"),
-          { yPercent: 110, opacity: 0 },
+          { yPercent: 110 },
           {
             yPercent: 0,
-            opacity: 1,
             duration: 1.2,
             stagger: 0.08,
             ease: "power4.out",
           },
-          "-=0.4"
+          "-=0.8"
         )
         .fromTo(
           sublineRef.current,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7 },
+          { y: 0, opacity: 1, duration: 0.8 },
           "-=0.6"
         );
     },
@@ -60,43 +80,67 @@ export default function CareersHero() {
   return (
     <section
       ref={containerRef}
-      className="relative overflow-hidden pt-32 pb-16 md:pt-48 md:pb-32"
+      className="bg-bg-primary relative min-h-[90vh] overflow-hidden pt-32 pb-24 md:pt-48 md:pb-40"
     >
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-4xl">
-            <span
-              ref={tagRef}
-              className="text-accent mb-4 block text-xs font-black tracking-[0.3em] uppercase opacity-0"
-            >
-              Careers at Wefik
-            </span>
+      {/* Background Image */}
+      <div
+        ref={bgRef}
+        className="pointer-events-none absolute inset-0 z-0 opacity-0"
+      >
+        <Image
+          src="/images/agency/story_banner.png"
+          alt="Careers Background"
+          fill
+          className="object-cover brightness-50 grayscale"
+          priority
+        />
+        <div className="from-bg-primary to-bg-primary absolute inset-0 z-10 bg-gradient-to-b via-transparent" />
+      </div>
+
+      {/* Ghost Text */}
+      <div
+        ref={ghostRef}
+        className="font-big text-text-primary pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 select-none"
+        style={{ fontSize: "20vw", whiteSpace: "nowrap" }}
+      >
+        CAREERS
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6">
+        <div className="flex flex-col items-center gap-12 text-center md:gap-16">
+          <div className="flex flex-col items-center gap-6">
+            <Tag>Careers at Wefik</Tag>
             <h1
               ref={headlineRef}
-              className="font-display text-text-primary text-6xl leading-[0.8] font-black tracking-tighter md:text-[8rem] lg:text-[10rem]"
+              className="font-big text-text-primary text-6xl leading-none font-black tracking-tighter uppercase md:text-8xl lg:text-[11rem]"
             >
               <div className="overflow-hidden">
-                <span className="char-reveal inline-block">JOIN THE</span>
+                <span className="char-reveal anim-el inline-block">
+                  Build the
+                </span>
               </div>
               <div className="overflow-hidden">
-                <span className="char-reveal text-accent inline-block italic">
-                  FUTURE.
+                <span className="char-reveal anim-el text-accent inline-block italic">
+                  Future.
                 </span>
               </div>
             </h1>
           </div>
-          <div ref={sublineRef} className="max-w-xs opacity-0">
-            <p className="text-text-muted text-sm leading-relaxed md:text-base">
+
+          <div
+            ref={sublineRef}
+            className="anim-el flex max-w-xl flex-col items-center gap-8 opacity-0"
+          >
+            <p className="font-body text-text-muted text-base leading-relaxed md:text-xl">
               We&apos;re looking for bold thinkers and creative problem solvers
-              to help us redefine the digital landscape.
+              to help us redefine the digital landscape. Join our elite team of
+              innovators.
             </p>
+            <div className="bg-accent/10 flex h-16 w-16 animate-bounce items-center justify-center rounded-full">
+              <ArrowDown size={24} className="text-accent" />
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="pointer-events-none absolute inset-0 z-[-1] overflow-hidden">
-        <div className="bg-accent/5 absolute top-0 right-0 h-[40%] w-[40%] rounded-full blur-[120px]" />
-        <div className="absolute -bottom-[10%] -left-[5%] h-[50%] w-[50%] rounded-full bg-blue-500/5 blur-[150px]" />
       </div>
     </section>
   );

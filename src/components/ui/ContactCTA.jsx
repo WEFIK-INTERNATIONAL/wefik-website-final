@@ -5,6 +5,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import SplitWords from "./SplitWords";
+import BookACall from "./BookACall";
 
 export default function ContactCTA() {
   const ctaRef = useRef(null);
@@ -99,18 +100,15 @@ export default function ContactCTA() {
             </div>
 
             <div className="cta-actions flex flex-col gap-4">
-              <a
-                href="https://calendly.com"
-                target="_blank"
-                rel="noreferrer"
-                className="group bg-accent-bright font-accent inline-flex items-center gap-5 rounded-full px-8 py-5 text-[11px] font-bold tracking-[0.25em] text-black uppercase transition-all duration-300 hover:gap-7"
-              >
-                <span>Schedule a Call</span>
-                <ArrowRight
-                  size={15}
-                  className="transition-transform group-hover:translate-x-1"
-                />
-              </a>
+              <BookACall>
+                <div className="group bg-accent-bright font-accent inline-flex items-center gap-5 rounded-full px-8 py-5 text-[11px] font-bold tracking-[0.25em] text-black uppercase transition-all duration-300 hover:gap-7">
+                  <span>Schedule a Call</span>
+                  <ArrowRight
+                    size={15}
+                    className="transition-transform group-hover:translate-x-1"
+                  />
+                </div>
+              </BookACall>
               <a
                 href="mailto:info@wefik.in"
                 className="group font-accent text-text-muted hover:text-text-primary inline-flex items-center gap-3 text-[10px] font-bold tracking-[0.25em] uppercase transition-all hover:gap-4"

@@ -58,20 +58,22 @@ export default function HeroSection() {
   const [countStarted, setCountStarted] = useState(false);
   const clientCount = useCountUp(30, 1.5, countStarted);
 
+  // Safety net: force content visible after 3s so the page is never blank
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!containerRef.current) return;
+      gsap.set(containerRef.current.querySelectorAll(".anim-el"), {
+        opacity: 1,
+        y: 0,
+        yPercent: 0,
+      });
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   useGSAP(
     () => {
-      const elements = [
-        tagRef.current,
-        headlineRef.current?.querySelectorAll(".headline-word"),
-        subtitleRef.current,
-        ctaRef.current,
-        scrollIndicatorRef.current,
-      ].filter(Boolean);
-
-      if (!canPlayEntrance) {
-        gsap.set(elements, { opacity: 0 });
-        return;
-      }
+      if (!canPlayEntrance) return;
 
       const tl = gsap.timeline({
         defaults: { ease: "power4.out" },
@@ -161,7 +163,7 @@ export default function HeroSection() {
           className="flex w-full flex-col items-center text-center"
           style={{ maxWidth: "860px", gap: "24px" }}
         >
-          <div ref={tagRef}>
+          <div ref={tagRef} className="anim-el opacity-0">
             <Tag>Available for work</Tag>
           </div>
 
@@ -177,31 +179,38 @@ export default function HeroSection() {
             }}
           >
             <div className="mr-[0.2em] inline-block overflow-hidden">
-              <span className="headline-word inline-block">Turning</span>
+              <span className="headline-word anim-el inline-block">
+                Turning
+              </span>
             </div>
             <div className="mr-[0.2em] inline-block overflow-hidden">
-              <span className="headline-word inline-block">Your</span>
+              <span className="headline-word anim-el inline-block">Your</span>
             </div>
             <div className="inline-block overflow-hidden">
-              <span className="headline-word inline-block">Ideas</span>
+              <span className="headline-word anim-el inline-block">Ideas</span>
             </div>
             <br />
             <div className="mr-[0.2em] inline-block overflow-hidden">
-              <span className="headline-word inline-block">into</span>
+              <span className="headline-word anim-el inline-block">into</span>
             </div>
             <div
               className="mr-[0.2em] inline-block overflow-hidden"
               style={{ color: "var(--color-accent)" }}
             >
-              <span className="headline-word inline-block">Digital</span>
+              <span className="headline-word anim-el inline-block">
+                Digital
+              </span>
             </div>
             <div className="inline-block overflow-hidden">
-              <span className="headline-word inline-block">Reality</span>
+              <span className="headline-word anim-el inline-block">
+                Reality
+              </span>
             </div>
           </div>
 
           <p
             ref={subtitleRef}
+            className="anim-el opacity-0"
             style={{
               fontSize: "clamp(0.9rem, 8vw, 1.15rem)",
               color: "var(--color-text-muted)",
@@ -216,7 +225,7 @@ export default function HeroSection() {
 
           <div
             ref={ctaRef}
-            className="flex flex-col-reverse items-center justify-center sm:flex-row"
+            className="anim-el flex flex-col-reverse items-center justify-center opacity-0 sm:flex-row"
             style={{ gap: "16px", width: "100%" }}
           >
             <TransitionLink href="/contact">
@@ -255,7 +264,7 @@ export default function HeroSection() {
 
       <div
         ref={scrollIndicatorRef}
-        className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center"
+        className="anim-el absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center opacity-0"
         style={{ gap: "6px" }}
       >
         <span

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import { useLoader } from "@/components/ui/LoaderProvider";
@@ -12,18 +12,20 @@ export default function BlogHero() {
   const headlineRef = useRef(null);
   const sublineRef = useRef(null);
 
+  // Safety net: if canPlayEntrance never fires (e.g. JS error upstream),
+  // make the content visible after 3 seconds so the page isn't blank forever.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!containerRef.current) return;
+      const els = containerRef.current.querySelectorAll(".anim-el");
+      gsap.set(els, { opacity: 1, y: 0, yPercent: 0 });
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   useGSAP(
     () => {
-      const elements = [
-        tagRef.current,
-        headlineRef.current?.querySelectorAll(".split-word"),
-        sublineRef.current,
-      ].filter(Boolean);
-
-      if (!canPlayEntrance) {
-        gsap.set(elements, { opacity: 0 });
-        return;
-      }
+      if (!canPlayEntrance) return;
 
       const tl = gsap.timeline({
         defaults: { ease: "power4.out" },
@@ -69,7 +71,10 @@ export default function BlogHero() {
 
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="max-w-4xl">
-          <div ref={tagRef} className="flex items-center gap-4 opacity-0">
+          <div
+            ref={tagRef}
+            className="anim-el flex items-center gap-4 opacity-0"
+          >
             <div className="bg-accent/20 h-px w-16" />
             <span className="text-accent text-xs font-bold tracking-[0.2em] uppercase">
               Insights & Stories
@@ -80,21 +85,23 @@ export default function BlogHero() {
             className="font-display mt-8 text-5xl leading-[0.9] font-black tracking-tighter md:text-8xl lg:text-9xl"
           >
             <div className="mr-[0.2em] inline-block overflow-hidden">
-              <span className="split-word inline-block">Thought</span>
+              <span className="split-word anim-el inline-block">Thought</span>
             </div>
             <div
               className="mr-[0.2em] inline-block overflow-hidden"
               style={{ color: "var(--color-accent)" }}
             >
-              <span className="split-word inline-block italic">Leadership</span>
+              <span className="split-word anim-el inline-block italic">
+                Leadership
+              </span>
             </div>
             <div className="inline-block overflow-hidden">
-              <span className="split-word inline-block">& Updates</span>
+              <span className="split-word anim-el inline-block">& Updates</span>
             </div>
           </h1>
           <p
             ref={sublineRef}
-            className="border-accent/10 text-text-muted mt-8 max-w-xl border-l-2 pl-6 text-lg opacity-0 md:text-xl"
+            className="border-accent/10 text-text-muted anim-el mt-8 max-w-xl border-l-2 pl-6 text-lg opacity-0 md:text-xl"
           >
             Explore our latest thoughts on digital innovation, design trends,
             and the future of web experiences.

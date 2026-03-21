@@ -2,9 +2,11 @@
 
 import TransitionLink from "@/components/ui/TransitionLink";
 import { useRef } from "react";
+import Image from "next/image";
 import { ArrowRight, ArrowUpRight, MapPin, Mail, Phone } from "lucide-react";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
+import ContactCTA from "@/components/ui/ContactCTA";
 
 const stats = [
   { value: 3, suffix: "+", label: "Years in the game" },
@@ -37,12 +39,10 @@ const values = [
 ];
 
 const team = [
-  { name: "Arjun Mehta", role: "Founder & Creative Director", since: "2022" },
-  { name: "Priya Sharma", role: "Head of Design", since: "2022" },
-  { name: "Rohan Das", role: "Lead Developer", since: "2023" },
-  { name: "Sneha Kapoor", role: "Strategy & Branding", since: "2023" },
-  { name: "Vikram Bose", role: "Motion & Content", since: "2024" },
-  { name: "Ananya Roy", role: "Project Lead", since: "2024" },
+  { name: "Sk. Shahinur Islam", role: "Founder", since: "2022" },
+  { name: "Sandip Samanta", role: "Co-Founder", since: "2022" },
+  { name: "Supratik Sahis", role: "Head Designer", since: "2023" },
+  { name: "Parthiv Sarker", role: "Lead Developer", since: "2023" },
 ];
 
 const capabilities = [
@@ -201,6 +201,30 @@ export default function AgencyPage() {
           scrollTrigger: { ...st, start: "top 72%" },
         }
       );
+
+      gsap.fromTo(
+        ".manifesto-ghost",
+        { xPercent: -10, opacity: 0 },
+        {
+          xPercent: 0,
+          opacity: 0.03,
+          duration: 1.5,
+          ease: "power3.out",
+          scrollTrigger: { ...st, start: "top 85%" },
+        }
+      );
+
+      gsap.fromTo(
+        ".manifesto-image-container",
+        { clipPath: "inset(0% 100% 0% 0%)", opacity: 0 },
+        {
+          clipPath: "inset(0% 0% 0% 0%)",
+          opacity: 1,
+          duration: 1.2,
+          ease: "expo.out",
+          scrollTrigger: { ...st, start: "top 75%" },
+        }
+      );
     },
     { scope: manifestoRef }
   );
@@ -290,33 +314,31 @@ export default function AgencyPage() {
 
   useGSAP(
     () => {
+      // Reveal headers
       gsap.fromTo(
-        ".team-header > *",
+        ".team-header-content > *",
         { y: 30, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.7,
+          duration: 0.8,
           ease: "power3.out",
           stagger: 0.1,
           scrollTrigger: { trigger: teamRef.current, start: "top 80%" },
         }
       );
 
+      // Reveal the list itself
       gsap.fromTo(
-        ".team-row",
-        { x: -40, opacity: 0 },
+        ".team-item",
+        { y: 40, opacity: 0 },
         {
-          x: 0,
+          y: 0,
           opacity: 1,
-          duration: 0.6,
+          duration: 1,
           ease: "power3.out",
-          stagger: 0.08,
-          scrollTrigger: {
-            trigger: ".team-list",
-            start: "top 78%",
-            toggleActions: "play none none none",
-          },
+          stagger: 0.1,
+          scrollTrigger: { trigger: teamRef.current, start: "top 75%" },
         }
       );
     },
@@ -548,28 +570,43 @@ export default function AgencyPage() {
           </div>
         </div>
       </div>
-
       <section
         ref={manifestoRef}
-        className="px-5 py-20 md:px-10 md:py-32 lg:px-16"
+        className="relative overflow-hidden px-5 py-24 md:px-10 md:py-36 lg:px-16"
       >
+        <div
+          className="manifesto-ghost font-big pointer-events-none absolute top-1/2 left-0 -translate-y-1/2 font-black uppercase select-none"
+          style={{
+            fontSize: "20vw",
+            color: "var(--color-text-primary)",
+            opacity: 0,
+          }}
+        >
+          MANIFESTO
+        </div>
+
         <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_2fr] lg:gap-20">
+          <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[100px_1fr_350px] lg:gap-16">
             <div className="flex flex-row items-start gap-4 lg:flex-col">
-              <span className="manifesto-label font-accent text-text-muted text-[9px] font-bold tracking-[0.4em] uppercase opacity-0">
+              <span className="manifesto-label font-accent text-text-muted text-[9px] font-bold tracking-[0.4em] uppercase opacity-0 lg:rotate-180 lg:[writing-mode:vertical-rl]">
                 Our Story
               </span>
-              <div className="bg-border h-px flex-1 lg:h-16 lg:w-px lg:flex-none" />
+              <div className="bg-border h-px flex-1 lg:h-24 lg:w-px lg:flex-none" />
             </div>
 
-            <div className="flex flex-col gap-8">
-              <SplitWords
-                text="Culture-driven. Creative. Competitive."
-                className="manifesto-headline font-big text-text-primary leading-none font-black tracking-tight uppercase"
-                style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)" }}
-              />
+            <div className="relative z-10 flex flex-col gap-8">
+              <div className="flex flex-col gap-4">
+                <span className="font-accent text-accent text-[10px] font-bold tracking-[0.3em] uppercase">
+                  Est. 2025
+                </span>
+                <SplitWords
+                  text="Culture-driven. Creative. Competitive."
+                  className="manifesto-headline font-big text-text-primary leading-[0.9] font-black tracking-tight uppercase"
+                  style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)" }}
+                />
+              </div>
 
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                 <p className="manifesto-body font-body text-text-muted text-base leading-relaxed opacity-0 md:text-lg">
                   Wefik was born in Kolkata with a simple obsession — make
                   things that actually work. Not just things that look good in a
@@ -594,6 +631,16 @@ export default function AgencyPage() {
                   className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                 />
               </TransitionLink>
+            </div>
+
+            <div className="manifesto-image-container relative aspect-[4/5] w-full overflow-hidden rounded-2xl opacity-0 lg:mt-12">
+              <Image
+                src="/images/agency/story_banner.png"
+                alt="Wefik Creative Vision"
+                fill
+                className="object-cover transition-transform duration-700 hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>
           </div>
         </div>
@@ -701,65 +748,69 @@ export default function AgencyPage() {
           </div>
         </div>
       </section>
-
+      {/* the team*/}
       <section
         ref={teamRef}
         className="border-border border-t px-5 py-20 md:px-10 md:py-32 lg:px-16"
       >
         <div className="mx-auto max-w-7xl">
-          <div className="team-header mb-12 flex flex-col gap-4 md:mb-0 md:flex-row md:items-end md:justify-between">
-            <div className="opacity-0">
-              <span className="font-accent text-text-muted text-[9px] font-bold tracking-[0.4em] uppercase">
-                The Humans
+          <div className="team-header-content mb-16 flex flex-col gap-6 lg:mb-24 lg:flex-row lg:items-end lg:justify-between">
+            <div className="flex flex-col gap-4 lg:max-w-2xl">
+              <span className="font-accent text-accent text-[10px] font-bold tracking-[0.3em] uppercase opacity-80">
+                Wefik Culture
               </span>
-              <div
-                className="font-big text-text-primary mt-3 leading-none font-black tracking-tight uppercase"
-                style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
-              >
-                Meet the Team
-              </div>
+              <h2 className="font-big text-text-primary text-4xl leading-none font-black tracking-tight uppercase md:text-6xl lg:text-7xl">
+                The Humans <span className="text-accent italic">Behind</span>{" "}
+                the Work.
+              </h2>
             </div>
-            <TransitionLink
-              href="/careers"
-              className="group font-accent text-text-muted hover:text-accent inline-flex w-fit items-center gap-3 text-[10px] font-bold tracking-[0.3em] uppercase opacity-0 transition-all hover:gap-4 md:mb-2"
-            >
-              <span>We&apos;re hiring</span>
-              <ArrowUpRight size={13} />
-            </TransitionLink>
+            <p className="font-body text-text-muted max-w-md text-base leading-relaxed lg:pb-3 lg:text-lg">
+              A collective of strategists, designers, and engineers dedicated to
+              moving needles and solving real problems.
+            </p>
           </div>
 
-          <div className="team-list mt-8 md:mt-12">
+          <div
+            className="flex flex-col border-t"
+            style={{ borderColor: "var(--color-border)" }}
+          >
             {team.map((member, i) => (
               <div
                 key={i}
-                className="team-row group border-border hover:bg-bg-secondary flex items-center justify-between border-t py-5 opacity-0 transition-colors duration-200 last:border-b md:py-6"
+                className="team-item group border-border hover:bg-bg-secondary relative flex flex-col border-b py-8 transition-colors duration-500 md:flex-row md:items-end md:justify-between md:py-10 lg:px-6"
               >
-                <div className="flex items-center gap-4 px-2 md:gap-6 md:px-4">
-                  <div className="bg-accent/10 text-accent flex h-10 w-10 shrink-0 items-center justify-center rounded-full md:h-12 md:w-12">
-                    <span className="font-big text-sm leading-none font-black md:text-base">
-                      {member.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                <div className="flex flex-col gap-2 md:gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="font-accent text-accent text-[9px] font-bold tracking-[0.3em] uppercase opacity-60">
+                      {String(i + 1).padStart(2, "0")}
                     </span>
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-big text-text-primary text-base leading-none font-black tracking-tight uppercase md:text-xl">
-                      {member.name}
-                    </span>
-                    <span className="font-accent text-text-muted text-[9px] font-semibold tracking-[0.25em] uppercase md:text-[10px]">
+                    <div className="bg-accent h-px w-6 opacity-30" />
+                    <span className="font-accent text-text-muted text-[10px] font-bold tracking-[0.2em] uppercase">
                       {member.role}
                     </span>
                   </div>
+                  <div className="flex items-baseline gap-4">
+                    <h3 className="font-big text-text-primary text-3xl leading-none font-black tracking-tighter uppercase transition-all duration-500 group-hover:pl-2 md:text-5xl lg:text-7xl">
+                      {member.name}
+                    </h3>
+                  </div>
                 </div>
-                <div className="flex items-center gap-4 px-2 md:gap-8 md:px-4">
-                  <span className="font-accent text-text-muted hidden text-[9px] font-semibold tracking-[0.25em] uppercase sm:block">
-                    Since {member.since}
-                  </span>
-                  <div className="border-border group-hover:border-accent group-hover:bg-accent flex h-8 w-8 items-center justify-center rounded-full border transition-all duration-300">
+
+                <div className="mt-6 flex flex-col items-start gap-4 md:mt-0 md:flex-row md:items-center md:gap-12">
+                  <div className="flex flex-col items-start gap-0.5 md:items-end">
+                    <span className="font-accent text-text-subtle text-[8px] font-bold tracking-[0.2em] uppercase">
+                      Division
+                    </span>
+                    <span className="font-body text-text-muted text-xs font-medium italic">
+                      {i % 2 === 0
+                        ? "Creative & Brand"
+                        : "Engineering & Product"}
+                    </span>
+                  </div>
+                  <div className="bg-accent/10 group-hover:bg-accent flex h-10 w-10 items-center justify-center rounded-full transition-all duration-500 group-hover:rotate-45 md:h-12 md:w-12">
                     <ArrowUpRight
-                      size={13}
-                      className="text-text-muted transition-colors group-hover:text-white"
+                      size={20}
+                      className="text-accent group-hover:text-white"
                     />
                   </div>
                 </div>
@@ -768,112 +819,7 @@ export default function AgencyPage() {
           </div>
         </div>
       </section>
-
-      <section
-        ref={locationRef}
-        className="border-border bg-bg-secondary border-t px-5 py-14 md:px-10 md:py-20 lg:px-16"
-      >
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 md:grid-cols-3">
-          {[
-            {
-              icon: MapPin,
-              label: "Location",
-              content: (
-                <p className="font-body text-text-primary text-base">
-                  Kestopur Salt Lake
-                  <br />
-                  Kolkata 700114, India
-                </p>
-              ),
-            },
-            {
-              icon: Mail,
-              label: "Email",
-              content: (
-                <a
-                  href="mailto:info@wefik.in"
-                  className="font-body text-text-primary hover:text-accent text-base transition-colors"
-                >
-                  info@wefik.in
-                </a>
-              ),
-            },
-            {
-              icon: Phone,
-              label: "Phone",
-              content: (
-                <a
-                  href="tel:+919609653522"
-                  className="font-body text-text-primary hover:text-accent text-base transition-colors"
-                >
-                  +91 96096 53522
-                </a>
-              ),
-            },
-          ].map(({ icon: Icon, label, content }, i) => (
-            <div
-              key={i}
-              className="location-item flex flex-col gap-3 opacity-0"
-            >
-              <div className="border-border flex h-10 w-10 items-center justify-center rounded-full border">
-                <Icon size={16} className="text-accent" />
-              </div>
-              <span className="font-accent text-text-muted text-[9px] font-bold tracking-[0.35em] uppercase">
-                {label}
-              </span>
-              {content}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section ref={ctaRef} className="px-5 py-20 md:px-10 md:py-32 lg:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="cta-panel bg-text-primary relative overflow-hidden rounded-4xl px-8 py-16 opacity-0 md:rounded-[3rem] md:px-16 md:py-24">
-            <div
-              className="cta-ghost font-big pointer-events-none absolute -right-4 -bottom-6 leading-none font-black uppercase opacity-0 select-none"
-              style={{
-                fontSize: "clamp(5rem, 18vw, 16rem)",
-                color: "rgba(255,255,255,0.04)",
-              }}
-              aria-hidden
-            >
-              LET&apos;S
-            </div>
-
-            <div className="cta-content relative z-10 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-              <div className="flex flex-col gap-4 opacity-0">
-                <span className="font-accent text-[9px] font-bold tracking-[0.4em] text-white/50 uppercase">
-                  Ready to build something great?
-                </span>
-                <div
-                  className="font-big leading-none font-black tracking-tight text-white uppercase"
-                  style={{ fontSize: "clamp(2.5rem, 7vw, 6rem)" }}
-                >
-                  Let&apos;s Work
-                  <br />
-                  <span className="text-accent-bright">Together.</span>
-                </div>
-              </div>
-              <div className="flex flex-col gap-4 opacity-0">
-                <TransitionLink
-                  href="/contact"
-                  className="group bg-accent-bright font-accent inline-flex items-center gap-5 rounded-full px-8 py-5 text-[11px] font-bold tracking-[0.25em] text-black uppercase transition-all duration-300 hover:gap-7"
-                >
-                  <span>Book a Call</span>
-                  <ArrowRight
-                    size={15}
-                    className="transition-transform group-hover:translate-x-1"
-                  />
-                </TransitionLink>
-                <span className="font-accent text-[9px] font-semibold tracking-[0.25em] text-white/40 uppercase md:text-center">
-                  Free 30-min strategy session
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ContactCTA />
     </main>
   );
 }

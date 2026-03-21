@@ -1,12 +1,28 @@
 @import "tailwindcss";
 
-html,
-body {
+/* ─── Base resets ──────────────────────────────────────────────────────── */
+/* *,
+*::before,
+*::after {
+  box-sizing: border-box;
+} */
+
+html {
+  /* Use the real viewport height on mobile browsers that have a
+     dynamic address bar (iOS Safari, Chrome on Android). */
+  height: 100%;
   overflow-x: hidden;
-  width: 100%;
-  position: relative;
 }
 
+body {
+  min-height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+  scrollbar-gutter: stable;
+}
+
+/* ─── Theme tokens ─────────────────────────────────────────────────────── */
 @theme {
   --color-bg-primary: #f5f8ee;
   --color-bg-secondary: #eef4de;
@@ -23,6 +39,13 @@ body {
   --color-accent-subtle: #d4f07a;
 
   --color-border: #dde8c0;
+
+  /* Explicit z-index scale so Tailwind's JIT picks them up and the
+     preloader / transition overlay always stack correctly. */
+  --z-preloader: 10000;
+  --z-transition: 9999;
+  --z-navbar: 50;
+  --z-mobile-menu: 40;
 }
 
 .dark {
@@ -43,7 +66,17 @@ body {
   --color-border: #1e1e1e;
 }
 
+/* ─── Utilities ────────────────────────────────────────────────────────── */
 @layer utilities {
+  /* Tailwind v4 requires explicit declaration of arbitrary z values used in
+     className strings. Declare them here so the compiler emits the rules. */
+  .z-\[10000\] {
+    z-index: 10000;
+  }
+  .z-\[9999\] {
+    z-index: 9999;
+  }
+
   .clip-diagonal {
     clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
   }
@@ -55,6 +88,7 @@ body {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
   .font-body {
     font-family: var(--font-neue);
   }
@@ -69,6 +103,26 @@ body {
   }
 }
 
+/* ─── Page-transition overlay ──────────────────────────────────────────── */
+/*
+  Ensure the SVG overlay element (injected by useViewTransition.js) is never
+  clipped or obscured by the parent's overflow/transform context.
+*/
+.page-transition-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  overflow: hidden;
+  pointer-events: all;
+}
+
+.page-transition-overlay svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ─── Typography ───────────────────────────────────────────────────────── */
 h1,
 h2,
 h3,
@@ -83,17 +137,14 @@ h4 {
 h1 {
   font-size: 8rem;
 }
-
 h2 {
   font-size: 6rem;
   letter-spacing: -0.2rem;
 }
-
 h3 {
   font-size: 5rem;
   letter-spacing: -0.15rem;
 }
-
 h4 {
   font-size: 4rem;
   letter-spacing: -0.1rem;
@@ -132,19 +183,17 @@ p.cap {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ─── Responsive typography ────────────────────────────────────────────── */
 @media (max-width: 1000px) {
   h1 {
     font-size: 3rem;
   }
-
   h2 {
     font-size: 2rem;
   }
-
   h3 {
     font-size: 1.5rem;
   }
-
   h4 {
     font-size: 1rem;
   }

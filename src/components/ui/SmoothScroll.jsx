@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useRef } from "react";
 import { ReactLenis, useLenis } from "lenis/react";
 import { ScrollTrigger, gsap } from "@/lib/gsap";
@@ -28,8 +29,12 @@ export default function SmoothScroll({ children }) {
       autoRaf={false}
       options={{
         lerp: 0.1,
-        duration: 1.5,
+        duration: 1.2,
         smoothWheel: true,
+        smoothTouch: false,
+        touchMultiplier: 1,
+        orientation: "vertical",
+        gestureOrientation: "vertical",
       }}
     >
       {children}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import { useLoader } from "@/components/ui/LoaderProvider";
@@ -12,18 +12,23 @@ export default function WorksHero() {
   const headlineRef = useRef(null);
   const sublineRef = useRef(null);
 
+  // Safety net: make content visible after 3s even if canPlayEntrance
+  // never fires (prevents permanently blank page on slow/errored devices).
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!containerRef.current) return;
+      gsap.set(containerRef.current.querySelectorAll(".anim-el"), {
+        opacity: 1,
+        y: 0,
+        yPercent: 0,
+      });
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   useGSAP(
     () => {
-      const elements = [
-        tagRef.current,
-        headlineRef.current?.querySelectorAll(".split-word"),
-        sublineRef.current,
-      ].filter(Boolean);
-
-      if (!canPlayEntrance) {
-        gsap.set(elements, { opacity: 0 });
-        return;
-      }
+      if (!canPlayEntrance) return;
 
       const tl = gsap.timeline({
         defaults: { ease: "power4.out" },
@@ -61,7 +66,7 @@ export default function WorksHero() {
     <header ref={containerRef} className="mb-16 md:mb-24">
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="max-w-2xl">
-          <div ref={tagRef} className="opacity-0">
+          <div ref={tagRef} className="anim-el opacity-0">
             <span className="text-accent mb-4 block text-xs font-bold tracking-[0.3em] uppercase">
               Our Portfolio
             </span>
@@ -71,18 +76,20 @@ export default function WorksHero() {
             className="font-display text-text-primary text-5xl leading-[0.9] font-black tracking-tighter md:text-8xl lg:text-9xl"
           >
             <div className="mr-[0.2em] inline-block overflow-hidden">
-              <span className="split-word inline-block">SELECTED</span>
+              <span className="split-word anim-el inline-block">SELECTED</span>
             </div>
             <br />
             <div
               className="inline-block overflow-hidden"
               style={{ color: "var(--color-accent)" }}
             >
-              <span className="split-word inline-block italic">WORKS.</span>
+              <span className="split-word anim-el inline-block italic">
+                WORKS.
+              </span>
             </div>
           </h1>
         </div>
-        <div ref={sublineRef} className="opacity-0">
+        <div ref={sublineRef} className="anim-el opacity-0">
           <p className="text-text-muted max-w-xs text-sm leading-relaxed md:text-base">
             Explore our latest projects across web development, design, and
             digital transformation.

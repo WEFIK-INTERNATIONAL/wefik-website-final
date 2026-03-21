@@ -14,6 +14,7 @@ const Preloader = ({ onComplete }) => {
   const wordRef = useRef(null);
   const statusRef = useRef(null);
   const progressLineRef = useRef(null);
+  const tlRef = useRef(null);
 
   const statuses = [
     "Optimizing Systems",
@@ -24,15 +25,36 @@ const Preloader = ({ onComplete }) => {
 
   const brandName = "WEFIK".split("");
 
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow || "";
+    };
+  }, []);
+
   useGSAP(
     () => {
+      if (
+        !containerRef.current ||
+        !wordRef.current ||
+        !counterRef.current ||
+        !statusRef.current ||
+        !progressLineRef.current
+      )
+        return;
+
       const tl = gsap.timeline({
         onComplete: () => {
+          document.body.style.overflow = "";
+          setIsPreloaderDone(true);
           if (onComplete) onComplete();
         },
       });
 
-      document.body.style.overflow = "hidden";
+      tlRef.current = tl;
+
       tl.set(containerRef.current, { clipPath: "inset(0% 0% 0% 0%)" });
 
       const letters = wordRef.current.children;
@@ -59,9 +81,11 @@ const Preloader = ({ onComplete }) => {
           onUpdate: () => {
             const val = Math.floor(obj.value);
             setPercentage(val);
-
             const stage = Math.min(Math.floor(val / 25), 3);
-            if (status !== statuses[stage]) setStatus(statuses[stage]);
+            setStatus((prev) => {
+              const next = statuses[stage];
+              return prev !== next ? next : prev;
+            });
           },
         },
         "-=0.8"
@@ -83,21 +107,18 @@ const Preloader = ({ onComplete }) => {
           { opacity: 0, duration: 0.6, ease: "power2.inOut" },
           "-=0.6"
         )
-
         .to(
           containerRef.current,
           {
             clipPath: "inset(100% 0% 0% 0%)",
             duration: 1.2,
             ease: "expo.inOut",
-            onStart: () => {
-              setIsPreloaderDone(true);
-            },
           },
           "-=0.2"
         );
 
       return () => {
+        tl.kill();
         document.body.style.overflow = "";
       };
     },
@@ -107,7 +128,7 @@ const Preloader = ({ onComplete }) => {
   return (
     <div
       ref={containerRef}
-      className="bg-bg-primary text-text-primary fixed inset-0 z-10000 flex flex-col justify-between p-6 md:p-12"
+      className="bg-bg-primary text-text-primary fixed inset-0 z-[10000] flex flex-col justify-between p-6 md:p-12"
     >
       <div className="h-20 w-full" />
 
@@ -151,7 +172,7 @@ const Preloader = ({ onComplete }) => {
       <div className="bg-border/40 absolute right-0 bottom-0 left-0 h-1 md:h-[6px]">
         <div
           ref={progressLineRef}
-          className="bg-accent h-full w-0 transition-all duration-300 ease-out"
+          className="bg-accent h-full transition-[width] duration-300 ease-out"
           style={{ width: `${percentage}%` }}
         />
       </div>

@@ -55,7 +55,7 @@ export default async function BlogPostPage({ params }) {
 
         <div className="relative mx-auto max-w-4xl px-6 text-center">
           <TransitionLink
-            href="/blog"
+            href="/blogs"
             className="text-accent hover:text-accent/80 mb-8 inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase transition-colors"
           >
             <svg
