@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const LoaderContext = createContext(null);
 
@@ -14,6 +14,12 @@ export function useLoader() {
 
 export function LoaderProvider({ children }) {
   const [isPreloaderDone, setIsPreloaderDone] = useState(false);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("wefik-loaded")) {
+      setTimeout(() => setIsPreloaderDone(true), 0);
+    }
+  }, []);
 
   const [isTransitioning, setIsTransitioning] = useState(false);
 

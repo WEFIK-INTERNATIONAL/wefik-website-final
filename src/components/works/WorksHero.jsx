@@ -5,7 +5,7 @@ import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import { useLoader } from "@/components/ui/LoaderProvider";
 
-export default function BlogHero() {
+export default function WorksHero() {
   const { canPlayEntrance } = useLoader();
   const containerRef = useRef(null);
   const tagRef = useRef(null);
@@ -58,49 +58,37 @@ export default function BlogHero() {
   );
 
   return (
-    <section
-      ref={containerRef}
-      className="bg-bg-primary font-body relative w-full overflow-hidden pt-32 pb-16 md:pt-48 md:pb-24"
-    >
-      <div className="pointer-events-none absolute inset-0">
-        <div className="border-border/30 absolute top-0 left-1/2 h-full w-px -translate-x-1/2 border-l border-dashed" />
-        <div className="border-border/10 absolute top-[40%] left-0 h-px w-full border-t" />
-      </div>
-
-      <div className="relative mx-auto max-w-7xl px-6">
-        <div className="max-w-4xl">
-          <div ref={tagRef} className="flex items-center gap-4 opacity-0">
-            <div className="bg-accent/20 h-px w-16" />
-            <span className="text-accent text-xs font-bold tracking-[0.2em] uppercase">
-              Insights & Stories
+    <header ref={containerRef} className="mb-16 md:mb-24">
+      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div className="max-w-2xl">
+          <div ref={tagRef} className="opacity-0">
+            <span className="text-accent mb-4 block text-xs font-bold tracking-[0.3em] uppercase">
+              Our Portfolio
             </span>
           </div>
           <h1
             ref={headlineRef}
-            className="font-display mt-8 text-5xl leading-[0.9] font-black tracking-tighter md:text-8xl lg:text-9xl"
+            className="font-display text-text-primary text-5xl leading-[0.9] font-black tracking-tighter md:text-8xl lg:text-9xl"
           >
             <div className="mr-[0.2em] inline-block overflow-hidden">
-              <span className="split-word inline-block">Thought</span>
+              <span className="split-word inline-block">SELECTED</span>
             </div>
+            <br />
             <div
-              className="mr-[0.2em] inline-block overflow-hidden"
+              className="inline-block overflow-hidden"
               style={{ color: "var(--color-accent)" }}
             >
-              <span className="split-word inline-block italic">Leadership</span>
-            </div>
-            <div className="inline-block overflow-hidden">
-              <span className="split-word inline-block">& Updates</span>
+              <span className="split-word inline-block italic">WORKS.</span>
             </div>
           </h1>
-          <p
-            ref={sublineRef}
-            className="border-accent/10 text-text-muted mt-8 max-w-xl border-l-2 pl-6 text-lg opacity-0 md:text-xl"
-          >
-            Explore our latest thoughts on digital innovation, design trends,
-            and the future of web experiences.
+        </div>
+        <div ref={sublineRef} className="opacity-0">
+          <p className="text-text-muted max-w-xs text-sm leading-relaxed md:text-base">
+            Explore our latest projects across web development, design, and
+            digital transformation.
           </p>
         </div>
       </div>
-    </section>
+    </header>
   );
 }

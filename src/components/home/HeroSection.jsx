@@ -60,30 +60,57 @@ export default function HeroSection() {
 
   useGSAP(
     () => {
-      if (!canPlayEntrance) return;
+      const elements = [
+        tagRef.current,
+        headlineRef.current?.querySelectorAll(".headline-word"),
+        subtitleRef.current,
+        ctaRef.current,
+        scrollIndicatorRef.current,
+      ].filter(Boolean);
 
-      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+      if (!canPlayEntrance) {
+        gsap.set(elements, { opacity: 0 });
+        return;
+      }
 
-      tl.from(tagRef.current, { y: 20, opacity: 0, duration: 0.7 })
-        .from(
+      const tl = gsap.timeline({
+        defaults: { ease: "power4.out" },
+        delay: 0.2,
+      });
+
+      tl.fromTo(
+        tagRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7 }
+      )
+        .fromTo(
           headlineRef.current.querySelectorAll(".headline-word"),
+          { yPercent: 110, opacity: 0 },
           {
-            y: 60,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.1,
+            yPercent: 0,
+            opacity: 1,
+            duration: 1.2,
+            stagger: 0.08,
+            ease: "power4.out",
           },
-          "-=0.3"
-        )
-        .from(
-          subtitleRef.current,
-          { y: 20, opacity: 0, duration: 0.7 },
           "-=0.4"
         )
-        .from(ctaRef.current, { y: 20, opacity: 0, duration: 0.7 }, "-=0.5")
-        .from(
+        .fromTo(
+          subtitleRef.current,
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7 },
+          "-=0.4"
+        )
+        .fromTo(
+          ctaRef.current,
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7 },
+          "-=0.5"
+        )
+        .fromTo(
           scrollIndicatorRef.current,
-          { opacity: 0, duration: 0.6 },
+          { opacity: 0 },
+          { opacity: 1, duration: 0.6 },
           "-=0.2"
         )
         .add(() => setCountStarted(true), "-=0.3");
@@ -97,7 +124,7 @@ export default function HeroSection() {
         delay: 1.5,
       });
     },
-    { scope: containerRef }
+    { scope: containerRef, dependencies: [canPlayEntrance] }
   );
 
   return (
@@ -111,14 +138,14 @@ export default function HeroSection() {
         className="pointer-events-none absolute inset-0 z-1"
         style={{
           background:
-            "radial-gradient(80% 60% at 50% 40%, rgba(163,230,53,0.04) 0%, transparent 100%)",
+            "radial-gradient(60% 50% at 50% 40%, rgba(163,230,53,0.1) 0%, transparent 100%)",
         }}
       />
       <div
         className="pointer-events-none absolute top-1/2 left-1/2 z-2 -translate-x-1/2 -translate-y-1/2"
         style={{
           width: "clamp(260px, 92vw, 680px)",
-          opacity: 0.28,
+          opacity: 0.9,
         }}
       >
         <SphereAnimation />
@@ -147,21 +174,30 @@ export default function HeroSection() {
               letterSpacing: "-0.025em",
               color: "var(--color-text-primary)",
               margin: 0,
-              overflow: "hidden",
             }}
           >
-            <span className="headline-word inline-block">Turning</span>{" "}
-            <span className="headline-word inline-block">Your</span>{" "}
-            <span className="headline-word inline-block">Ideas</span>
+            <div className="mr-[0.2em] inline-block overflow-hidden">
+              <span className="headline-word inline-block">Turning</span>
+            </div>
+            <div className="mr-[0.2em] inline-block overflow-hidden">
+              <span className="headline-word inline-block">Your</span>
+            </div>
+            <div className="inline-block overflow-hidden">
+              <span className="headline-word inline-block">Ideas</span>
+            </div>
             <br />
-            <span className="headline-word inline-block">into</span>{" "}
-            <span
-              className="headline-word inline-block"
+            <div className="mr-[0.2em] inline-block overflow-hidden">
+              <span className="headline-word inline-block">into</span>
+            </div>
+            <div
+              className="mr-[0.2em] inline-block overflow-hidden"
               style={{ color: "var(--color-accent)" }}
             >
-              Digital
-            </span>{" "}
-            <span className="headline-word inline-block">Reality</span>
+              <span className="headline-word inline-block">Digital</span>
+            </div>
+            <div className="inline-block overflow-hidden">
+              <span className="headline-word inline-block">Reality</span>
+            </div>
           </div>
 
           <p

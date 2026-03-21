@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
+import TransitionLink from "@/components/ui/TransitionLink";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { getBlogBySlug, getAllBlogs } from "@/sanity/lib/queries";
@@ -54,7 +54,7 @@ export default async function BlogPostPage({ params }) {
         </div>
 
         <div className="relative mx-auto max-w-4xl px-6 text-center">
-          <Link
+          <TransitionLink
             href="/blog"
             className="text-accent hover:text-accent/80 mb-8 inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase transition-colors"
           >
@@ -72,7 +72,7 @@ export default async function BlogPostPage({ params }) {
               <polyline points="12 19 5 12 12 5"></polyline>
             </svg>
             Back to Blog
-          </Link>
+          </TransitionLink>
 
           <div className="mx-auto mb-6 flex flex-wrap justify-center gap-2 text-center">
             {post.categories?.map((cat) => (
@@ -150,12 +150,12 @@ export default async function BlogPostPage({ params }) {
           <h2 className="font-display text-text-primary mb-12 text-3xl font-bold tracking-tight">
             Ready to build something together?
           </h2>
-          <Link
+          <TransitionLink
             href="/contact"
             className="bg-accent hover:bg-accent/90 inline-flex h-16 items-center justify-center rounded-full px-12 text-sm font-bold tracking-[0.2em] text-black uppercase transition-all hover:scale-105 active:scale-95"
           >
             Start a Project
-          </Link>
+          </TransitionLink>
         </div>
       </footer>
     </article>

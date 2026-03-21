@@ -3,6 +3,7 @@
 import { useRef, useCallback } from "react";
 import { useTransitionRouter } from "next-view-transitions";
 import { gsap } from "@/lib/gsap";
+import { useLoader } from "@/components/ui/LoaderProvider";
 
 let _isTransitioningGlobal = false;
 
@@ -43,6 +44,7 @@ const PATHS = {
 
 export const useViewTransition = () => {
   const router = useTransitionRouter();
+  const { setIsTransitioning } = useLoader();
 
   const failsafeTimerRef = useRef(null);
 
@@ -80,6 +82,7 @@ export const useViewTransition = () => {
           ease: "power1",
           attr: { d: PATHS.step1.filled },
           onComplete: () => {
+            setIsTransitioning(true);
             router.push(href);
             if (onRouteChange) onRouteChange();
           },
@@ -95,16 +98,20 @@ export const useViewTransition = () => {
           duration: 1,
           ease: "power4",
           attr: { d: PATHS.step2.unfilled },
+          onStart: () => {
+            setIsTransitioning(false);
+          },
         });
       failsafeTimerRef.current = setTimeout(() => {
         if (_isTransitioningGlobal) {
           overlay?.parentNode?.removeChild(overlay);
           _isTransitioningGlobal = false;
+          setIsTransitioning(false);
           router.push(href);
         }
       }, 4000);
     },
-    [router]
+    [router, setIsTransitioning]
   );
 
   const navigateWithTransition = useCallback(

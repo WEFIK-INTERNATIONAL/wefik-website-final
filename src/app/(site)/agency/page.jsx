@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import TransitionLink from "@/components/ui/TransitionLink";
 import { useRef } from "react";
 import { ArrowRight, ArrowUpRight, MapPin, Mail, Phone } from "lucide-react";
 import { gsap } from "@/lib/gsap";
@@ -458,7 +458,7 @@ export default function AgencyPage() {
             Culture-driven, creative and competitive. We craft digital
             experiences that make brands impossible to ignore.
           </p>
-          <Link
+          <TransitionLink
             href="/contact"
             className="group bg-accent font-accent hover:bg-accent-hover inline-flex items-center gap-4 rounded-full px-8 py-4 text-[11px] font-bold tracking-[0.25em] text-white uppercase opacity-0 transition-all duration-300 hover:gap-6"
           >
@@ -467,7 +467,7 @@ export default function AgencyPage() {
               size={15}
               className="transition-transform duration-300 group-hover:translate-x-1"
             />
-          </Link>
+          </TransitionLink>
         </div>
       </section>
 
@@ -584,7 +584,7 @@ export default function AgencyPage() {
                 </p>
               </div>
 
-              <Link
+              <TransitionLink
                 href="/works"
                 className="group font-accent text-accent inline-flex w-fit items-center gap-3 text-[10px] font-bold tracking-[0.3em] uppercase transition-all hover:gap-5"
               >
@@ -593,7 +593,7 @@ export default function AgencyPage() {
                   size={14}
                   className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                 />
-              </Link>
+              </TransitionLink>
             </div>
           </div>
         </div>
@@ -719,13 +719,13 @@ export default function AgencyPage() {
                 Meet the Team
               </div>
             </div>
-            <Link
+            <TransitionLink
               href="/careers"
               className="group font-accent text-text-muted hover:text-accent inline-flex w-fit items-center gap-3 text-[10px] font-bold tracking-[0.3em] uppercase opacity-0 transition-all hover:gap-4 md:mb-2"
             >
               <span>We&apos;re hiring</span>
               <ArrowUpRight size={13} />
-            </Link>
+            </TransitionLink>
           </div>
 
           <div className="team-list mt-8 md:mt-12">
@@ -829,7 +829,7 @@ export default function AgencyPage() {
 
       <section ref={ctaRef} className="px-5 py-20 md:px-10 md:py-32 lg:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="cta-panel bg-text-primary relative overflow-hidden rounded-[2rem] px-8 py-16 opacity-0 md:rounded-[3rem] md:px-16 md:py-24">
+          <div className="cta-panel bg-text-primary relative overflow-hidden rounded-4xl px-8 py-16 opacity-0 md:rounded-[3rem] md:px-16 md:py-24">
             <div
               className="cta-ghost font-big pointer-events-none absolute -right-4 -bottom-6 leading-none font-black uppercase opacity-0 select-none"
               style={{
@@ -856,7 +856,7 @@ export default function AgencyPage() {
                 </div>
               </div>
               <div className="flex flex-col gap-4 opacity-0">
-                <Link
+                <TransitionLink
                   href="/contact"
                   className="group bg-accent-bright font-accent inline-flex items-center gap-5 rounded-full px-8 py-5 text-[11px] font-bold tracking-[0.25em] text-black uppercase transition-all duration-300 hover:gap-7"
                 >
@@ -865,7 +865,7 @@ export default function AgencyPage() {
                     size={15}
                     className="transition-transform group-hover:translate-x-1"
                   />
-                </Link>
+                </TransitionLink>
                 <span className="font-accent text-[9px] font-semibold tracking-[0.25em] text-white/40 uppercase md:text-center">
                   Free 30-min strategy session
                 </span>

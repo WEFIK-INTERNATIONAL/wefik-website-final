@@ -28,7 +28,6 @@ const Preloader = ({ onComplete }) => {
     () => {
       const tl = gsap.timeline({
         onComplete: () => {
-          setIsPreloaderDone(true);
           if (onComplete) onComplete();
         },
       });
@@ -88,9 +87,12 @@ const Preloader = ({ onComplete }) => {
         .to(
           containerRef.current,
           {
-            clipPath: "inset(0% 0% 100% 0%)",
+            clipPath: "inset(100% 0% 0% 0%)",
             duration: 1.2,
             ease: "expo.inOut",
+            onStart: () => {
+              setIsPreloaderDone(true);
+            },
           },
           "-=0.2"
         );

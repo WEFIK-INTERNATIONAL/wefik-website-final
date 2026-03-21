@@ -3,26 +3,58 @@
 import React, { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { useLoader } from "@/components/ui/LoaderProvider";
 
 export default function CareersHero() {
+  const { canPlayEntrance } = useLoader();
   const containerRef = useRef(null);
+  const tagRef = useRef(null);
+  const headlineRef = useRef(null);
+  const sublineRef = useRef(null);
 
   useGSAP(
     () => {
-      const tl = gsap.timeline();
+      const elements = [
+        tagRef.current,
+        headlineRef.current?.querySelectorAll(".char-reveal"),
+        sublineRef.current,
+      ].filter(Boolean);
+
+      if (!canPlayEntrance) {
+        gsap.set(elements, { opacity: 0 });
+        return;
+      }
+
+      const tl = gsap.timeline({
+        defaults: { ease: "power4.out" },
+        delay: 0.2,
+      });
 
       tl.fromTo(
-        ".char-reveal",
-        { y: 100, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, stagger: 0.05, ease: "power4.out" }
-      ).fromTo(
-        ".hero-sub",
+        tagRef.current,
         { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
-        "-=0.5"
-      );
+        { y: 0, opacity: 1, duration: 0.7 }
+      )
+        .fromTo(
+          headlineRef.current.querySelectorAll(".char-reveal"),
+          { yPercent: 110, opacity: 0 },
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 1.2,
+            stagger: 0.08,
+            ease: "power4.out",
+          },
+          "-=0.4"
+        )
+        .fromTo(
+          sublineRef.current,
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7 },
+          "-=0.6"
+        );
     },
-    { scope: containerRef }
+    { scope: containerRef, dependencies: [canPlayEntrance] }
   );
 
   return (
@@ -33,10 +65,16 @@ export default function CareersHero() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-4xl">
-            <span className="text-accent hero-sub mb-4 block text-xs font-black tracking-[0.3em] uppercase">
+            <span
+              ref={tagRef}
+              className="text-accent mb-4 block text-xs font-black tracking-[0.3em] uppercase opacity-0"
+            >
               Careers at Wefik
             </span>
-            <h1 className="font-display text-text-primary text-6xl leading-[0.8] font-black tracking-tighter md:text-[8rem] lg:text-[10rem]">
+            <h1
+              ref={headlineRef}
+              className="font-display text-text-primary text-6xl leading-[0.8] font-black tracking-tighter md:text-[8rem] lg:text-[10rem]"
+            >
               <div className="overflow-hidden">
                 <span className="char-reveal inline-block">JOIN THE</span>
               </div>
@@ -47,7 +85,7 @@ export default function CareersHero() {
               </div>
             </h1>
           </div>
-          <div className="hero-sub max-w-xs">
+          <div ref={sublineRef} className="max-w-xs opacity-0">
             <p className="text-text-muted text-sm leading-relaxed md:text-base">
               We&apos;re looking for bold thinkers and creative problem solvers
               to help us redefine the digital landscape.

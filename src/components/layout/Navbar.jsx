@@ -411,7 +411,7 @@ export default function Navbar() {
               padding: "0 20px",
             }}
           >
-            <Link
+            <TransitionLink
               ref={logoRef}
               href="/"
               aria-label="WeFik home"
@@ -424,7 +424,7 @@ export default function Navbar() {
               }}
             >
               <WeFikLogo />
-            </Link>
+            </TransitionLink>
             <nav
               ref={navPillRef}
               className="nav-desktop"

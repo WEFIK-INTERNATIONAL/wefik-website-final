@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import Link from "next/link";
+import TransitionLink from "@/components/ui/TransitionLink";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ArrowRight, MapPin, Briefcase, Clock } from "lucide-react";
@@ -53,10 +53,10 @@ export default function JobList({ jobs }) {
 
         <div className="divide-y divide-white/5 border-t border-white/5">
           {jobs.map((job) => (
-            <Link
+            <TransitionLink
               key={job.slug.current}
               href={`/careers/${job.slug.current}`}
-              className="job-item group block py-8 transition-all hover:bg-white/[0.02] hover:px-6 md:py-12"
+              className="job-item group block py-8 transition-all hover:bg-white/2 hover:px-6 md:py-12"
             >
               <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
                 <div className="flex flex-col gap-4">
@@ -92,7 +92,7 @@ export default function JobList({ jobs }) {
                   </div>
                 </div>
               </div>
-            </Link>
+            </TransitionLink>
           ))}
         </div>
       </div>

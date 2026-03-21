@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
+import TransitionLink from "@/components/ui/TransitionLink";
 import { notFound } from "next/navigation";
 import { getWorkBySlug, getAllWorks } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
@@ -60,13 +60,13 @@ export default async function WorkDetailPage({ params }) {
 
         <div className="absolute inset-0 flex items-end justify-center pb-12 md:pb-24">
           <div className="mx-auto w-full max-w-7xl px-6">
-            <Link
+            <TransitionLink
               href="/works"
               className="text-accent mb-8 inline-flex items-center gap-2 text-xs font-black tracking-[0.3em] uppercase transition-transform hover:-translate-x-2"
             >
               <ArrowLeft size={16} strokeWidth={3} />
               Back to Works
-            </Link>
+            </TransitionLink>
             <h1 className="font-display text-text-primary text-5xl leading-[0.8] font-black tracking-tighter md:text-9xl lg:text-[12rem]">
               {project.title}
             </h1>
@@ -169,7 +169,10 @@ export default async function WorkDetailPage({ params }) {
           <h2 className="font-display text-text-primary mb-16 text-5xl font-black tracking-tighter md:text-8xl">
             NEXT PROJECT.
           </h2>
-          <Link href="/works" className="group inline-flex items-center gap-6">
+          <TransitionLink
+            href="/works"
+            className="group inline-flex items-center gap-6"
+          >
             <div className="group-hover:bg-accent group-hover:border-accent flex h-20 w-20 items-center justify-center rounded-full border-2 border-white/10 transition-all">
               <ArrowLeft
                 size={32}
@@ -179,7 +182,7 @@ export default async function WorkDetailPage({ params }) {
             <span className="text-text-primary outline-text group-hover:text-accent text-3xl font-black tracking-tighter">
               VIEW ALL
             </span>
-          </Link>
+          </TransitionLink>
         </div>
       </section>
     </article>

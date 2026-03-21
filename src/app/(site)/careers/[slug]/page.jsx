@@ -9,7 +9,7 @@ import {
   Clock,
   CheckCircle2,
 } from "lucide-react";
-import Link from "next/link";
+import TransitionLink from "@/components/ui/TransitionLink";
 import ApplySection from "@/components/careers/ApplySection";
 
 export async function generateMetadata({ params }) {
@@ -41,13 +41,13 @@ export default async function JobDetailPage({ params }) {
   return (
     <article className="bg-bg-primary min-h-screen pt-32 pb-32 md:pt-48">
       <div className="mx-auto max-w-4xl px-6">
-        <Link
+        <TransitionLink
           href="/careers"
           className="text-accent mb-12 inline-flex items-center gap-2 text-xs font-black tracking-[0.3em] uppercase transition-transform hover:-translate-x-2"
         >
           <ArrowLeft size={16} strokeWidth={3} />
           Back to Careers
-        </Link>
+        </TransitionLink>
 
         <header className="mb-16">
           <h1 className="font-display text-text-primary text-5xl leading-tight font-black tracking-tighter md:text-8xl">

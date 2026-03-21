@@ -6,6 +6,7 @@ import {
 } from "./fonts";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
+import { LoaderProvider } from "@/components/ui/LoaderProvider";
 
 export const metadata = {
   title: "Create Next App",
@@ -26,7 +27,7 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <LoaderProvider>{children}</LoaderProvider>
         </ThemeProvider>
       </body>
     </html>

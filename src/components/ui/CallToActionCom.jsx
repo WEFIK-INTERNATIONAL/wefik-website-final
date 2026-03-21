@@ -2,7 +2,7 @@
 import React, { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import Link from "next/link";
+import TransitionLink from "@/components/ui/TransitionLink";
 
 export default function CallToActionCom() {
   const containerRef = useRef(null);
@@ -30,7 +30,7 @@ export default function CallToActionCom() {
 
   return (
     <section className="-translate-y-5">
-      <Link href="/contact" className="flex overflow-x-clip p-4">
+      <TransitionLink href="/contact" className="flex overflow-x-clip p-4">
         <div
           ref={containerRef}
           className="group flex flex-none gap-16 pr-16 text-8xl font-medium md:text-[14rem]"
@@ -46,7 +46,7 @@ export default function CallToActionCom() {
             </div>
           ))}
         </div>
-      </Link>
+      </TransitionLink>
     </section>
   );
 }

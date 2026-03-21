@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
+import { useLoader } from "@/components/ui/LoaderProvider";
 
 gsap.registerPlugin(useGSAP);
 
@@ -104,18 +105,54 @@ const expertiseDetails = [
 ];
 
 export default function ExpertisePage() {
+  const { canPlayEntrance } = useLoader();
   const containerRef = useRef(null);
   const heroRef = useRef(null);
+  const tagRef = useRef(null);
+  const headlineRef = useRef(null);
+  const sublineRef = useRef(null);
 
   useGSAP(
     () => {
-      gsap.from(heroRef.current.children, {
-        opacity: 0,
-        y: 30,
-        duration: 1,
-        stagger: 0.2,
-        ease: "power4.out",
+      const elements = [
+        tagRef.current,
+        headlineRef.current?.querySelectorAll(".split-word"),
+        sublineRef.current,
+      ].filter(Boolean);
+
+      if (!canPlayEntrance) {
+        gsap.set(elements, { opacity: 0 });
+        return;
+      }
+
+      const tl = gsap.timeline({
+        defaults: { ease: "power4.out" },
+        delay: 0.2,
       });
+
+      tl.fromTo(
+        tagRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7 }
+      )
+        .fromTo(
+          headlineRef.current.querySelectorAll(".split-word"),
+          { yPercent: 110, opacity: 0 },
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 1.2,
+            stagger: 0.08,
+            ease: "power4.out",
+          },
+          "-=0.4"
+        )
+        .fromTo(
+          sublineRef.current,
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7 },
+          "-=0.6"
+        );
 
       const sections = gsap.utils.toArray(".expertise-section");
       sections.forEach((section) => {
@@ -131,27 +168,53 @@ export default function ExpertisePage() {
         });
       });
     },
-    { scope: containerRef }
+    { scope: containerRef, dependencies: [canPlayEntrance] }
   );
 
   return (
     <main
       ref={containerRef}
-      className="bg-bg-primary text-text-primary min-h-screen pt-32 pb-24"
+      className="bg-bg-primary text-text-primary font-body min-h-screen pt-32 pb-24"
     >
       <section ref={heroRef} className="mb-24 px-6 md:mb-32">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex items-center gap-4">
+          <div ref={tagRef} className="mb-8 flex items-center gap-4 opacity-0">
             <div className="bg-accent/30 h-px w-16" />
             <span className="text-accent text-sm font-bold tracking-[0.3em] uppercase">
               Expertise
             </span>
           </div>
-          <h1 className="text-text-primary mb-12 text-5xl leading-tight font-black tracking-tighter uppercase md:text-8xl">
-            Capabilities <br />
-            <span className="text-accent">That Drive Growth</span>
+          <h1
+            ref={headlineRef}
+            className="text-text-primary mb-12 text-5xl leading-tight font-black tracking-tighter uppercase md:text-8xl"
+          >
+            <div className="mr-[0.2em] inline-block overflow-hidden">
+              <span className="split-word inline-block">Capabilities</span>
+            </div>
+            <br />
+            <div
+              className="mr-[0.2em] inline-block overflow-hidden"
+              style={{ color: "var(--color-accent)" }}
+            >
+              <span className="split-word inline-block">That</span>
+            </div>
+            <div
+              className="mr-[0.2em] inline-block overflow-hidden"
+              style={{ color: "var(--color-accent)" }}
+            >
+              <span className="split-word inline-block">Drive</span>
+            </div>
+            <div
+              className="inline-block overflow-hidden"
+              style={{ color: "var(--color-accent)" }}
+            >
+              <span className="split-word inline-block">Growth</span>
+            </div>
           </h1>
-          <p className="text-text-muted max-w-2xl text-xl leading-relaxed md:text-2xl">
+          <p
+            ref={sublineRef}
+            className="text-text-muted max-w-2xl text-xl leading-relaxed opacity-0 md:text-2xl"
+          >
             We combine strategy, design, and technology to build brands that
             stand out and digital products that people love to use.
           </p>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import Link from "next/link";
+import TransitionLink from "@/components/ui/TransitionLink";
 import {
   Monitor,
   Smartphone,
@@ -77,7 +77,7 @@ const ExpertiseCard = ({ item, setCardRef, index }) => {
       style={{ borderRadius: "clamp(1rem, 2.5vw, 2rem)" }}
     >
       <div
-        className={`pointer-events-none absolute -top-20 -right-20 h-72 w-72 rounded-full bg-gradient-to-br opacity-20 blur-3xl ${item.gradient}`}
+        className={`pointer-events-none absolute -top-20 -right-20 h-72 w-72 rounded-full bg-linear-to-br opacity-20 blur-3xl ${item.gradient}`}
       />
       <div className="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.035] mix-blend-overlay" />
 
@@ -166,7 +166,7 @@ const ExpertiseCard = ({ item, setCardRef, index }) => {
             </div>
           </div>
 
-          <Link
+          <TransitionLink
             href={item.link}
             className={`group inline-flex w-fit items-center gap-4 rounded-full px-7 py-4 text-[0.7rem] font-bold tracking-[0.25em] uppercase transition-all duration-300 hover:gap-6 ${
               isVibrant
@@ -179,7 +179,7 @@ const ExpertiseCard = ({ item, setCardRef, index }) => {
               size={14}
               className="transition-transform duration-300 group-hover:translate-x-1"
             />
-          </Link>
+          </TransitionLink>
         </div>
 
         <div className="flex flex-col justify-center gap-6 pl-10 xl:pl-14">
@@ -280,7 +280,7 @@ export default function Expertise() {
               We merge creativity with technical precision to build digital
               products that move the needle.
             </p>
-            <Link
+            <TransitionLink
               href="/expertise"
               className="text-text-muted hover:text-accent group flex items-center gap-3 text-[10px] font-bold tracking-[0.25em] uppercase transition-all md:text-xs"
             >
@@ -291,7 +291,7 @@ export default function Expertise() {
                   className="transition-transform group-hover:translate-x-1"
                 />
               </div>
-            </Link>
+            </TransitionLink>
           </div>
         </div>
       </section>

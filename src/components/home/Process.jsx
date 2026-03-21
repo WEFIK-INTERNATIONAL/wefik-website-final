@@ -15,6 +15,7 @@ import { useGSAP } from "@gsap/react";
 
 import MagneticButton from "@/components/ui/MagneticButton";
 import Tag from "../ui/Tag";
+import BookACall from "../ui/BookACall";
 
 const processSteps = [
   {
@@ -199,17 +200,16 @@ export default function Process() {
         </div>
 
         <div className="mt-32 text-center">
-          <MagneticButton>
-            <Link
-              href="/contact"
-              className="group bg-accent inline-flex items-center gap-4 rounded-full px-10 py-5 font-black tracking-widest text-black uppercase shadow-xl transition-all duration-300 hover:bg-white hover:text-black hover:shadow-white/10"
-            >
-              <span>Book a 30-Min Call</span>
-              <div className="group-hover:bg-accent flex h-8 w-8 items-center justify-center rounded-full bg-black/10 transition-colors">
-                <ArrowRight size={18} />
+          <BookACall>
+            <MagneticButton>
+              <div className="group bg-accent inline-flex items-center gap-4 rounded-full px-5 py-2.5 font-black tracking-widest text-black uppercase shadow-xl transition-all duration-300 hover:bg-white hover:text-black hover:shadow-white/10">
+                <span>Book a 30-Min Call</span>
+                <div className="group-hover:bg-accent flex h-8 w-8 items-center justify-center rounded-full bg-black/10 transition-colors">
+                  <ArrowRight size={18} />
+                </div>
               </div>
-            </Link>
-          </MagneticButton>
+            </MagneticButton>
+          </BookACall>
         </div>
       </div>
     </section>
