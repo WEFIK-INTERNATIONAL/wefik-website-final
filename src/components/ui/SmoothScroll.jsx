@@ -3,9 +3,11 @@
 import { useEffect, useRef } from "react";
 import { ReactLenis, useLenis } from "lenis/react";
 import { ScrollTrigger, gsap } from "@/lib/gsap";
+import { usePathname } from "next/navigation";
 
 export default function SmoothScroll({ children }) {
   const lenisRef = useRef();
+  const pathname = usePathname();
 
   useEffect(() => {
     function update(time) {
@@ -22,6 +24,20 @@ export default function SmoothScroll({ children }) {
 
   useLenis(ScrollTrigger.update);
 
+  useEffect(() => {
+    const lenis = lenisRef.current?.lenis;
+    if (!lenis) return;
+
+    lenis.scrollTo(0, { immediate: true, force: true });
+
+    const rafId = requestAnimationFrame(() => {
+      lenis.resize();
+      ScrollTrigger.refresh();
+    });
+
+    return () => cancelAnimationFrame(rafId);
+  }, [pathname]);
+
   return (
     <ReactLenis
       root
@@ -32,9 +48,11 @@ export default function SmoothScroll({ children }) {
         duration: 1.2,
         smoothWheel: true,
         smoothTouch: false,
-        touchMultiplier: 1,
+        touchMultiplier: 2,
         orientation: "vertical",
         gestureOrientation: "vertical",
+
+        prevent: (node) => node.classList?.contains("lenis-prevent"),
       }}
     >
       {children}

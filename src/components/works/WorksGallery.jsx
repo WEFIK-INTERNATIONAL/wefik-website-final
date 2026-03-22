@@ -48,12 +48,14 @@ export default function WorksGallery({ initialWorks, categories }) {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-6">
+    <section aria-label="Portfolio works" className="mx-auto max-w-7xl px-6">
       <div className="mb-12 flex flex-wrap gap-3 md:mb-16">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => handleFilter(cat)}
+            aria-pressed={activeCategory === cat}
+            aria-label={`Filter works by ${cat}`}
             className={`rounded-full px-6 py-2.5 text-xs font-black tracking-widest uppercase transition-all duration-300 md:px-8 md:py-3 ${
               activeCategory === cat
                 ? "bg-accent shadow-accent/20 scale-105 text-black shadow-lg"
@@ -89,6 +91,6 @@ export default function WorksGallery({ initialWorks, categories }) {
           </button>
         </div>
       )}
-    </div>
+    </section>
   );
 }

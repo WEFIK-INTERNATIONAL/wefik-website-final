@@ -73,6 +73,7 @@ export default function WorkCard({ project }) {
                   blurDataURL: project.coverImage.asset.metadata.lqip,
                 }
               : {})}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
             className="object-cover transition-opacity duration-700 will-change-transform group-hover:opacity-80"
           />
         )}

@@ -7,46 +7,109 @@ import { getBlogBySlug, getAllBlogs } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import PortableTextContent from "@/components/blog/PortableTextContent";
 import Tag from "@/components/ui/Tag";
+import { SEO, canonical } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const post = await getBlogBySlug(slug);
   if (!post) return {};
 
+  const ogImage = post.coverImage?.asset
+    ? urlFor(post.coverImage).width(1200).height(630).url()
+    : `${SEO.domain}/opengraph-image`;
+
+  const url = canonical(`/blogs/${slug}`);
+
   return {
-    title: `${post.title} | Wefik Blog`,
-    description: post.excerpt,
+    title: post.title,
+    description:
+      post.excerpt ||
+      `Read "${post.title}" on the Wefik blog — insights on web design, development and digital strategy.`,
+    keywords: [
+      ...(post.categories?.map((c) => c.title) ?? []),
+      "wefik blog",
+      "web design India",
+      "digital agency Kolkata",
+    ],
+    alternates: { canonical: url },
     openGraph: {
-      images: [
-        post.coverImage?.asset
-          ? urlFor(post.coverImage).width(1200).height(630).url()
-          : "",
-      ],
+      type: "article",
+      url,
+      title: post.title,
+      description: post.excerpt ?? "",
+      publishedTime: post.publishedAt,
+      authors: post.author?.name ? [post.author.name] : [SEO.founder.name],
+      tags: post.categories?.map((c) => c.title) ?? [],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: post.title }],
+    },
+    twitter: {
+      title: post.title,
+      description: post.excerpt ?? "",
+      images: [ogImage],
     },
   };
 }
 
 export async function generateStaticParams() {
   const posts = await getAllBlogs();
-  return posts.map((post) => ({
-    slug: post.slug.current,
-  }));
+  return posts.map((post) => ({ slug: post.slug.current }));
 }
 
 export default async function BlogPostPage({ params }) {
   const { slug } = await params;
   const post = await getBlogBySlug(slug);
 
-  if (!post) {
-    notFound();
-  }
+  if (!post) notFound();
 
   const publishedDate = post.publishedAt
     ? new Date(post.publishedAt)
     : new Date();
+  const url = canonical(`/blogs/${slug}`);
+  const ogImage = post.coverImage?.asset
+    ? urlFor(post.coverImage).width(1200).height(630).url()
+    : `${SEO.domain}/opengraph-image`;
+
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${url}/#article`,
+    url,
+    headline: post.title,
+    description: post.excerpt ?? "",
+    image: ogImage,
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    author: {
+      "@type": "Person",
+      name: post.author?.name ?? SEO.founder.name,
+    },
+    publisher: { "@id": `${SEO.domain}/#organization` },
+    isPartOf: { "@id": `${SEO.domain}/blogs/#webpage` },
+    keywords: post.categories?.map((c) => c.title).join(", ") ?? "",
+    inLanguage: SEO.language,
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: SEO.domain },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Blog",
+          item: canonical("/blogs"),
+        },
+        { "@type": "ListItem", position: 3, name: post.title, item: url },
+      ],
+    },
+  };
 
   return (
     <article className="bg-bg-primary min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+
       <header className="relative w-full overflow-hidden pt-32 pb-16 md:pt-48 md:pb-24">
         <div className="pointer-events-none absolute inset-0">
           <div className="border-border/30 absolute top-0 left-1/2 h-full w-px -translate-x-1/2 border-l border-dashed" />
@@ -68,8 +131,8 @@ export default async function BlogPostPage({ params }) {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
             </svg>
             Back to Blog
           </TransitionLink>
@@ -109,9 +172,12 @@ export default async function BlogPostPage({ params }) {
               </span>
             </div>
             <div className="hidden h-1 w-1 rounded-full bg-white/20 md:block" />
-            <span className="text-text-muted text-sm font-medium tracking-widest uppercase">
+            <time
+              dateTime={post.publishedAt}
+              className="text-text-muted text-sm font-medium tracking-widest uppercase"
+            >
               {format(publishedDate, "MMMM dd, yyyy")}
-            </span>
+            </time>
           </div>
         </div>
       </header>
@@ -141,7 +207,6 @@ export default async function BlogPostPage({ params }) {
         <div className="relative mx-auto max-w-3xl px-6">
           <PortableTextContent value={post.body} />
         </div>
-
         <div className="bg-accent/5 pointer-events-none absolute bottom-0 left-1/2 h-[500px] w-[500px] -translate-x-1/2 blur-[120px]" />
       </section>
 

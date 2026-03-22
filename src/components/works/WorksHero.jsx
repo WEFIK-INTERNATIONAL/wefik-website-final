@@ -12,8 +12,6 @@ export default function WorksHero() {
   const headlineRef = useRef(null);
   const sublineRef = useRef(null);
 
-  // Safety net: make content visible after 3s even if canPlayEntrance
-  // never fires (prevents permanently blank page on slow/errored devices).
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!containerRef.current) return;
@@ -22,7 +20,7 @@ export default function WorksHero() {
         y: 0,
         yPercent: 0,
       });
-    }, 3000);
+    }, 400);
     return () => clearTimeout(timer);
   }, []);
 

@@ -26,7 +26,7 @@ export default function CareersHero() {
         y: 0,
         yPercent: 0,
       });
-    }, 3000);
+    }, 400);
     return () => clearTimeout(timer);
   }, []);
 
@@ -82,7 +82,7 @@ export default function CareersHero() {
       ref={containerRef}
       className="bg-bg-primary relative min-h-[90vh] overflow-hidden pt-32 pb-24 md:pt-48 md:pb-40"
     >
-      {/* Background Image */}
+      {}
       <div
         ref={bgRef}
         className="pointer-events-none absolute inset-0 z-0 opacity-0"
@@ -97,7 +97,7 @@ export default function CareersHero() {
         <div className="from-bg-primary to-bg-primary absolute inset-0 z-10 bg-gradient-to-b via-transparent" />
       </div>
 
-      {/* Ghost Text */}
+      {}
       <div
         ref={ghostRef}
         className="font-big text-text-primary pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 select-none"

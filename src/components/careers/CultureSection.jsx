@@ -2,14 +2,10 @@
 
 import React, { useRef } from "react";
 import { Globe, BookOpen, Zap } from "lucide-react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap } from "@/lib/gsap";
+import { ScrollTrigger } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import Tag from "../ui/Tag";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const CULTURE_DATA = [
   {
@@ -35,27 +31,39 @@ const CULTURE_DATA = [
 export default function CultureSection() {
   const containerRef = useRef(null);
   const stickyRef = useRef(null);
-  const contentRef = useRef(null);
+  const pinInstanceRef = useRef(null);
 
   useGSAP(
     () => {
-      // Pin the header on desktop
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: "top 120px", // 120px from top (accounting for navbar)
-        end: "bottom bottom",
-        pin: stickyRef.current,
-        pinSpacing: false,
-        invalidateOnRefresh: true,
-        // Only pin on desktop (md/lg)
-        onUpdate: (self) => {
-          if (window.innerWidth < 1024) {
-            self.disable();
-          } else {
-            self.enable();
-          }
-        },
-      });
+      function applyPin() {
+        if (pinInstanceRef.current) {
+          pinInstanceRef.current.kill();
+          pinInstanceRef.current = null;
+        }
+
+        if (window.innerWidth < 1024) return;
+
+        pinInstanceRef.current = ScrollTrigger.create({
+          trigger: containerRef.current,
+          start: "top 120px",
+          end: "bottom bottom",
+          pin: stickyRef.current,
+          pinSpacing: false,
+          invalidateOnRefresh: true,
+        });
+      }
+
+      applyPin();
+
+      ScrollTrigger.addEventListener("refresh", applyPin);
+
+      return () => {
+        ScrollTrigger.removeEventListener("refresh", applyPin);
+        if (pinInstanceRef.current) {
+          pinInstanceRef.current.kill();
+          pinInstanceRef.current = null;
+        }
+      };
     },
     { scope: containerRef }
   );
@@ -78,7 +86,7 @@ export default function CultureSection() {
           </p>
         </div>
 
-        <div ref={contentRef} className="flex flex-col gap-12 lg:max-w-xl">
+        <div className="flex flex-col gap-12 lg:max-w-xl">
           {CULTURE_DATA.map((item, i) => (
             <div
               key={i}

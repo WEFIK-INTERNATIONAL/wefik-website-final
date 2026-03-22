@@ -314,7 +314,6 @@ export default function AgencyPage() {
 
   useGSAP(
     () => {
-      // Reveal headers
       gsap.fromTo(
         ".team-header-content > *",
         { y: 30, opacity: 0 },
@@ -328,7 +327,6 @@ export default function AgencyPage() {
         }
       );
 
-      // Reveal the list itself
       gsap.fromTo(
         ".team-item",
         { y: 40, opacity: 0 },
@@ -748,7 +746,7 @@ export default function AgencyPage() {
           </div>
         </div>
       </section>
-      {/* the team*/}
+      {}
       <section
         ref={teamRef}
         className="border-border border-t px-5 py-20 md:px-10 md:py-32 lg:px-16"

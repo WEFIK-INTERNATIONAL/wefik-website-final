@@ -26,13 +26,19 @@ const Preloader = ({ onComplete }) => {
   const brandName = "WEFIK".split("");
 
   useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
+    const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     return () => {
-      document.body.style.overflow = previousOverflow || "";
+      document.body.style.overflow = prev;
     };
   }, []);
+
+  const handleComplete = () => {
+    document.body.style.overflow = "";
+    setIsPreloaderDone(true);
+    if (onComplete) onComplete();
+  };
 
   useGSAP(
     () => {
@@ -45,14 +51,7 @@ const Preloader = ({ onComplete }) => {
       )
         return;
 
-      const tl = gsap.timeline({
-        onComplete: () => {
-          document.body.style.overflow = "";
-          setIsPreloaderDone(true);
-          if (onComplete) onComplete();
-        },
-      });
-
+      const tl = gsap.timeline({ onComplete: handleComplete });
       tlRef.current = tl;
 
       tl.set(containerRef.current, { clipPath: "inset(0% 0% 0% 0%)" });
@@ -117,8 +116,17 @@ const Preloader = ({ onComplete }) => {
           "-=0.2"
         );
 
+      const failsafe = setTimeout(() => {
+        if (tlRef.current && tlRef.current.isActive()) {
+          tlRef.current.kill();
+          handleComplete();
+        }
+      }, 6000);
+
       return () => {
+        clearTimeout(failsafe);
         tl.kill();
+
         document.body.style.overflow = "";
       };
     },

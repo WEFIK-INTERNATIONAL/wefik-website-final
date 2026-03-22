@@ -1,61 +1,49 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import Preloader from "@/components/ui/Preloader";
 import { useLoader } from "@/components/ui/LoaderProvider";
-import { ViewTransitions } from "next-view-transitions";
 
 export default function SiteLayout({ children }) {
   const { setIsPreloaderDone } = useLoader();
   const pathname = usePathname();
-
   const isHomePage = pathname === "/";
-
   const [showPreloader, setShowPreloader] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
-    setHydrated(true);
+    if (initializedRef.current) return;
+    initializedRef.current = true;
 
     const alreadyLoaded = !!sessionStorage.getItem("wefik-loaded");
 
     if (isHomePage && !alreadyLoaded) {
-      setShowPreloader(true);
+      setTimeout(() => setShowPreloader(true), 0);
     } else {
-      setIsPreloaderDone(true);
+      setTimeout(() => setIsPreloaderDone(true), 0);
     }
-  }, []);
+  }, [isHomePage, setIsPreloaderDone]);
 
   const handleLoadingComplete = () => {
     sessionStorage.setItem("wefik-loaded", "true");
     setShowPreloader(false);
   };
 
-  const contentHidden = !hydrated || showPreloader;
-
   return (
     <>
+      {}
       {showPreloader && <Preloader onComplete={handleLoadingComplete} />}
 
-      <div
-        style={{
-          opacity: contentHidden ? 0 : 1,
-          transition: showPreloader ? "none" : "opacity 0.25s ease",
-          pointerEvents: contentHidden ? "none" : "auto",
-        }}
-      >
-        <ViewTransitions>
-          <SmoothScroll>
-            <Navbar />
-            {children}
-            <Footer />
-          </SmoothScroll>
-        </ViewTransitions>
-      </div>
+      {}
+      <SmoothScroll>
+        <Navbar />
+        {children}
+        <Footer />
+      </SmoothScroll>
     </>
   );
 }

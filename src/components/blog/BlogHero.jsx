@@ -12,14 +12,12 @@ export default function BlogHero() {
   const headlineRef = useRef(null);
   const sublineRef = useRef(null);
 
-  // Safety net: if canPlayEntrance never fires (e.g. JS error upstream),
-  // make the content visible after 3 seconds so the page isn't blank forever.
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!containerRef.current) return;
       const els = containerRef.current.querySelectorAll(".anim-el");
       gsap.set(els, { opacity: 1, y: 0, yPercent: 0 });
-    }, 3000);
+    }, 400);
     return () => clearTimeout(timer);
   }, []);
 

@@ -4,48 +4,97 @@ import TransitionLink from "@/components/ui/TransitionLink";
 import { notFound } from "next/navigation";
 import { getWorkBySlug, getAllWorks } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
-import {
-  ArrowLeft,
-  ExternalLink,
-  Calendar,
-  Tag as TagIcon,
-} from "lucide-react";
+import { ArrowLeft, ExternalLink, Calendar } from "lucide-react";
+import { SEO, canonical } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const project = await getWorkBySlug(slug);
   if (!project) return {};
 
+  const ogImage = project.coverImage?.asset
+    ? urlFor(project.coverImage).width(1200).height(630).url()
+    : `${SEO.domain}/opengraph-image`;
+  const url = canonical(`/works/${slug}`);
+
   return {
-    title: `${project.title} | Wefik`,
-    description: project.description,
+    title: `${project.title} — Case Study`,
+    description: project.description
+      ? `${project.description.slice(0, 155)}…`
+      : `Explore the ${project.title} project by Wefik — a Kolkata-based digital agency.`,
+    keywords: [
+      ...(project.tags ?? []),
+      "wefik portfolio",
+      "web design case study India",
+      "digital agency work Kolkata",
+    ],
+    alternates: { canonical: url },
     openGraph: {
-      images: [
-        project.coverImage?.asset
-          ? urlFor(project.coverImage).width(1200).height(630).url()
-          : "",
-      ],
+      type: "article",
+      url,
+      title: `${project.title} | ${SEO.siteName}`,
+      description: project.description ?? `A ${SEO.siteName} project.`,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: project.title }],
+    },
+    twitter: {
+      title: `${project.title} | ${SEO.siteName}`,
+      description: project.description ?? "",
+      images: [ogImage],
     },
   };
 }
 
 export async function generateStaticParams() {
   const projects = await getAllWorks();
-  return projects.map((project) => ({
-    slug: project.slug.current,
-  }));
+  return projects.map((p) => ({ slug: p.slug.current }));
 }
 
 export default async function WorkDetailPage({ params }) {
   const { slug } = await params;
   const project = await getWorkBySlug(slug);
 
-  if (!project) {
-    notFound();
-  }
+  if (!project) notFound();
+
+  const url = canonical(`/works/${slug}`);
+  const ogImage = project.coverImage?.asset
+    ? urlFor(project.coverImage).width(1200).height(630).url()
+    : `${SEO.domain}/opengraph-image`;
+
+  const creativeWorkSchema = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "@id": `${url}/#work`,
+    url,
+    name: project.title,
+    description: project.description ?? "",
+    image: ogImage,
+    creator: { "@id": `${SEO.domain}/#organization` },
+    dateCreated: project.completedAt ?? "",
+    keywords: project.tags?.join(", ") ?? "",
+    inLanguage: SEO.language,
+    ...(project.projectUrl ? { sameAs: project.projectUrl } : {}),
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: SEO.domain },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Works",
+          item: canonical("/works"),
+        },
+        { "@type": "ListItem", position: 3, name: project.title, item: url },
+      ],
+    },
+  };
 
   return (
     <article className="bg-bg-primary min-h-screen pb-32">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(creativeWorkSchema) }}
+      />
+
       <section className="relative h-[70vh] w-full overflow-hidden md:h-[85vh]">
         {project.coverImage?.asset && (
           <Image
@@ -96,7 +145,6 @@ export default async function WorkDetailPage({ params }) {
                 </a>
               </div>
             )}
-
             <div className="flex flex-col gap-3">
               <span className="text-text-muted text-[10px] font-black tracking-[0.2em] uppercase">
                 Year
@@ -108,7 +156,6 @@ export default async function WorkDetailPage({ params }) {
                   : "2024"}
               </div>
             </div>
-
             <div className="flex flex-col gap-3">
               <span className="text-text-muted text-[10px] font-black tracking-[0.2em] uppercase">
                 Services
@@ -154,7 +201,7 @@ export default async function WorkDetailPage({ params }) {
               >
                 <Image
                   src={urlFor(image).width(2000).height(1200).url()}
-                  alt={`Project image ${index + 1}`}
+                  alt={`${project.title} — project image ${index + 1}`}
                   fill
                   className="object-cover"
                 />

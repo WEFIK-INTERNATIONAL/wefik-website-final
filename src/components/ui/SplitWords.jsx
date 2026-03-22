@@ -2,12 +2,6 @@
 
 import React from "react";
 
-/**
- * SplitWords component to animate words individually.
- * @param {string} text - The text to split and animate.
- * @param {string} className - Additional CSS classes.
- * @param {object} style - Inline styles.
- */
 export default function SplitWords({ text, className, style }) {
   if (!text) return null;
 

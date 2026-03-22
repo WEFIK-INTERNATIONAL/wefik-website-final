@@ -7,15 +7,15 @@ export async function getAllBlogs() {
       coverImage{
         asset->{
           _id,
-          metadata{
-            lqip
-          }
+          metadata{ lqip }
         },
         alt
       },
       "author": author->{ name, image },
       "categories": categories[]->{ title, slug }
-    }`
+    }`,
+    {},
+    { next: { revalidate: 60 } }
   );
 }
 
@@ -26,16 +26,15 @@ export async function getBlogBySlug(slug) {
       coverImage{
         asset->{
           _id,
-          metadata{
-            lqip
-          }
+          metadata{ lqip }
         },
         alt
       },
       "author": author->{ name, image },
       "categories": categories[]->{ title, slug }
     }`,
-    { slug }
+    { slug },
+    { next: { revalidate: 60 } }
   );
 }
 
@@ -48,13 +47,13 @@ export async function getAllWorks() {
       coverImage{
         asset->{
           _id,
-          metadata{
-            lqip
-          }
+          metadata{ lqip }
         },
         alt
       }
-    }`
+    }`,
+    {},
+    { next: { revalidate: 60 } }
   );
 }
 
@@ -63,7 +62,8 @@ export async function getWorkBySlug(slug) {
     `*[_type == "work" && slug.current == $slug][0]{
       title, slug, coverImage, images, description, tags, projectUrl, completedAt
     }`,
-    { slug }
+    { slug },
+    { next: { revalidate: 60 } }
   );
 }
 
@@ -73,13 +73,13 @@ export async function getHomeFeaturedWorks() {
       title, slug, category, coverImage{
         asset->{
           _id,
-          metadata{
-            lqip
-          }
+          metadata{ lqip }
         },
         alt
       }, tags, order
-    }`
+    }`,
+    {},
+    { next: { revalidate: 60 } }
   );
 }
 
@@ -87,12 +87,16 @@ export async function getOpenJobs() {
   return client.fetch(
     `*[_type == "jobOpening" && isOpen == true] | order(postedAt desc){
       title, slug, type, location, description, responsibilities, requirements, applyUrl, postedAt
-    }`
+    }`,
+    {},
+    { next: { revalidate: 60 } }
   );
 }
 
 export async function getJobBySlug(slug) {
-  return client.fetch(`*[_type == "jobOpening" && slug.current == $slug][0]`, {
-    slug,
-  });
+  return client.fetch(
+    `*[_type == "jobOpening" && slug.current == $slug][0]`,
+    { slug },
+    { next: { revalidate: 60 } }
+  );
 }

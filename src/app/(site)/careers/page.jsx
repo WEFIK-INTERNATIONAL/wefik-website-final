@@ -1,5 +1,6 @@
 import React from "react";
 import { getOpenJobs } from "@/sanity/lib/queries";
+import { SEO, canonical } from "@/lib/seo";
 import CareersHero from "@/components/careers/CareersHero";
 import CultureSection from "@/components/careers/CultureSection";
 import JobList from "@/components/careers/JobList";
@@ -15,13 +16,60 @@ import {
 import Tag from "@/components/ui/Tag";
 
 export const metadata = {
-  title: "Careers | Join Wefik Team",
+  title: "Careers — Join the Wefik Team",
   description:
-    "Explore career opportunities at Wefik and help us build the future of digital experiences.",
+    "Explore open roles at Wefik — Kolkata's digital agency. Join our team and help build premium web experiences, brands, and digital products for clients across India.",
+  keywords: [
+    "wefik jobs",
+    "digital agency jobs Kolkata",
+    "web designer jobs India",
+    "web developer jobs Kolkata",
+    "UI UX designer jobs India",
+    "branding jobs India",
+    "digital marketing jobs Kolkata",
+  ],
+  alternates: { canonical: canonical("/careers") },
+  openGraph: {
+    type: "website",
+    url: canonical("/careers"),
+    title: `Careers | ${SEO.siteName}`,
+    description:
+      "Join Wefik — Kolkata's digital agency. Explore open roles and help shape the future of digital experiences in India.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Careers at WEFIK",
+      },
+    ],
+  },
 };
 
 export default async function CareersPage() {
   const jobs = await getOpenJobs();
+
+  const careersPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${SEO.domain}/careers/#webpage`,
+    url: canonical("/careers"),
+    name: `Careers | ${SEO.siteName}`,
+    description: "Open roles at Wefik — Kolkata's digital agency.",
+    isPartOf: { "@id": `${SEO.domain}/#website` },
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: SEO.domain },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Careers",
+          item: canonical("/careers"),
+        },
+      ],
+    },
+  };
 
   const perks = [
     {
@@ -58,17 +106,21 @@ export default async function CareersPage() {
 
   return (
     <main className="bg-bg-primary min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(careersPageSchema) }}
+      />
       <CareersHero />
 
-      {/* Culture Section */}
+      {}
       <CultureSection />
 
-      {/* JobList Section */}
+      {}
       <div className="bg-bg-secondary/30">
         <JobList jobs={jobs} />
       </div>
 
-      {/* Perks Section */}
+      {}
       <section className="mx-auto max-w-7xl px-6 py-24 lg:py-40">
         <div className="flex flex-col gap-16">
           <div className="flex flex-col gap-6 text-center">

@@ -1,5 +1,12 @@
+import { SEO, canonical } from "@/lib/seo";
 import React from "react";
 import LegalBase from "@/components/legal/LegalBase";
+
+export const metadata = {
+  title: "Cookiepolicy",
+  alternates: { canonical: `${SEO.domain}/legal/cookiepolicy` },
+  robots: { index: true, follow: true },
+};
 
 export default function CookiePolicyPage() {
   return (

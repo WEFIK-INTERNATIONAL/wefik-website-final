@@ -1,5 +1,12 @@
+import { SEO, canonical } from "@/lib/seo";
 import React from "react";
 import LegalBase from "@/components/legal/LegalBase";
+
+export const metadata = {
+  title: "Terms",
+  alternates: { canonical: `${SEO.domain}/legal/terms` },
+  robots: { index: true, follow: true },
+};
 
 export default function TermsPage() {
   return (

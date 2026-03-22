@@ -35,6 +35,7 @@ export const ppNeueMontreal = localFont({
   ],
   variable: "--font-neue",
   display: "swap",
+  preload: true,
   adjustFontFallback: false,
   fallback: ["Arial", "sans-serif"],
 });
@@ -79,7 +80,8 @@ export const pangramSans = localFont({
   ],
   variable: "--font-pangram",
   display: "swap",
-  adjustFontFallback: "Arial",
+  preload: false,
+  adjustFontFallback: false,
   fallback: ["Arial", "sans-serif"],
 });
 
@@ -87,7 +89,9 @@ export const bigShouldersDisplay = localFont({
   src: "./fonts/big-shoulders-display/BigShouldersDisplay.ttf",
   variable: "--font-big-shoulders",
   display: "swap",
-  adjustFontFallback: "Arial",
+  preload: true,
+
+  adjustFontFallback: false,
   fallback: ["Arial", "sans-serif"],
 });
 
@@ -96,7 +100,7 @@ export const goodMonolith = localFont({
   variable: "--font-monolith",
   weight: "400",
   display: "swap",
-  preload: true,
+  preload: false,
   adjustFontFallback: false,
   fallback: ["Courier New", "monospace"],
 });

@@ -1,12 +1,37 @@
 import React from "react";
 import { getAllWorks } from "@/sanity/lib/queries";
 import WorksGallery from "@/components/works/WorksGallery";
-
 import WorksHero from "@/components/works/WorksHero";
+import { SEO, canonical } from "@/lib/seo";
 
 export const metadata = {
-  title: "Our Works | Wefik",
-  description: "Explore our selected projects and case studies.",
+  title: "Our Works — Selected Projects & Case Studies",
+  description:
+    "Browse Wefik's portfolio of 60+ projects — premium web design, web development, branding, Shopify stores, and digital experiences delivered for clients across India.",
+  keywords: [
+    "wefik portfolio",
+    "web design portfolio India",
+    "web development projects Kolkata",
+    "digital agency portfolio",
+    "Shopify store design India",
+    "branding portfolio India",
+  ],
+  alternates: { canonical: canonical("/works") },
+  openGraph: {
+    type: "website",
+    url: canonical("/works"),
+    title: `Our Works | ${SEO.siteName}`,
+    description:
+      "60+ projects delivered. Explore Wefik's portfolio of premium web design, development, and branding work.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "WEFIK Portfolio",
+      },
+    ],
+  },
 };
 
 export default async function WorksPage() {
@@ -22,8 +47,35 @@ export default async function WorksPage() {
     ["All"]
   );
 
+  const portfolioSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${SEO.domain}/works/#webpage`,
+    url: canonical("/works"),
+    name: `Our Works | ${SEO.siteName}`,
+    description: "Wefik's portfolio of premium digital projects.",
+    isPartOf: { "@id": `${SEO.domain}/#website` },
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: SEO.domain },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Works",
+          item: canonical("/works"),
+        },
+      ],
+    },
+  };
+
   return (
     <main className="bg-bg-primary min-h-screen pt-32 pb-24 md:pt-48">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(portfolioSchema) }}
+      />
+
       <div className="mx-auto max-w-7xl px-6">
         <WorksHero />
       </div>

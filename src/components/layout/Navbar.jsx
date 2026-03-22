@@ -414,7 +414,7 @@ export default function Navbar() {
             <TransitionLink
               ref={logoRef}
               href="/"
-              aria-label="WeFik home"
+              aria-label="WEFIK — Back to home"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -429,6 +429,7 @@ export default function Navbar() {
               ref={navPillRef}
               className="nav-desktop"
               aria-label="Main navigation"
+              role="navigation"
               style={{ alignItems: "center" }}
             >
               <div

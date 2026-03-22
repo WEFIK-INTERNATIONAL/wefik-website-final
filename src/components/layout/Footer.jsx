@@ -11,7 +11,7 @@ const allLinks = [
       { name: "WEFIK", url: "/" },
       { name: "Kestopur Salt Lake kolkata 700114", url: "#" },
       { name: "info@wefik.in", url: "mailto:info@wefik.in" },
-      { name: "+91 9609653522", url: "tel:9609653522" },
+      { name: "+91 9609653522", url: "tel:+919609653522" },
     ],
   },
   {

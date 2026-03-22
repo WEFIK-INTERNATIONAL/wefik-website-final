@@ -2,18 +2,68 @@ import React from "react";
 import { getAllBlogs } from "@/sanity/lib/queries";
 import BlogHero from "@/components/blog/BlogHero";
 import BlogCard from "@/components/blog/BlogCard";
+import { SEO, canonical } from "@/lib/seo";
 
 export const metadata = {
-  title: "Blog | Wefik",
+  title: "Blog — Insights on Web Design, Development & Digital Marketing",
   description:
-    "Explore our latest thoughts on digital innovation, design trends, and the future of web experiences.",
+    "Read Wefik's latest articles on web design trends, web development, UI/UX, branding, Shopify, and digital marketing for businesses in India.",
+  keywords: [
+    "web design blog India",
+    "digital agency blog Kolkata",
+    "UI UX tips India",
+    "web development insights",
+    "Shopify tips India",
+    "digital marketing blog India",
+    "wefik blog",
+  ],
+  alternates: { canonical: canonical("/blogs") },
+  openGraph: {
+    type: "website",
+    url: canonical("/blogs"),
+    title: `Blog | ${SEO.siteName}`,
+    description:
+      "Thought leadership, design trends, and digital insights from Wefik — Kolkata's digital agency.",
+    images: [
+      { url: "/opengraph-image", width: 1200, height: 630, alt: "WEFIK Blog" },
+    ],
+  },
 };
 
 export default async function BlogListingPage() {
   const posts = await getAllBlogs();
 
+  const blogSchema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "@id": `${SEO.domain}/blogs/#webpage`,
+    url: canonical("/blogs"),
+    name: `Blog | ${SEO.siteName}`,
+    description:
+      "Web design, development, and digital marketing insights from Wefik.",
+    publisher: { "@id": `${SEO.domain}/#organization` },
+    isPartOf: { "@id": `${SEO.domain}/#website` },
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: SEO.domain },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Blog",
+          item: canonical("/blogs"),
+        },
+      ],
+    },
+  };
+
   return (
     <main className="bg-bg-primary min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }}
+      />
+
       <BlogHero />
 
       <section className="relative pb-24 md:pb-32">

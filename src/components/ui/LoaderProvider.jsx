@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 
 const LoaderContext = createContext(null);
 
@@ -15,6 +21,22 @@ export function useLoader() {
 export function LoaderProvider({ children }) {
   const [isPreloaderDone, setIsPreloaderDone] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const failsafeRef = useRef(null);
+  useEffect(() => {
+    failsafeRef.current = setTimeout(() => {
+      setIsPreloaderDone((prev) => {
+        if (!prev) {
+          console.warn(
+            "[LoaderProvider] Preloader did not complete — forcing done state."
+          );
+        }
+        return true;
+      });
+    }, 5000);
+
+    return () => clearTimeout(failsafeRef.current);
+  }, []);
 
   const canPlayEntrance = isPreloaderDone && !isTransitioning;
 

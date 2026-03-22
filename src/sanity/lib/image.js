@@ -1,7 +1,9 @@
-import { createImageUrlBuilder } from "@sanity/image-url";
-import { serverClient as client } from "./client";
+import createImageUrlBuilder from "@sanity/image-url";
 
-const builder = createImageUrlBuilder(client);
+const builder = createImageUrlBuilder({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+});
 
 export function urlFor(source) {
   return builder.image(source);

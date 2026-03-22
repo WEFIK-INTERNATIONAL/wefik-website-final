@@ -58,7 +58,6 @@ export default function HeroSection() {
   const [countStarted, setCountStarted] = useState(false);
   const clientCount = useCountUp(30, 1.5, countStarted);
 
-  // Safety net: force content visible after 3s so the page is never blank
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!containerRef.current) return;
@@ -67,7 +66,7 @@ export default function HeroSection() {
         y: 0,
         yPercent: 0,
       });
-    }, 3000);
+    }, 4000);
     return () => clearTimeout(timer);
   }, []);
 

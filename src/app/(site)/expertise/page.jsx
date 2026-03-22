@@ -13,8 +13,6 @@ import ContactCTA from "@/components/ui/ContactCTA";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ─── Content ───────────────────────────────────────────────────────────────────
-
 const SERVICES = [
   {
     num: "01",
@@ -141,7 +139,7 @@ function WebDesignSVG() {
         }
       `}</style>
       <g className="wd-browser">
-        {/* Browser chrome */}
+        {}
         <rect
           x="10"
           y="10"
@@ -182,7 +180,7 @@ function WebDesignSVG() {
           fill="currentColor"
           opacity="0.08"
         />
-        {/* Hero block */}
+        {}
         <rect
           className="wd-rect1"
           x="22"
@@ -192,7 +190,7 @@ function WebDesignSVG() {
           rx="5"
           fill="currentColor"
         />
-        {/* Content rows */}
+        {}
         <rect
           className="wd-rect2"
           x="22"
@@ -213,7 +211,7 @@ function WebDesignSVG() {
           fill="currentColor"
           opacity="0.1"
         />
-        {/* Card grid */}
+        {}
         <rect
           className="wd-rect3"
           x="22"
@@ -232,7 +230,7 @@ function WebDesignSVG() {
           rx="5"
           fill="currentColor"
         />
-        {/* Scan line */}
+        {}
         <line
           className="wd-scan-line"
           x1="22"
@@ -243,7 +241,7 @@ function WebDesignSVG() {
           strokeWidth="1.5"
           opacity="0.35"
         />
-        {/* Blinking cursor */}
+        {}
         <rect
           className="wd-cursor"
           x="22"
@@ -284,7 +282,7 @@ function DigitalProductSVG() {
           100% { opacity: 0.12; }
         }
       `}</style>
-      {/* Orbit rings */}
+      {}
       <circle
         className="dp-orbit1"
         cx="50"
@@ -305,7 +303,7 @@ function DigitalProductSVG() {
         strokeDasharray="3 5"
         opacity="0.1"
       />
-      {/* Orbital node dots */}
+      {}
       <circle
         className="dp-pulse"
         cx="50"
@@ -315,7 +313,7 @@ function DigitalProductSVG() {
         opacity="0.32"
       />
       <circle cx="190" cy="90" r="4" fill="currentColor" opacity="0.22" />
-      {/* Phone body */}
+      {}
       <rect
         x="80"
         y="5"
@@ -335,7 +333,7 @@ function DigitalProductSVG() {
         fill="currentColor"
         opacity="0.18"
       />
-      {/* Screen content */}
+      {}
       <rect
         className="dp-screen"
         x="84"
@@ -382,7 +380,7 @@ function DigitalProductSVG() {
         fill="currentColor"
         opacity="0.07"
       />
-      {/* Home indicator */}
+      {}
       <circle
         cx="120"
         cy="169"
@@ -391,7 +389,7 @@ function DigitalProductSVG() {
         strokeWidth="1.4"
         opacity="0.2"
       />
-      {/* Connectors */}
+      {}
       <line
         x1="84"
         y1="55"
@@ -489,7 +487,7 @@ function DevelopmentSVG() {
           opacity="0.1"
         />
       ))}
-      {/* Animated type-on line */}
+      {}
       <line
         className="dev-line"
         x1="22"
@@ -501,7 +499,7 @@ function DevelopmentSVG() {
         opacity="0.6"
         strokeLinecap="round"
       />
-      {/* Bracket pair */}
+      {}
       <path
         className="dev-bracket"
         d="M 170 50 L 158 97 L 170 144"
@@ -556,7 +554,7 @@ function UiUxSVG() {
           opacity={0.07 + i * 0.04}
         />
       ))}
-      {/* Central user */}
+      {}
       <circle cx="120" cy="176" r="12" fill="currentColor" opacity="0.18" />
       <path
         d="M 100 195 Q 120 183 140 195"
@@ -566,7 +564,7 @@ function UiUxSVG() {
         fill="none"
         strokeLinecap="round"
       />
-      {/* Animated nodes */}
+      {}
       {[
         [164, 142, 5, 0.32],
         [75, 128, 5, 0.32],
@@ -584,7 +582,7 @@ function UiUxSVG() {
           style={{ transformOrigin: `${cx}px ${cy}px` }}
         />
       ))}
-      {/* Connectors */}
+      {}
       <line
         x1="120"
         y1="176"
@@ -650,7 +648,7 @@ function BrandIdentitySVG() {
           50%     { transform: scale(1.5); }
         }
       `}</style>
-      {/* W fill (thick) */}
+      {}
       <path
         className="bi-letter bi-letter-fill"
         d="M 18 28 L 60 157 L 98 68 L 120 118 L 142 68 L 180 157 L 222 28"
@@ -660,7 +658,7 @@ function BrandIdentitySVG() {
         strokeLinejoin="round"
         opacity="0.1"
       />
-      {/* W outline */}
+      {}
       <path
         className="bi-letter"
         d="M 18 28 L 60 157 L 98 68 L 120 118 L 142 68 L 180 157 L 222 28"
@@ -670,7 +668,7 @@ function BrandIdentitySVG() {
         strokeLinejoin="round"
         opacity="0.28"
       />
-      {/* Guide lines */}
+      {}
       <line
         className="bi-guide"
         x1="8"
@@ -716,7 +714,7 @@ function BrandIdentitySVG() {
         opacity="0.14"
         style={{ transition: "opacity 0.4s" }}
       />
-      {/* Color swatches */}
+      {}
       <circle
         className="bi-dot"
         cx="12"
@@ -773,7 +771,7 @@ function CreativeContentSVG() {
           100% { r: 34; opacity: 0; }
         }
       `}</style>
-      {/* Strip body */}
+      {}
       <rect
         x="10"
         y="42"
@@ -784,7 +782,7 @@ function CreativeContentSVG() {
         strokeWidth="1.4"
         opacity="0.22"
       />
-      {/* Sprocket holes */}
+      {}
       {[52, 72, 92, 112].map((y, i) => (
         <rect
           key={`sl${i}`}
@@ -809,7 +807,7 @@ function CreativeContentSVG() {
           opacity="0.12"
         />
       ))}
-      {/* Film frames */}
+      {}
       <rect
         className="cc-frame"
         x="38"
@@ -837,7 +835,7 @@ function CreativeContentSVG() {
         rx="4"
         fill="currentColor"
       />
-      {/* Play button */}
+      {}
       <g className="cc-play">
         <circle
           className="cc-ring"
@@ -854,7 +852,7 @@ function CreativeContentSVG() {
           opacity="0.38"
         />
       </g>
-      {/* Starburst above */}
+      {}
       {[0, 45, 90, 135].map((deg, i) => (
         <line
           key={i}
@@ -867,7 +865,7 @@ function CreativeContentSVG() {
           opacity={i % 2 === 0 ? "0.22" : "0.13"}
         />
       ))}
-      {/* Bottom label strips */}
+      {}
       <rect
         x="38"
         y="148"
@@ -915,7 +913,7 @@ function StickyNav({ activeService, onNavClick, sectionRef }) {
         pin: innerRef.current,
         pinSpacing: false,
         invalidateOnRefresh: true,
-        // Disable on mobile/tablet (below 1024px)
+
         onUpdate: (self) => {
           if (window.innerWidth < 1024) {
             self.disable();
@@ -930,9 +928,9 @@ function StickyNav({ activeService, onNavClick, sectionRef }) {
 
   return (
     <aside className="hidden w-48 shrink-0 lg:block xl:w-52">
-      {/* This wrapper fills the full height of the content column */}
+      {}
       <div ref={wrapperRef} style={{ height: "100%", position: "relative" }}>
-        {/* This inner div is the "sticky" panel */}
+        {}
         <div ref={innerRef} style={{ willChange: "transform" }}>
           <p
             className="font-accent mb-5"
@@ -992,8 +990,6 @@ function StickyNav({ activeService, onNavClick, sectionRef }) {
   );
 }
 
-// ─── Main Page ─────────────────────────────────────────────────────────────────
-
 export default function ExpertisePage() {
   const { canPlayEntrance } = useLoader();
 
@@ -1002,11 +998,10 @@ export default function ExpertisePage() {
   const headlineRef = useRef(null);
   const sublineRef = useRef(null);
   const panelRefs = useRef([]);
-  const explorerSectionRef = useRef(null); // passed to StickyNav
+  const explorerSectionRef = useRef(null);
 
   const [activeService, setActiveService] = useState(0);
 
-  // Safety net
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!containerRef.current) return;
@@ -1018,7 +1013,6 @@ export default function ExpertisePage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // IntersectionObserver: update active nav item as user scrolls
   useEffect(() => {
     const observers = [];
     panelRefs.current.forEach((panel, i) => {
@@ -1042,7 +1036,6 @@ export default function ExpertisePage() {
     });
   }, []);
 
-  // GSAP entrance + scroll-triggered panel reveals
   useGSAP(
     () => {
       if (!canPlayEntrance) return;
@@ -1176,7 +1169,7 @@ export default function ExpertisePage() {
         }
         .marquee-inner:hover { animation-play-state: paused; }
 
-        /* Left-nav active indicator */
+        
         .snav-item { position: relative; transition: color 0.22s ease; }
         .snav-item::before {
           content: "";
@@ -1193,7 +1186,7 @@ export default function ExpertisePage() {
         .snav-item.active { color: var(--color-accent) !important; }
         .snav-item:hover:not(.active) { color: var(--color-text-primary) !important; }
 
-        /* Art card hover — lifts the card */
+        
         .art-card {
           transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
                       box-shadow 0.35s ease,
@@ -1206,9 +1199,9 @@ export default function ExpertisePage() {
         }
       `}</style>
 
-      {/* ═══ HERO ══════════════════════════════════════════════════════════════ */}
+      {}
       <section className="relative flex min-h-svh flex-col justify-between overflow-hidden px-6 pt-36 pb-0 md:px-12 md:pt-44">
-        {/* Dot-grid */}
+        {}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
@@ -1218,7 +1211,7 @@ export default function ExpertisePage() {
             opacity: 0.55,
           }}
         />
-        {/* Accent bloom */}
+        {}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
@@ -1304,20 +1297,20 @@ export default function ExpertisePage() {
         </div>
       </section>
 
-      {/* ═══ SERVICES EXPLORER ════════════════════════════════════════════════ */}
+      {}
       <section
         ref={explorerSectionRef}
         className="mx-auto max-w-7xl px-6 py-20 md:px-12 md:py-24"
       >
         <div className="flex items-start gap-0 lg:gap-20 xl:gap-28">
-          {/* ── Sticky left nav — JS-pinned via useLenis ── */}
+          {}
           <StickyNav
             activeService={activeService}
             onNavClick={scrollToPanel}
             sectionRef={explorerSectionRef}
           />
 
-          {/* ── Service panels ── */}
+          {}
           <div className="min-w-0 flex-1">
             {SERVICES.map((service, i) => {
               const SvgComponent = SVG_COMPONENTS[i];
@@ -1335,7 +1328,7 @@ export default function ExpertisePage() {
                     position: "relative",
                   }}
                 >
-                  {/* Ghost number */}
+                  {}
                   <div
                     className="panel-num pointer-events-none absolute inset-0 flex items-start justify-end overflow-hidden select-none"
                     aria-hidden="true"
@@ -1355,7 +1348,7 @@ export default function ExpertisePage() {
                     </span>
                   </div>
 
-                  {/* Top rule */}
+                  {}
                   <div
                     className="panel-line mb-8 h-px"
                     style={{
@@ -1366,9 +1359,9 @@ export default function ExpertisePage() {
                     }}
                   />
 
-                  {/* Two-column grid */}
+                  {}
                   <div className="relative grid grid-cols-1 items-start gap-12 md:grid-cols-2 md:gap-16">
-                    {/* Text column */}
+                    {}
                     <div className="flex flex-col gap-7">
                       <div>
                         <span
@@ -1459,7 +1452,7 @@ export default function ExpertisePage() {
                       </div>
                     </div>
 
-                    {/* Art column */}
+                    {}
                     <div className="panel-visual flex items-start justify-center pt-2 md:justify-end">
                       <div
                         className="art-card"
@@ -1478,7 +1471,7 @@ export default function ExpertisePage() {
                           padding: "24px",
                         }}
                       >
-                        {/* Inner bloom */}
+                        {}
                         <div
                           style={{
                             position: "absolute",
@@ -1489,7 +1482,7 @@ export default function ExpertisePage() {
                             pointerEvents: "none",
                           }}
                         />
-                        {/* Corner label */}
+                        {}
                         <span
                           className="font-accent"
                           style={{
@@ -1505,7 +1498,7 @@ export default function ExpertisePage() {
                         >
                           {service.num}
                         </span>
-                        {/* SVG */}
+                        {}
                         <div
                           style={{
                             position: "relative",
@@ -1526,7 +1519,7 @@ export default function ExpertisePage() {
         </div>
       </section>
 
-      {/* ═══ STATS ════════════════════════════════════════════════════════════ */}
+      {}
       <section className="mx-auto max-w-7xl px-6 py-20 md:px-12 md:py-28">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           {STATS.map(({ value, label }) => (
@@ -1573,7 +1566,7 @@ export default function ExpertisePage() {
         </div>
       </section>
 
-      {/* ═══ CTA ══════════════════════════════════════════════════════════════ */}
+      {}
       <ContactCTA />
     </main>
   );

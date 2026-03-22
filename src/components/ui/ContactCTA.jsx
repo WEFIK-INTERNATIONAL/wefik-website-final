@@ -12,7 +12,6 @@ export default function ContactCTA() {
 
   useGSAP(
     () => {
-      // Panel entry animation
       gsap.fromTo(
         ".cta-panel",
         { y: 70, opacity: 0, scale: 0.97 },
@@ -30,7 +29,6 @@ export default function ContactCTA() {
         }
       );
 
-      // Text reveal animation
       gsap.fromTo(
         ".cta-line .split-word",
         { yPercent: 110 },
@@ -47,7 +45,6 @@ export default function ContactCTA() {
         }
       );
 
-      // Actions entry animation
       gsap.fromTo(
         ".cta-actions > *",
         { y: 30, opacity: 0 },
@@ -72,7 +69,7 @@ export default function ContactCTA() {
     <section ref={ctaRef} className="px-5 pb-24 md:px-10 md:pb-32 lg:px-16">
       <div className="mx-auto max-w-7xl">
         <div className="cta-panel bg-bg-card border-border/40 relative overflow-hidden rounded-4xl border px-8 py-16 opacity-0 shadow-2xl md:rounded-[3rem] md:px-16 md:py-24">
-          {/* Background Decorative Text */}
+          {}
           <div
             className="font-big text-text-primary pointer-events-none absolute -right-4 -bottom-4 leading-none font-black uppercase opacity-[0.04] select-none"
             style={{

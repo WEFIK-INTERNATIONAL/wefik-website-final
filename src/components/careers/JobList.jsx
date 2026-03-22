@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import TransitionLink from "@/components/ui/TransitionLink";
-import gsap from "gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import { ArrowRight, MapPin, Briefcase, Clock } from "lucide-react";
 import { format } from "date-fns";

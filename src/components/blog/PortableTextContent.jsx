@@ -9,8 +9,9 @@ const components = {
         <div className="relative aspect-video w-full">
           <Image
             src={urlFor(value).url()}
-            alt={value.alt || "Blog image"}
+            alt={value.alt || value.caption || "Blog article image"}
             fill
+            sizes="(max-width: 768px) 100vw, 768px"
             className="object-cover"
           />
         </div>
@@ -32,6 +33,11 @@ const components = {
       <h3 className="font-display text-text-primary mt-16 mb-6 text-2xl font-bold tracking-tight md:text-3xl">
         {children}
       </h3>
+    ),
+    h4: ({ children }) => (
+      <h4 className="font-display text-text-primary mt-12 mb-4 text-xl font-bold tracking-tight md:text-2xl">
+        {children}
+      </h4>
     ),
     normal: ({ children }) => (
       <p className="text-text-muted mt-8 text-lg leading-relaxed md:text-xl">
@@ -58,13 +64,12 @@ const components = {
   },
   marks: {
     link: ({ children, value }) => {
-      const rel = !value.href.startsWith("/")
-        ? "noreferrer noopener"
-        : undefined;
+      const isExternal = value.href && !value.href.startsWith("/");
       return (
         <a
           href={value.href}
-          rel={rel}
+          rel={isExternal ? "noopener noreferrer" : undefined}
+          target={isExternal ? "_blank" : undefined}
           className="text-accent decoration-accent/30 hover:decoration-accent underline underline-offset-4 transition-colors"
         >
           {children}
@@ -73,6 +78,9 @@ const components = {
     },
     strong: ({ children }) => (
       <strong className="text-text-primary font-bold">{children}</strong>
+    ),
+    em: ({ children }) => (
+      <em className="text-text-muted italic">{children}</em>
     ),
     code: ({ children }) => (
       <code className="text-accent rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-sm">

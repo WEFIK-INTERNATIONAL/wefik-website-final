@@ -27,6 +27,7 @@ export default function BlogCard({ post }) {
                   blurDataURL: post.coverImage.asset.metadata.lqip,
                 }
               : {})}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
           />
         )}
@@ -44,7 +45,9 @@ export default function BlogCard({ post }) {
       <div className="flex flex-1 flex-col p-6 md:p-8">
         <div className="mb-4 flex items-center justify-between">
           <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
-            {format(publishedDate, "MMMM dd, yyyy")}
+            <time dateTime={post.publishedAt}>
+              {format(publishedDate, "MMMM dd, yyyy")}
+            </time>
           </span>
           {post.author && (
             <span className="text-text-muted text-[10px] font-medium italic">

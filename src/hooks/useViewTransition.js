@@ -17,7 +17,8 @@ function getOrCreateOverlay() {
     position: "fixed",
     inset: "0",
     zIndex: "9999",
-    pointerEvents: "all",
+
+    pointerEvents: "none",
     overflow: "hidden",
   });
 
@@ -58,14 +59,19 @@ export const useViewTransition = () => {
   const router = useRouter();
   const { setIsTransitioning } = useLoader();
   const failsafeTimerRef = useRef(null);
+
   const cleanup = useCallback(
     (overlay) => {
       clearTimeout(failsafeTimerRef.current);
       _isTransitioningGlobal = false;
       setIsTransitioning(false);
-      try {
-        overlay?.parentNode?.removeChild(overlay);
-      } catch (_) {}
+
+      if (overlay) {
+        overlay.style.pointerEvents = "none";
+        try {
+          overlay.parentNode?.removeChild(overlay);
+        } catch (_) {}
+      }
     },
     [setIsTransitioning]
   );
@@ -91,10 +97,12 @@ export const useViewTransition = () => {
       }, 2500);
 
       gsap
-        .timeline({
-          onComplete: () => cleanup(overlay),
-        })
+        .timeline({ onComplete: () => cleanup(overlay) })
         .set(overlayPath, { attr: { d: PATHS.step1.unfilled } })
+
+        .call(() => {
+          overlay.style.pointerEvents = "all";
+        })
         .to(overlayPath, {
           duration: 0.55,
           ease: "power4.in",
@@ -111,14 +119,16 @@ export const useViewTransition = () => {
           },
         })
         .to({}, { duration: 0.6 })
+
         .set(overlayPath, { attr: { d: PATHS.step2.filled } })
+        .call(() => {
+          overlay.style.pointerEvents = "none";
+          setIsTransitioning(false);
+        })
         .to(overlayPath, {
           duration: 0.15,
           ease: "sine.in",
           attr: { d: PATHS.step2.inBetween },
-          onStart: () => {
-            setIsTransitioning(false);
-          },
         })
         .to(overlayPath, {
           duration: 0.95,
