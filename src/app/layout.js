@@ -71,8 +71,8 @@ export const metadata = {
   },
 
   verification: {
-    google: "YOUR_GOOGLE_SEARCH_CONSOLE_CODE",
-    bing: "YOUR_BING_WEBMASTER_CODE",
+    google: "IQ0dlrpIwsYC2oS9vMj9HBvxvlGnL1YCRT0PiHCQ0RA",
+    bing: "IQ0dlrpIwsYC2oS9vMj9HBvxvlGnL1YCRT0PiHCQ0RA",
   },
 
   icons: {
