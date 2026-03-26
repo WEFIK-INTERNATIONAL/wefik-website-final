@@ -6,7 +6,9 @@ import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import Tag from "@/components/ui/Tag";
 import { urlFor } from "@/sanity/lib/image";
-import { useRouter } from "next/navigation";
+import { useViewTransition } from "@/hooks/useViewTransition";
+import TransitionLink from "@/components/ui/TransitionLink";
+import { useTheme } from "next-themes";
 
 function ProjectCard({ project, index, onProjectClick }) {
   const cardRef = useRef(null);
@@ -84,7 +86,12 @@ function ProjectCard({ project, index, onProjectClick }) {
 export default function SelectedWorks({ projects = [] }) {
   const containerRef = useRef(null);
   const carouselRef = useRef(null);
-  const router = useRouter();
+  const { navigateWithTransition } = useViewTransition();
+
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  React.useEffect(() => setMounted(true), []);
+  const isDark = !mounted ? true : resolvedTheme === "dark";
 
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -180,7 +187,7 @@ export default function SelectedWorks({ projects = [] }) {
       return;
     }
     if (slug) {
-      router.push(`/works/${slug}`);
+      navigateWithTransition(`/works/${slug}`);
     }
   };
 
@@ -287,8 +294,8 @@ export default function SelectedWorks({ projects = [] }) {
 
         {projects.length > 0 && (
           <div className="mt-20 flex justify-center">
-            <button
-              onClick={() => router.push("/works")}
+            <TransitionLink
+              href="/works"
               className="group text-text-muted hover:text-accent flex items-center gap-4 text-xs font-bold tracking-[0.2em] uppercase transition-colors"
             >
               <span>View All Projects</span>
@@ -307,7 +314,7 @@ export default function SelectedWorks({ projects = [] }) {
                   <polyline points="12 5 19 12 12 19"></polyline>
                 </svg>
               </div>
-            </button>
+            </TransitionLink>
           </div>
         )}
       </div>
