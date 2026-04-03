@@ -161,17 +161,31 @@ const organizationSchema = {
   },
 };
 
+import GlobalPreloader from "@/components/ui/GlobalPreloader";
+
 export const revalidate = 60;
 
 export default function RootLayout({ children }) {
   return (
     <html lang={SEO.language} suppressHydrationWarning>
       <head>
-        {}
+        {/* Blocking script to prevent preloader flash on return visits or non-home pages */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  if (window.location.pathname !== '/' || sessionStorage.getItem('wefik-loaded')) {
+                    document.documentElement.classList.add('skip-preloader');
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
 
-        {}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -188,7 +202,10 @@ export default function RootLayout({ children }) {
           enableSystem
           disableTransitionOnChange
         >
-          <LoaderProvider>{children}</LoaderProvider>
+          <LoaderProvider>
+            <GlobalPreloader />
+            {children}
+          </LoaderProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -103,6 +103,10 @@ body {
   height: 100%;
 }
 
+html.skip-preloader #preloader-container {
+  display: none !important;
+}
+
 h1,
 h2,
 h3,

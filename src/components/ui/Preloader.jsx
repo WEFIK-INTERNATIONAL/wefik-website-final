@@ -136,7 +136,17 @@ const Preloader = ({ onComplete }) => {
   return (
     <div
       ref={containerRef}
+      id="preloader-container"
       className="bg-bg-primary text-text-primary fixed inset-0 z-[10000] flex flex-col justify-between p-6 md:p-12"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 10000,
+        backgroundColor: "var(--color-bg-primary, #f5f8ee)",
+      }}
     >
       <div className="h-20 w-full" />
 
@@ -149,7 +159,7 @@ const Preloader = ({ onComplete }) => {
           className="font-display flex overflow-hidden text-[25vw] leading-none font-black tracking-tighter sm:text-[20vw] md:text-[22vw]"
         >
           {brandName.map((char, index) => (
-            <span key={index} className="inline-block pb-4">
+            <span key={index} className="inline-block pb-4 opacity-0">
               {char}
             </span>
           ))}

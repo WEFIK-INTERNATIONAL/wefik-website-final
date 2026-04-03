@@ -1,69 +1,22 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import Image from "next/image";
 import TransitionLink from "../ui/TransitionLink";
 import { urlFor } from "@/sanity/lib/image";
 import { ArrowRight } from "lucide-react";
-import gsap from "gsap";
 
 export default function WorkCard({ project }) {
-  const imageRef = useRef(null);
-  const titleRef = useRef(null);
-  const infoRef = useRef(null);
-  const arrowRef = useRef(null);
-
   if (!project.slug?.current) return null;
-
-  const handleMouseEnter = () => {
-    gsap.to(imageRef.current, {
-      scale: 1.05,
-      duration: 0.8,
-      ease: "power2.out",
-    });
-    gsap.to(titleRef.current, {
-      x: 10,
-      duration: 0.4,
-      ease: "power2.out",
-    });
-    gsap.to(arrowRef.current, {
-      x: 5,
-      opacity: 1,
-      duration: 0.4,
-      ease: "power2.out",
-    });
-  };
-
-  const handleMouseLeave = () => {
-    gsap.to(imageRef.current, {
-      scale: 1,
-      duration: 0.8,
-      ease: "power2.out",
-    });
-    gsap.to(titleRef.current, {
-      x: 0,
-      duration: 0.4,
-      ease: "power2.out",
-    });
-    gsap.to(arrowRef.current, {
-      x: 0,
-      opacity: 0,
-      duration: 0.3,
-      ease: "power2.in",
-    });
-  };
 
   return (
     <TransitionLink
       href={`/works/${project.slug.current}`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className="group flex flex-col gap-6"
+      className="group border-border bg-bg-secondary flex h-full flex-col overflow-hidden rounded-4xl border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl md:rounded-4xl"
     >
-      <div className="relative aspect-4/5 overflow-hidden rounded-sm bg-neutral-900 md:aspect-3/2">
+      <div className="border-border relative aspect-4/3 w-full overflow-hidden border-b md:aspect-[1.1]">
         {project.coverImage?.asset && (
           <Image
-            ref={imageRef}
             src={urlFor(project.coverImage).width(1200).height(800).url()}
             alt={project.coverImage.alt || project.title}
             fill
@@ -74,45 +27,46 @@ export default function WorkCard({ project }) {
                 }
               : {})}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
-            className="object-cover transition-opacity duration-700 will-change-transform group-hover:opacity-80"
+            className="object-cover transition-transform duration-700 will-change-transform group-hover:scale-[1.03]"
           />
         )}
 
-        <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        {/* Top-left category overlay exactly matching image */}
+        <div className="absolute top-4 left-4 z-10 flex md:top-6 md:left-6">
+          <span className="bg-accent/40 rounded-full border border-white/20 px-4 py-1.5 text-[10px] font-black tracking-widest text-white uppercase shadow-xl backdrop-blur-md sm:text-[11px]">
+            {project.category?.title || "GENERAL"}
+          </span>
+        </div>
       </div>
 
-      <div ref={infoRef} className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-accent mb-1 text-[10px] font-black tracking-[0.25em] uppercase">
-              {project.category?.title || "Project"}
-            </span>
-            <div className="flex items-center gap-4">
-              <h3
-                ref={titleRef}
-                className="font-display text-text-primary text-4xl leading-none font-black tracking-tighter md:text-5xl lg:text-6xl"
-              >
-                {project.title}
-              </h3>
-              <div
-                ref={arrowRef}
-                className="text-accent opacity-0 transition-opacity"
-              >
-                <ArrowRight size={32} strokeWidth={2.5} />
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="bg-bg-secondary flex flex-1 flex-col p-6 md:p-8">
+        {/* Massive uppercase title matching the reference without wrapping */}
+        <h3 className="font-big text-text-primary mb-4 text-6xl leading-[0.8] font-black tracking-[-0.02em] break-keep uppercase sm:text-7xl lg:text-[5.5rem]">
+          {project.title}
+        </h3>
 
-        <div className="mt-2 flex gap-3">
+        {/* Tags matching the pill style beneath title */}
+        <div className="mb-8 flex flex-wrap gap-2 md:gap-3">
           {project.tags?.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="text-text-muted border-b border-white/5 pb-1 text-[10px] font-bold tracking-widest uppercase"
+              className="bg-bg-primary text-text-primary border-border/50 rounded-full border px-4 py-1.5 text-[9px] font-black tracking-widest whitespace-nowrap uppercase shadow-sm sm:text-[10px]"
             >
               {tag}
             </span>
           ))}
+        </div>
+
+        {/* Clear separating footer exactly matching image */}
+        <div className="border-border mt-auto flex items-center justify-between border-t pt-5 md:pt-6">
+          <span className="font-accent text-text-primary text-[10px] font-bold tracking-[0.2em] uppercase md:text-[11px]">
+            View Case Study
+          </span>
+          <ArrowRight
+            size={20}
+            strokeWidth={2.5}
+            className="text-text-primary transition-transform group-hover:translate-x-1"
+          />
         </div>
       </div>
     </TransitionLink>

@@ -15,7 +15,7 @@ export default function BlogCard({ post }) {
       href={`/blogs/${post.slug.current}`}
       className="group bg-bg-card border-border/10 hover:border-accent/30 relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-2"
     >
-      <div className="relative aspect-16/9 overflow-hidden bg-neutral-900">
+      <div className="relative aspect-video overflow-hidden bg-neutral-900">
         {post.coverImage?.asset && (
           <Image
             src={urlFor(post.coverImage).url()}
@@ -56,7 +56,7 @@ export default function BlogCard({ post }) {
           )}
         </div>
 
-        <h3 className="font-display group-hover:text-accent text-text-primary mb-4 text-2xl font-bold tracking-tight transition-colors md:text-3xl">
+        <h3 className="font-display group-hover:text-accent text-text-primary mb-4 line-clamp-2 text-2xl font-bold tracking-tight transition-colors md:text-3xl">
           {post.title}
         </h3>
 
