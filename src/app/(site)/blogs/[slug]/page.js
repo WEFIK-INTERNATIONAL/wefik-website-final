@@ -7,6 +7,7 @@ import { getBlogBySlug, getAllBlogs } from "@/sanity/lib/queries";
 import { urlFor } from "@/sanity/lib/image";
 import PortableTextContent from "@/components/blog/PortableTextContent";
 import Tag from "@/components/ui/Tag";
+import ShareButton from "@/components/blog/ShareButton";
 import { SEO, canonical } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
@@ -178,6 +179,13 @@ export default async function BlogPostPage({ params }) {
             >
               {format(publishedDate, "MMMM dd, yyyy")}
             </time>
+            <div className="hidden h-1 w-1 rounded-full bg-white/20 md:block" />
+            <ShareButton
+              url={url}
+              title={post.title}
+              text={post.excerpt ?? ""}
+              variant="pill"
+            />
           </div>
         </div>
       </header>
