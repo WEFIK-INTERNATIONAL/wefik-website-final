@@ -46,7 +46,7 @@ export default function ImprintPage() {
           <h2 className="font-big text-text-primary text-3xl font-black tracking-tight uppercase">
             Represented By
           </h2>
-          <p>Arjun Mehta, Founder & Creative Director</p>
+          <p>Wefik International Ltd.</p>
         </section>
 
         <section className="space-y-6">
