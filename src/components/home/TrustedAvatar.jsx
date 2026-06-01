@@ -3,10 +3,10 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 const AVATARS = [
-  { src: "/images/avatar/avatar-1.png", alt: "Client 1" },
-  { src: "/images/avatar/avatar-2.png", alt: "Client 2" },
-  { src: "/images/avatar/avatar-3.png", alt: "Client 3" },
-  { src: "/images/avatar/avatar-4.png", alt: "Client 4" },
+  { src: "/images/avatar/SouvikDev.jpg", alt: "Client 1" },
+  { src: "/images/avatar/jayabalan.jpg", alt: "Client 2" },
+  { src: "/images/avatar/sourish.png", alt: "Client 3" },
+  { src: "/images/avatar/Supratik.jpg", alt: "Client 4" },
 ];
 
 const BORDERS = [

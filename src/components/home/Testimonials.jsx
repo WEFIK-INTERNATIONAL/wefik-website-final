@@ -9,43 +9,43 @@ import Tag from "../ui/Tag";
 
 const testimonials = [
   {
-    name: "Sarah Johnson",
-    role: "CEO of LuxStyle",
+    name: "SOUVIK DEB",
+    role: "Founder, Niva Homeo",
     content:
-      "Wefik transformed our brand identity into something truly remarkable. Their attention to detail and strategic approach is unmatched.",
-    avatar: "/testimonials/avatar-1.png",
+      "Wefik gave Niva Homeo a website that actually feels like us — clean, warm, trustworthy. Orders picked up within weeks. Genuinely happy with the outcome!",
+    avatar: "/testimonials/SouvikDev.jpg",
     rating: 5,
   },
   {
-    name: "Michael Chen",
-    role: "Founder of TechFlow",
+    name: "R. JAYABALAN",
+    role: "R. Jayabalan, Founder",
     content:
-      "The process was seamless and the results exceeded our expectations. Our new website has already seen a 40% increase in conversions.",
-    avatar: "/testimonials/avatar-2.png",
+      "Professional team. They understood the gravity a law firm's website must carry. The result is dignified, precise, and client-ready. Highly recommend Wefik.",
+    avatar: "/testimonials/jayabalan.jpg",
     rating: 5,
   },
   {
-    name: "Elena Rodriguez",
-    role: "Marketing Director at Bloom",
+    name: "Sourish Mitra",
+    role: "ADSOC 6.0",
     content:
-      "Strategic, creative, and always unique. Wefik is more than a design agency; they are a growth partner.",
-    avatar: "/testimonials/avatar-3.png",
+      "Honestly wasn't sure what to expect, but Wefik delivered way beyond our brief. Site looks sharp, loads fast, and our members love it. Great work overall!",
+    avatar: "/testimonials/sourish.png",
     rating: 5,
   },
   {
-    name: "David Smith",
-    role: "CTO of InnovateX",
+    name: "ALUN RAFIQUE",
+    role: "CEO MARKETDOJO",
     content:
-      "They don't just design; they craft experiences that resonate. Highly recommended for any brand looking to level up.",
-    avatar: "/testimonials/avatar-4.png",
+      "Solid execution, responsive team, no drama. Wefik handled the complexity of our platform well. Would confidently work with them again on future builds.",
+    avatar: "/testimonials/alan.jpg",
     rating: 5,
   },
   {
-    name: "James Wilson",
-    role: "Product Manager at CloudScale",
+    name: "Supratik Sahis",
+    role: "Photographer",
     content:
-      "Professionalism and creativity at its finest. The team at Wefik handled our SaaS product design with incredible expertise.",
-    avatar: "/testimonials/avatar-5.png",
+      "Building StoryFinder needed someone who got the vision. Wefik did. Clean UI, smooth UX — it feels alive. Proud of what we shipped together. Respect!",
+    avatar: "/testimonials/Supratik.jpg",
     rating: 5,
   },
 ];
