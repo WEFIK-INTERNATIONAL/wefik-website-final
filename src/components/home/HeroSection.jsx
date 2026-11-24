@@ -11,10 +11,10 @@ import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import { useLoader } from "@/components/ui/LoaderProvider";
 
-// Hero centrepiece: "blob" = 3D liquid blob, "sphere" = original SVG sphere.
+// Hero centrepiece: "glass" = 3D glass bubble, "sphere" = original SVG sphere.
 // To go back, set this to "sphere".
-const HERO_VISUAL = "blob";
-const LiquidBlob = dynamic(() => import("@/components/home/LiquidBlob"), {
+const HERO_VISUAL = "glass";
+const GlassBlob = dynamic(() => import("@/components/home/GlassBlob"), {
   ssr: false,
 });
 const SphereAnimation = dynamic(
@@ -160,7 +160,7 @@ export default function HeroSection() {
           opacity: 0.9,
         }}
       >
-        {HERO_VISUAL === "blob" ? <LiquidBlob /> : <SphereAnimation />}
+        {HERO_VISUAL === "sphere" ? <SphereAnimation /> : <GlassBlob />}
       </div>
       <div
         className="relative z-10 flex w-full items-center justify-center"

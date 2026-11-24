@@ -5,6 +5,12 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useTheme } from "next-themes";
 
+/*
+ * Hero 3D centrepiece: an iridescent glass bubble. The surface wobbles with
+ * simplex noise, leans toward the cursor, and shows a thin-film rainbow at the
+ * edges. It gets more restless, smaller and fainter as the hero scrolls away.
+ */
+
 // Ashima 3D simplex noise (MIT)
 const NOISE = /* glsl */ `
 vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
@@ -52,9 +58,10 @@ float snoise(vec3 v){
 }
 `;
 
-const vertexShader = /* glsl */ `
+const displacedVertex = /* glsl */ `
 uniform float uTime;
 uniform float uAmp;
+uniform float uFreq;
 uniform vec3 uMouse;
 varying vec3 vNormalV;
 varying vec3 vPosV;
@@ -62,8 +69,8 @@ varying float vNoise;
 ${NOISE}
 
 float displace(vec3 p){
-  float n = snoise(p * 0.9 + vec3(uTime * 0.16, uTime * 0.1, 0.0));
-  n += 0.15 * snoise(p * 2.2 - vec3(0.0, uTime * 0.22, uTime * 0.1));
+  float n = snoise(p * uFreq + vec3(uTime * 0.16, uTime * 0.1, 0.0));
+  n += 0.15 * snoise(p * uFreq * 2.4 - vec3(0.0, uTime * 0.22, uTime * 0.1));
   // bulge toward the cursor
   float pull = smoothstep(0.35, 1.0, dot(normalize(p), normalize(uMouse)));
   return n * uAmp + pull * 0.16 * length(uMouse.xy);
@@ -88,11 +95,11 @@ void main(){
 }
 `;
 
-const fragmentShader = /* glsl */ `
+const glassFragment = /* glsl */ `
+uniform float uTime;
 uniform vec3 uCore;
 uniform vec3 uRim;
-uniform vec3 uGlow;
-uniform float uCoreAlpha;
+uniform float uFilm;
 uniform float uFade;
 varying vec3 vNormalV;
 varying vec3 vPosV;
@@ -101,41 +108,49 @@ varying float vNoise;
 void main(){
   vec3 n = normalize(vNormalV);
   vec3 v = normalize(-vPosV);
-  float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.2);
+  float ndv = clamp(dot(n, v), 0.0, 1.0);
+  float fres = pow(1.0 - ndv, 1.6);
 
-  // soft bands that slide across the surface like oil on water
-  float bands = 0.5 + 0.5 * sin(vNoise * 8.0 + fres * 4.0);
-  vec3 col = mix(uCore, uGlow, bands * 0.14 + fres * 0.2);
-  col = mix(col, uRim, smoothstep(0.25, 1.0, fres));
+  // thin-film interference: hue drifts with view angle, surface noise and time
+  float phase = fres * 1.3 + vNoise * 2.2 + uTime * 0.04;
+  vec3 film = 0.5 + 0.5 * cos(6.28318 * (phase + vec3(0.0, 0.33, 0.67)));
+  film = mix(film, uRim, 0.3);
 
-  vec3 l = normalize(vec3(-0.5, 0.8, 0.7));
-  float spec = pow(max(dot(n, normalize(l + v)), 0.0), 70.0);
-  col += spec * 0.55;
+  vec3 col = mix(uCore, film, smoothstep(0.0, 0.85, fres) * uFilm);
 
-  float alpha = mix(uCoreAlpha, 1.0, smoothstep(0.1, 0.9, fres)) + spec * 0.4;
+  // two highlights: a sharp key and a broad soft fill
+  vec3 l1 = normalize(vec3(-0.6, 0.7, 0.6));
+  vec3 l2 = normalize(vec3(0.7, -0.4, 0.5));
+  float s1 = pow(max(dot(n, normalize(l1 + v)), 0.0), 120.0);
+  float s2 = pow(max(dot(n, normalize(l2 + v)), 0.0), 18.0) * 0.18;
+  col += (s1 + s2);
+
+  float alpha = mix(0.08, 0.9, smoothstep(0.05, 1.0, fres)) + s1 * 0.8 + s2;
   gl_FragColor = vec4(col, clamp(alpha, 0.0, 1.0) * uFade);
 }
 `;
 
 const PALETTE = {
-  dark: { core: "#0b1106", rim: "#bbf451", glow: "#4a6b14", coreAlpha: 0.55 },
-  light: { core: "#f4f7ea", rim: "#4a6b14", glow: "#a3c255", coreAlpha: 0.45 },
+  dark: { core: "#0d1208", rim: "#bbf451", film: 1 },
+  light: { core: "#ffffff", rim: "#4a6b14", film: 0.75 },
 };
 
-function Blob({ isDark, animate, detail }) {
-  const mesh = useRef(null);
-  const mouse = useRef(new THREE.Vector3(0, 0, 1));
-  const target = useRef({ x: 0, y: 0 });
+const AMP = 0.14;
 
+function Bubble({ isDark, animate, detail }) {
+  const mesh = useRef(null);
   const mat = useRef(null);
+  const target = useRef({ x: 0, y: 0 });
+  const mouse = useRef({ x: 0, y: 0 });
+
   const [uniforms] = useState(() => ({
     uTime: { value: 0 },
-    uAmp: { value: 0.2 },
+    uAmp: { value: AMP },
+    uFreq: { value: 0.75 },
     uMouse: { value: new THREE.Vector3(0, 0, 1) },
     uCore: { value: new THREE.Color() },
     uRim: { value: new THREE.Color() },
-    uGlow: { value: new THREE.Color() },
-    uCoreAlpha: { value: 0.5 },
+    uFilm: { value: 1 },
     uFade: { value: 1 },
   }));
 
@@ -145,8 +160,7 @@ function Blob({ isDark, animate, detail }) {
     const p = isDark ? PALETTE.dark : PALETTE.light;
     u.uCore.value.set(p.core);
     u.uRim.value.set(p.rim);
-    u.uGlow.value.set(p.glow);
-    u.uCoreAlpha.value = p.coreAlpha;
+    u.uFilm.value = p.film;
   }, [isDark]);
 
   useEffect(() => {
@@ -159,31 +173,28 @@ function Blob({ isDark, animate, detail }) {
     return () => window.removeEventListener("pointermove", onMove);
   }, [animate]);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
     if (!mat.current) return;
     const u = mat.current.uniforms;
     u.uTime.value += dt;
 
-    // ease the cursor so the blob follows lazily
-    mouse.current.x += (target.current.x - mouse.current.x) * 0.05;
-    mouse.current.y += (target.current.y - mouse.current.y) * 0.05;
-    u.uMouse.value.set(mouse.current.x, mouse.current.y, 0.9);
+    // ease the cursor so the bubble follows lazily
+    const m = mouse.current;
+    m.x += (target.current.x - m.x) * 0.05;
+    m.y += (target.current.y - m.y) * 0.05;
+    u.uMouse.value.set(m.x, m.y, 0.9);
 
-    // scroll: blob gets more restless, shrinks and fades as the hero leaves
-    const vh = window.innerHeight || 1;
-    const s = Math.min(window.scrollY / vh, 1);
-    u.uAmp.value = 0.2 + s * 0.15;
+    // scroll: more restless, smaller and fainter as the hero leaves
+    const s = Math.min(window.scrollY / (window.innerHeight || 1), 1);
+    u.uAmp.value = AMP + s * 0.15;
     u.uFade.value = 1 - s * 0.85;
 
     if (mesh.current) {
       mesh.current.rotation.y += dt * 0.12;
-      mesh.current.rotation.x +=
-        (mouse.current.y * 0.35 - mesh.current.rotation.x) * 0.05;
-      mesh.current.rotation.z +=
-        (-mouse.current.x * 0.2 - mesh.current.rotation.z) * 0.05;
-      const scale = 1 - s * 0.2;
-      mesh.current.scale.setScalar(scale);
+      mesh.current.rotation.x += (m.y * 0.35 - mesh.current.rotation.x) * 0.05;
+      mesh.current.rotation.z += (-m.x * 0.2 - mesh.current.rotation.z) * 0.05;
+      mesh.current.scale.setScalar(1 - s * 0.2);
     }
   });
 
@@ -192,8 +203,8 @@ function Blob({ isDark, animate, detail }) {
       <icosahedronGeometry args={[1, detail]} />
       <shaderMaterial
         ref={mat}
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
+        vertexShader={displacedVertex}
+        fragmentShader={glassFragment}
         uniforms={uniforms}
         transparent
         depthWrite={false}
@@ -202,7 +213,7 @@ function Blob({ isDark, animate, detail }) {
   );
 }
 
-export default function LiquidBlob() {
+export default function GlassBlob() {
   const { resolvedTheme } = useTheme();
   const wrapRef = useRef(null);
   const [ready, setReady] = useState(false);
@@ -243,7 +254,6 @@ export default function LiquidBlob() {
 
   const isDark = resolvedTheme !== "light";
   const animate = !reduceMotion;
-  const light = isMobile || lowEnd;
 
   if (!webgl) return null;
 
@@ -266,10 +276,10 @@ export default function LiquidBlob() {
         onCreated={() => setReady(true)}
         style={{ pointerEvents: "none" }}
       >
-        <Blob
+        <Bubble
           isDark={isDark}
           animate={animate}
-          detail={lowEnd ? 20 : light ? 32 : 64}
+          detail={lowEnd ? 20 : isMobile ? 32 : 64}
         />
       </Canvas>
     </div>
