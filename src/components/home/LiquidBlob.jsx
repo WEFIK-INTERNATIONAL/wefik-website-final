@@ -5,6 +5,24 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useTheme } from "next-themes";
 
+/*
+ * Hero 3D centrepiece. One canvas, several looks ("variants"):
+ *   liquid    – dark glassy blob with a lime rim (the original)
+ *   glass     – iridescent soap-bubble blob with a shifting rainbow film
+ *   particles – a breathing sphere of glowing dots that parts around the cursor
+ *   wire      – displaced wireframe shell around a small liquid core
+ *   metaballs – raymarched blobs that drift, merge and split; one follows the cursor
+ *
+ * In development you can preview any of them with ?hero=<variant> in the URL.
+ */
+export const BLOB_VARIANTS = [
+  "liquid",
+  "glass",
+  "particles",
+  "wire",
+  "metaballs",
+];
+
 // Ashima 3D simplex noise (MIT)
 const NOISE = /* glsl */ `
 vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
@@ -52,9 +70,12 @@ float snoise(vec3 v){
 }
 `;
 
-const vertexShader = /* glsl */ `
+/* ---------- shaders: displaced sphere (liquid / glass / wire) ---------- */
+
+const displacedVertex = /* glsl */ `
 uniform float uTime;
 uniform float uAmp;
+uniform float uFreq;
 uniform vec3 uMouse;
 varying vec3 vNormalV;
 varying vec3 vPosV;
@@ -62,8 +83,8 @@ varying float vNoise;
 ${NOISE}
 
 float displace(vec3 p){
-  float n = snoise(p * 0.9 + vec3(uTime * 0.16, uTime * 0.1, 0.0));
-  n += 0.15 * snoise(p * 2.2 - vec3(0.0, uTime * 0.22, uTime * 0.1));
+  float n = snoise(p * uFreq + vec3(uTime * 0.16, uTime * 0.1, 0.0));
+  n += 0.15 * snoise(p * uFreq * 2.4 - vec3(0.0, uTime * 0.22, uTime * 0.1));
   // bulge toward the cursor
   float pull = smoothstep(0.35, 1.0, dot(normalize(p), normalize(uMouse)));
   return n * uAmp + pull * 0.16 * length(uMouse.xy);
@@ -88,7 +109,7 @@ void main(){
 }
 `;
 
-const fragmentShader = /* glsl */ `
+const liquidFragment = /* glsl */ `
 uniform vec3 uCore;
 uniform vec3 uRim;
 uniform vec3 uGlow;
@@ -117,37 +138,223 @@ void main(){
 }
 `;
 
+const glassFragment = /* glsl */ `
+uniform float uTime;
+uniform vec3 uCore;
+uniform vec3 uRim;
+uniform float uFilm;
+uniform float uFade;
+varying vec3 vNormalV;
+varying vec3 vPosV;
+varying float vNoise;
+
+void main(){
+  vec3 n = normalize(vNormalV);
+  vec3 v = normalize(-vPosV);
+  float ndv = clamp(dot(n, v), 0.0, 1.0);
+  float fres = pow(1.0 - ndv, 1.6);
+
+  // thin-film interference: hue drifts with view angle, surface noise and time
+  float phase = fres * 1.3 + vNoise * 2.2 + uTime * 0.04;
+  vec3 film = 0.5 + 0.5 * cos(6.28318 * (phase + vec3(0.0, 0.33, 0.67)));
+  film = mix(film, uRim, 0.3);
+
+  vec3 col = mix(uCore, film, smoothstep(0.0, 0.85, fres) * uFilm);
+
+  // two highlights: a sharp key and a broad soft fill
+  vec3 l1 = normalize(vec3(-0.6, 0.7, 0.6));
+  vec3 l2 = normalize(vec3(0.7, -0.4, 0.5));
+  float s1 = pow(max(dot(n, normalize(l1 + v)), 0.0), 120.0);
+  float s2 = pow(max(dot(n, normalize(l2 + v)), 0.0), 18.0) * 0.18;
+  col += (s1 + s2);
+
+  float alpha = mix(0.08, 0.9, smoothstep(0.05, 1.0, fres)) + s1 * 0.8 + s2;
+  gl_FragColor = vec4(col, clamp(alpha, 0.0, 1.0) * uFade);
+}
+`;
+
+const wireFragment = /* glsl */ `
+uniform vec3 uRim;
+uniform float uFade;
+varying vec3 vNormalV;
+varying vec3 vPosV;
+varying float vNoise;
+
+void main(){
+  vec3 n = normalize(vNormalV);
+  vec3 v = normalize(-vPosV);
+  float fres = pow(1.0 - abs(dot(n, v)), 1.4);
+  float alpha = 0.04 + 0.3 * fres + 0.22 * smoothstep(0.05, 0.25, vNoise);
+  gl_FragColor = vec4(uRim, clamp(alpha, 0.0, 1.0) * uFade);
+}
+`;
+
+/* ---------- shaders: particles ---------- */
+
+const particleVertex = /* glsl */ `
+attribute float aRand;
+uniform float uTime;
+uniform float uAmp;
+uniform float uSize;
+uniform float uPR;
+uniform vec3 uMouse;
+varying float vAlpha;
+varying float vNoise;
+${NOISE}
+
+void main(){
+  vec3 n = normalize(position);
+  float d = snoise(n * 1.5 + vec3(uTime * 0.15, uTime * 0.1, 0.0)) * uAmp;
+  // a slow ripple that travels pole to pole
+  d += sin(n.y * 6.0 - uTime * 1.2 + aRand * 0.6) * 0.025;
+  vec3 p = n * (1.0 + d);
+
+  // part around the cursor
+  vec3 m = normalize(vec3(uMouse.xy, 0.9));
+  float near = smoothstep(0.8, 1.0, dot(normalize(mat3(modelMatrix) * n), m));
+  p += n * near * 0.35 * length(uMouse.xy);
+
+  vec4 mv = modelViewMatrix * vec4(p, 1.0);
+  gl_Position = projectionMatrix * mv;
+  gl_PointSize = uSize * (0.55 + aRand * 0.9) * uPR / -mv.z;
+
+  vec3 nv = normalize(normalMatrix * n);
+  vAlpha = 0.25 + 0.75 * smoothstep(-0.4, 0.6, nv.z);
+  vNoise = d;
+}
+`;
+
+const particleFragment = /* glsl */ `
+uniform vec3 uRim;
+uniform vec3 uGlow;
+uniform float uFade;
+varying float vAlpha;
+varying float vNoise;
+
+void main(){
+  float r = length(gl_PointCoord - 0.5);
+  if (r > 0.5) discard;
+  float a = smoothstep(0.5, 0.05, r);
+  vec3 col = mix(uGlow, uRim, smoothstep(-0.12, 0.2, vNoise));
+  gl_FragColor = vec4(col, a * vAlpha * uFade);
+}
+`;
+
+/* ---------- shaders: raymarched metaballs ---------- */
+
+const quadVertex = /* glsl */ `
+varying vec2 vUv;
+void main(){
+  vUv = uv;
+  gl_Position = vec4(position.xy, 0.0, 1.0);
+}
+`;
+
+const metaballFragment = /* glsl */ `
+uniform float uTime;
+uniform vec3 uMouse;
+uniform vec3 uCore;
+uniform vec3 uRim;
+uniform vec3 uGlow;
+uniform float uCoreAlpha;
+uniform float uFade;
+uniform float uScale;
+varying vec2 vUv;
+
+#define STEPS __STEPS__
+
+float smin(float a, float b, float k){
+  float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
+  return mix(b, a, h) - k * h * (1.0 - h);
+}
+
+float map(vec3 p){
+  p /= uScale;
+  float d = 1e5;
+  for (int i = 0; i < 5; i++){
+    float fi = float(i);
+    vec3 c = vec3(
+      sin(uTime * 0.37 + fi * 1.7) * 0.55,
+      cos(uTime * 0.31 + fi * 2.3) * 0.5,
+      sin(uTime * 0.23 + fi * 0.9) * 0.35
+    );
+    d = smin(d, length(p - c) - (0.3 + 0.07 * sin(fi * 2.1)), 0.42);
+  }
+  // one blob follows the cursor
+  d = smin(d, length(p - vec3(uMouse.xy * 0.75, 0.25)) - 0.2, 0.42);
+  return d * uScale;
+}
+
+vec3 calcNormal(vec3 p){
+  vec2 e = vec2(0.002, 0.0);
+  return normalize(vec3(
+    map(p + e.xyy) - map(p - e.xyy),
+    map(p + e.yxy) - map(p - e.yxy),
+    map(p + e.yyx) - map(p - e.yyx)
+  ));
+}
+
+void main(){
+  vec2 uv = vUv * 2.0 - 1.0;
+  vec3 ro = vec3(0.0, 0.0, 3.6);
+  vec3 rd = normalize(vec3(uv * 0.4142, -1.0));
+
+  float t = 0.0;
+  bool hit = false;
+  for (int i = 0; i < STEPS; i++){
+    float d = map(ro + rd * t);
+    if (d < 0.002) { hit = true; break; }
+    t += d;
+    if (t > 6.0) break;
+  }
+  if (!hit) discard;
+
+  vec3 p = ro + rd * t;
+  vec3 n = calcNormal(p);
+  vec3 v = -rd;
+  float fres = pow(1.0 - clamp(dot(n, v), 0.0, 1.0), 2.0);
+
+  vec3 l = normalize(vec3(-0.5, 0.8, 0.7));
+  float diff = max(dot(n, l), 0.0);
+  float spec = pow(max(dot(n, normalize(l + v)), 0.0), 60.0);
+
+  vec3 col = mix(uCore, uGlow, diff * 0.25);
+  col = mix(col, uRim, smoothstep(0.2, 1.0, fres));
+  col += spec * 0.6;
+
+  float alpha = mix(uCoreAlpha, 1.0, smoothstep(0.1, 0.9, fres)) + spec * 0.4;
+  gl_FragColor = vec4(col, clamp(alpha, 0.0, 1.0) * uFade);
+}
+`;
+
+/* ---------- palettes ---------- */
+
 const PALETTE = {
-  dark: { core: "#0b1106", rim: "#bbf451", glow: "#4a6b14", coreAlpha: 0.55 },
-  light: { core: "#f4f7ea", rim: "#4a6b14", glow: "#a3c255", coreAlpha: 0.45 },
+  dark: {
+    core: "#0b1106",
+    rim: "#bbf451",
+    glow: "#4a6b14",
+    coreAlpha: 0.55,
+    glassCore: "#0d1208",
+    film: 1,
+    dots: "#6f9a22",
+  },
+  light: {
+    core: "#f4f7ea",
+    rim: "#4a6b14",
+    glow: "#a3c255",
+    coreAlpha: 0.45,
+    glassCore: "#ffffff",
+    film: 0.75,
+    dots: "#8fb33a",
+  },
 };
 
-function Blob({ isDark, animate, detail }) {
-  const mesh = useRef(null);
-  const mouse = useRef(new THREE.Vector3(0, 0, 1));
+/* ---------- shared motion: eased cursor + scroll progress ---------- */
+
+function useMotion(animate) {
   const target = useRef({ x: 0, y: 0 });
-
-  const mat = useRef(null);
-  const [uniforms] = useState(() => ({
-    uTime: { value: 0 },
-    uAmp: { value: 0.2 },
-    uMouse: { value: new THREE.Vector3(0, 0, 1) },
-    uCore: { value: new THREE.Color() },
-    uRim: { value: new THREE.Color() },
-    uGlow: { value: new THREE.Color() },
-    uCoreAlpha: { value: 0.5 },
-    uFade: { value: 1 },
-  }));
-
-  useEffect(() => {
-    if (!mat.current) return;
-    const u = mat.current.uniforms;
-    const p = isDark ? PALETTE.dark : PALETTE.light;
-    u.uCore.value.set(p.core);
-    u.uRim.value.set(p.rim);
-    u.uGlow.value.set(p.glow);
-    u.uCoreAlpha.value = p.coreAlpha;
-  }, [isDark]);
+  const state = useRef({ x: 0, y: 0, scroll: 0 });
 
   useEffect(() => {
     if (!animate) return;
@@ -159,31 +366,76 @@ function Blob({ isDark, animate, detail }) {
     return () => window.removeEventListener("pointermove", onMove);
   }, [animate]);
 
-  useFrame((state, delta) => {
+  useFrame(() => {
+    const s = state.current;
+    s.x += (target.current.x - s.x) * 0.05;
+    s.y += (target.current.y - s.y) * 0.05;
+    s.scroll = Math.min(window.scrollY / (window.innerHeight || 1), 1);
+  }, -1);
+
+  return state;
+}
+
+function applyPalette(mat, isDark, keys) {
+  if (!mat) return;
+  const p = isDark ? PALETTE.dark : PALETTE.light;
+  const u = mat.uniforms;
+  for (const [uniform, key] of Object.entries(keys)) {
+    if (!u[uniform]) continue;
+    if (u[uniform].value instanceof THREE.Color) u[uniform].value.set(p[key]);
+    else u[uniform].value = p[key];
+  }
+}
+
+/* ---------- variants ---------- */
+
+function DisplacedSphere({
+  isDark,
+  motion,
+  detail,
+  fragmentShader,
+  paletteKeys,
+  amp = 0.2,
+  freq = 0.9,
+  scale = 1,
+  spin = 0.12,
+  wireframe = false,
+}) {
+  const mesh = useRef(null);
+  const mat = useRef(null);
+  const [uniforms] = useState(() => ({
+    uTime: { value: 0 },
+    uAmp: { value: amp },
+    uFreq: { value: freq },
+    uMouse: { value: new THREE.Vector3(0, 0, 1) },
+    uCore: { value: new THREE.Color() },
+    uRim: { value: new THREE.Color() },
+    uGlow: { value: new THREE.Color() },
+    uCoreAlpha: { value: 0.5 },
+    uFilm: { value: 1 },
+    uFade: { value: 1 },
+  }));
+
+  useEffect(() => {
+    applyPalette(mat.current, isDark, paletteKeys);
+  }, [isDark, paletteKeys]);
+
+  useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
     if (!mat.current) return;
+    const m = motion.current;
     const u = mat.current.uniforms;
     u.uTime.value += dt;
-
-    // ease the cursor so the blob follows lazily
-    mouse.current.x += (target.current.x - mouse.current.x) * 0.05;
-    mouse.current.y += (target.current.y - mouse.current.y) * 0.05;
-    u.uMouse.value.set(mouse.current.x, mouse.current.y, 0.9);
-
-    // scroll: blob gets more restless, shrinks and fades as the hero leaves
-    const vh = window.innerHeight || 1;
-    const s = Math.min(window.scrollY / vh, 1);
-    u.uAmp.value = 0.2 + s * 0.15;
-    u.uFade.value = 1 - s * 0.85;
+    u.uMouse.value.set(m.x, m.y, 0.9);
+    // scroll: more restless, smaller and fainter as the hero leaves
+    u.uAmp.value = amp + m.scroll * 0.15;
+    u.uFade.value = 1 - m.scroll * 0.85;
 
     if (mesh.current) {
-      mesh.current.rotation.y += dt * 0.12;
-      mesh.current.rotation.x +=
-        (mouse.current.y * 0.35 - mesh.current.rotation.x) * 0.05;
-      mesh.current.rotation.z +=
-        (-mouse.current.x * 0.2 - mesh.current.rotation.z) * 0.05;
-      const scale = 1 - s * 0.2;
-      mesh.current.scale.setScalar(scale);
+      mesh.current.rotation.y += dt * spin;
+      mesh.current.rotation.x += (m.y * 0.35 - mesh.current.rotation.x) * 0.05;
+      mesh.current.rotation.z += (-m.x * 0.2 - mesh.current.rotation.z) * 0.05;
+      mesh.current.scale.setScalar(scale * (1 - m.scroll * 0.2));
     }
   });
 
@@ -192,17 +444,222 @@ function Blob({ isDark, animate, detail }) {
       <icosahedronGeometry args={[1, detail]} />
       <shaderMaterial
         ref={mat}
-        vertexShader={vertexShader}
+        vertexShader={displacedVertex}
         fragmentShader={fragmentShader}
         uniforms={uniforms}
         transparent
         depthWrite={false}
+        wireframe={wireframe}
       />
     </mesh>
   );
 }
 
-export default function LiquidBlob() {
+const LIQUID_KEYS = {
+  uCore: "core",
+  uRim: "rim",
+  uGlow: "glow",
+  uCoreAlpha: "coreAlpha",
+};
+const GLASS_KEYS = { uCore: "glassCore", uRim: "rim", uFilm: "film" };
+const WIRE_KEYS = { uRim: "rim" };
+const DOT_KEYS = { uRim: "rim", uGlow: "dots" };
+
+function ParticleSphere({ isDark, motion, count }) {
+  const points = useRef(null);
+  const mat = useRef(null);
+
+  // Fibonacci sphere: evenly spread points, plus a random size per point
+  const [geometry] = useState(() => {
+    const pos = new Float32Array(count * 3);
+    const rand = new Float32Array(count);
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < count; i++) {
+      const y = 1 - (i / (count - 1)) * 2;
+      const r = Math.sqrt(1 - y * y);
+      const th = golden * i;
+      pos[i * 3] = Math.cos(th) * r;
+      pos[i * 3 + 1] = y;
+      pos[i * 3 + 2] = Math.sin(th) * r;
+      rand[i] = Math.random();
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    g.setAttribute("aRand", new THREE.BufferAttribute(rand, 1));
+    return g;
+  });
+  useEffect(() => () => geometry.dispose(), [geometry]);
+
+  const [uniforms] = useState(() => ({
+    uTime: { value: 0 },
+    uAmp: { value: 0.16 },
+    uSize: { value: 9 },
+    uPR: { value: 1 },
+    uMouse: { value: new THREE.Vector3(0, 0, 1) },
+    uRim: { value: new THREE.Color() },
+    uGlow: { value: new THREE.Color() },
+    uFade: { value: 1 },
+  }));
+
+  useEffect(() => {
+    applyPalette(mat.current, isDark, DOT_KEYS);
+  }, [isDark]);
+
+  useFrame((state, delta) => {
+    const dt = Math.min(delta, 0.05);
+    if (!mat.current) return;
+    const m = motion.current;
+    const u = mat.current.uniforms;
+    u.uTime.value += dt;
+    u.uPR.value = state.gl.getPixelRatio();
+    u.uMouse.value.set(m.x, m.y, 0.9);
+    u.uAmp.value = 0.16 + m.scroll * 0.2;
+    u.uFade.value = 1 - m.scroll * 0.85;
+    if (points.current) {
+      points.current.rotation.y += dt * 0.1;
+      points.current.rotation.x +=
+        (m.y * 0.35 - points.current.rotation.x) * 0.05;
+      points.current.scale.setScalar(1 + m.scroll * 0.25);
+    }
+  });
+
+  return (
+    <points ref={points} geometry={geometry}>
+      <shaderMaterial
+        ref={mat}
+        vertexShader={particleVertex}
+        fragmentShader={particleFragment}
+        uniforms={uniforms}
+        transparent
+        depthWrite={false}
+        blending={isDark ? THREE.AdditiveBlending : THREE.NormalBlending}
+      />
+    </points>
+  );
+}
+
+function Metaballs({ isDark, motion, steps }) {
+  const mat = useRef(null);
+  const [uniforms] = useState(() => ({
+    uTime: { value: 0 },
+    uMouse: { value: new THREE.Vector3(0, 0, 1) },
+    uCore: { value: new THREE.Color() },
+    uRim: { value: new THREE.Color() },
+    uGlow: { value: new THREE.Color() },
+    uCoreAlpha: { value: 0.5 },
+    uFade: { value: 1 },
+    uScale: { value: 1 },
+  }));
+  const [fragment] = useState(() =>
+    metaballFragment.replace("__STEPS__", String(steps))
+  );
+
+  useEffect(() => {
+    applyPalette(mat.current, isDark, LIQUID_KEYS);
+  }, [isDark]);
+
+  useFrame((_, delta) => {
+    if (!mat.current) return;
+    const m = motion.current;
+    const u = mat.current.uniforms;
+    u.uTime.value += Math.min(delta, 0.05);
+    u.uMouse.value.set(m.x, m.y, 0.9);
+    u.uFade.value = 1 - m.scroll * 0.85;
+    u.uScale.value = 1 - m.scroll * 0.2;
+  });
+
+  return (
+    <mesh frustumCulled={false}>
+      <planeGeometry args={[2, 2]} />
+      <shaderMaterial
+        ref={mat}
+        vertexShader={quadVertex}
+        fragmentShader={fragment}
+        uniforms={uniforms}
+        transparent
+        depthWrite={false}
+        depthTest={false}
+      />
+    </mesh>
+  );
+}
+
+function Scene({ variant, isDark, animate, lowEnd, light }) {
+  const motion = useMotion(animate);
+  const detail = lowEnd ? 20 : light ? 32 : 64;
+
+  switch (variant) {
+    case "glass":
+      return (
+        <DisplacedSphere
+          isDark={isDark}
+          motion={motion}
+          detail={detail}
+          fragmentShader={glassFragment}
+          paletteKeys={GLASS_KEYS}
+          amp={0.14}
+          freq={0.75}
+        />
+      );
+    case "particles":
+      return (
+        <ParticleSphere
+          isDark={isDark}
+          motion={motion}
+          count={lowEnd ? 2500 : light ? 4000 : 7000}
+        />
+      );
+    case "wire":
+      return (
+        <>
+          <DisplacedSphere
+            isDark={isDark}
+            motion={motion}
+            detail={lowEnd ? 6 : 9}
+            fragmentShader={wireFragment}
+            paletteKeys={WIRE_KEYS}
+            amp={0.12}
+            freq={1.1}
+            scale={1.08}
+            spin={-0.06}
+            wireframe
+          />
+          <DisplacedSphere
+            isDark={isDark}
+            motion={motion}
+            detail={lowEnd ? 16 : 32}
+            fragmentShader={liquidFragment}
+            paletteKeys={LIQUID_KEYS}
+            amp={0.24}
+            freq={1.3}
+            scale={0.55}
+            spin={0.2}
+          />
+        </>
+      );
+    case "metaballs":
+      return (
+        <Metaballs
+          isDark={isDark}
+          motion={motion}
+          steps={lowEnd ? 32 : 56}
+        />
+      );
+    case "liquid":
+    default:
+      return (
+        <DisplacedSphere
+          isDark={isDark}
+          motion={motion}
+          detail={detail}
+          fragmentShader={liquidFragment}
+          paletteKeys={LIQUID_KEYS}
+        />
+      );
+  }
+}
+
+export default function LiquidBlob({ variant = "liquid" }) {
   const { resolvedTheme } = useTheme();
   const wrapRef = useRef(null);
   const [ready, setReady] = useState(false);
@@ -214,7 +671,7 @@ export default function LiquidBlob() {
   const [isMobile] = useState(
     () => window.matchMedia("(max-width: 767px)").matches
   );
-  // Low-end devices (few cores / little memory) get a lighter mesh and 1x DPR.
+  // Low-end devices (few cores / little memory) get lighter geometry and 1x DPR.
   const [lowEnd] = useState(() => {
     const cores = navigator.hardwareConcurrency || 8;
     const memory = navigator.deviceMemory || 8;
@@ -228,6 +685,14 @@ export default function LiquidBlob() {
     } catch {
       return false;
     }
+  });
+  // dev-only preview: ?hero=glass etc.
+  const [activeVariant] = useState(() => {
+    if (process.env.NODE_ENV === "development") {
+      const q = new URLSearchParams(window.location.search).get("hero");
+      if (BLOB_VARIANTS.includes(q)) return q;
+    }
+    return variant;
   });
 
   // stop rendering when the hero is off screen
@@ -244,6 +709,8 @@ export default function LiquidBlob() {
   const isDark = resolvedTheme !== "light";
   const animate = !reduceMotion;
   const light = isMobile || lowEnd;
+  // raymarching is per-pixel, so keep its resolution lower
+  const heavyPixels = activeVariant === "metaballs";
 
   if (!webgl) return null;
 
@@ -260,16 +727,20 @@ export default function LiquidBlob() {
     >
       <Canvas
         camera={{ position: [0, 0, 3.6], fov: 45 }}
-        dpr={lowEnd ? 1 : isMobile ? [1, 1.25] : [1, 1.75]}
+        dpr={
+          lowEnd ? 1 : heavyPixels ? [1, 1.25] : isMobile ? [1, 1.25] : [1, 1.75]
+        }
         gl={{ antialias: !lowEnd, alpha: true, powerPreference: "low-power" }}
         frameloop={!animate ? "demand" : visible ? "always" : "never"}
         onCreated={() => setReady(true)}
         style={{ pointerEvents: "none" }}
       >
-        <Blob
+        <Scene
+          variant={activeVariant}
           isDark={isDark}
           animate={animate}
-          detail={lowEnd ? 20 : light ? 32 : 64}
+          lowEnd={lowEnd}
+          light={light}
         />
       </Canvas>
     </div>
