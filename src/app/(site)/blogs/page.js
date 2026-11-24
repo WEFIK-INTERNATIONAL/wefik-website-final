@@ -2,6 +2,7 @@ import React from "react";
 import { getAllBlogs } from "@/sanity/lib/queries";
 import BlogHero from "@/components/blog/BlogHero";
 import BlogCard from "@/components/blog/BlogCard";
+import BlogGrid from "@/components/blog/BlogGrid";
 import ContactCTA from "@/components/ui/ContactCTA";
 import { SEO, canonical } from "@/lib/seo";
 
@@ -33,6 +34,10 @@ export const metadata = {
 
 export default async function BlogListingPage() {
   const posts = await getAllBlogs();
+  const [featuredPost, ...otherPosts] = posts;
+  const topicCount = new Set(
+    posts.flatMap((p) => (p.categories || []).map((c) => c.title))
+  ).size;
 
   const blogSchema = {
     "@context": "https://schema.org",
@@ -65,18 +70,24 @@ export default async function BlogListingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }}
       />
 
-      <BlogHero />
+      <BlogHero postCount={posts.length} topicCount={topicCount} />
 
       <section className="relative pb-24 md:pb-32">
         <div className="mx-auto max-w-7xl px-6">
           {posts.length > 0 ? (
-            <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
-              {posts.map((post) => (
-                <BlogCard key={post.slug.current} post={post} />
-              ))}
+            <div className="flex flex-col gap-6 md:gap-8">
+              <BlogCard post={featuredPost} featured />
+              {otherPosts.length > 0 && (
+                <>
+                  <h2 className="text-text-subtle mt-6 [font-family:inherit] text-xs font-bold tracking-[0.2em] uppercase md:mt-10">
+                    More articles
+                  </h2>
+                  <BlogGrid posts={otherPosts} />
+                </>
+              )}
             </div>
           ) : (
-            <div className="border-border/10 flex min-h-[400px] flex-col items-center justify-center rounded-3xl border bg-white/2 px-6 text-center">
+            <div className="border-text-primary/10 bg-bg-card flex min-h-[400px] flex-col items-center justify-center rounded-3xl border px-6 text-center">
               <h2 className="text-text-primary text-2xl font-bold">
                 No posts found yet.
               </h2>
@@ -90,11 +101,6 @@ export default async function BlogListingPage() {
       </section>
 
       <ContactCTA />
-
-      <div className="pointer-events-none fixed inset-0 z-0 opacity-20">
-        <div className="border-border/10 absolute top-[10%] left-0 h-px w-full border-t" />
-        <div className="border-border/10 absolute top-[90%] left-0 h-px w-full border-t" />
-      </div>
     </main>
   );
 }

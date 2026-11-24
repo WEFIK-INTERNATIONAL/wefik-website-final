@@ -11,6 +11,10 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 7, // 7 days
+    // Some networks (IPv6 NAT64/DNS64) resolve cdn.sanity.io to a 64:ff9b::
+    // address, which the image optimizer blocks as "private". Allow it only in
+    // local development; production keeps the SSRF protection.
+    dangerouslyAllowLocalIP: process.env.NODE_ENV === "development",
   },
 
   experimental: {

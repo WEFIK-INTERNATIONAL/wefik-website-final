@@ -36,6 +36,12 @@ const TOOLS = [
     href: "https://weclip.wefik.in", // TODO: confirm the real WeClip URL
     external: true,
   },
+  {
+    name: "Wefik World",
+    description: "Our marketplace for WordPress themes, plugins & templates.",
+    href: "https://www.wefik.world/",
+    external: true,
+  },
 ];
 
 // The Tools item is shown right after this link in the desktop nav.
@@ -832,7 +838,7 @@ export default function Navbar() {
             display: "flex",
             flexDirection: "column",
             height: "100%",
-            padding: "96px 24px 32px",
+            padding: "96px 24px 24px",
           }}
         >
           <nav
@@ -840,30 +846,26 @@ export default function Navbar() {
               display: "flex",
               flexDirection: "column",
               flex: 1,
-              justifyContent: "center",
+              minHeight: 0,
+              overflowY: "auto",
             }}
             aria-label="Mobile navigation"
+            className="scrollbar-hide"
           >
-            {NAV_LINKS.map((link, i) => {
-              const isActive = pathname === link.href;
-              // Shift ref slots after the Tools block so the stagger stays in order.
-              const toolsIdx = NAV_LINKS.findIndex(
-                (l) => l.href === TOOLS_AFTER_HREF
-              );
-              const hasTools = TOOLS.length > 0 && toolsIdx !== -1;
-              const slot = hasTools && i > toolsIdx ? i + 1 : i;
-              return (
-                <React.Fragment key={link.href}>
+            <div style={{ margin: "auto 0", padding: "8px 0" }}>
+              {NAV_LINKS.map((link, i) => {
+                const isActive = pathname === link.href;
+                return (
                   <TransitionLink
+                    key={link.href}
                     href={link.href}
-                    ref={(el) => (overlayLinksRef.current[slot] = el)}
+                    ref={(el) => (overlayLinksRef.current[i] = el)}
                     onClick={closeMenu}
                     style={{
                       display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "16px 0",
-                      borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)"}`,
+                      alignItems: "baseline",
+                      gap: "14px",
+                      padding: "clamp(3px, 1vh, 9px) 0",
                       textDecoration: "none",
                       color: isActive
                         ? "var(--color-accent)"
@@ -880,103 +882,125 @@ export default function Navbar() {
                           "var(--color-text-primary)";
                     }}
                   >
-                    <div
+                    <span
+                      style={{
+                        width: "18px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        fontVariantNumeric: "tabular-nums",
+                        color: isActive
+                          ? "var(--color-accent)"
+                          : "var(--color-text-subtle)",
+                      }}
+                    >
+                      0{i + 1}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-big-shoulders)",
+                        fontSize: "clamp(1.4rem, min(8.5vw, 4.4vh), 2.4rem)",
+                        fontWeight: 900,
+                        textTransform: "uppercase",
+                        letterSpacing: "-0.01em",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {link.label}
+                    </span>
+                    {isActive && (
+                      <span
+                        aria-hidden="true"
+                        style={{
+                          width: "7px",
+                          height: "7px",
+                          borderRadius: "50%",
+                          background: "var(--color-accent)",
+                          alignSelf: "center",
+                        }}
+                      />
+                    )}
+                  </TransitionLink>
+                );
+              })}
+            </div>
+          </nav>
+
+          {TOOLS.length > 0 && (
+            <div
+              ref={(el) => (overlayLinksRef.current[NAV_LINKS.length] = el)}
+              style={{ flexShrink: 0, paddingTop: "16px" }}
+            >
+              <span
+                style={{
+                  display: "block",
+                  marginBottom: "10px",
+                  fontSize: "10px",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.2em",
+                  color: "var(--color-text-subtle)",
+                }}
+              >
+                Our tools
+              </span>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                  gap: "10px",
+                }}
+              >
+                {TOOLS.map((tool) => (
+                  <ToolLink
+                    key={tool.name}
+                    tool={tool}
+                    onClick={closeMenu}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "4px",
+                      padding: "12px 14px",
+                      borderRadius: "16px",
+                      border: `1px solid ${isDark ? "rgba(163,230,53,0.18)" : "rgba(74,107,20,0.22)"}`,
+                      background: "var(--color-bg-card)",
+                      textDecoration: "none",
+                    }}
+                  >
+                    <span
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "12px",
+                        justifyContent: "space-between",
+                        gap: "6px",
+                        fontSize: "15px",
+                        fontWeight: 700,
+                        color: "var(--color-text-primary)",
                       }}
                     >
-                      {isActive && (
-                        <span
-                          style={{
-                            width: "6px",
-                            height: "6px",
-                            borderRadius: "50%",
-                            background: "var(--color-accent)",
-                            flexShrink: 0,
-                          }}
-                        />
-                      )}
-                      <span
+                      {tool.name}
+                      <ArrowUpRight
+                        size={14}
                         style={{
-                          fontSize: "clamp(1.3rem, 5vw, 1.7rem)",
-                          fontWeight: 700,
-                          letterSpacing: "-0.02em",
-                          lineHeight: 1,
+                          color: "var(--color-accent)",
+                          flexShrink: 0,
                         }}
-                      >
-                        {link.label}
-                      </span>
-                    </div>
-                    <ArrowUpRight size={16} />
-                  </TransitionLink>
-                  {hasTools && i === toolsIdx && (
-                    <div
-                      ref={(el) => (overlayLinksRef.current[i + 1] = el)}
-                      style={{
-                        padding: "16px 0",
-                        borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)"}`,
-                      }}
-                    >
-                      <span
-                        style={{
-                          display: "block",
-                          fontSize: "clamp(1.3rem, 5vw, 1.7rem)",
-                          fontWeight: 700,
-                          letterSpacing: "-0.02em",
-                          lineHeight: 1,
-                          color: "var(--color-text-primary)",
-                        }}
-                      >
-                        Tools
-                      </span>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: "8px",
-                          marginTop: "12px",
-                        }}
-                      >
-                        {TOOLS.map((tool) => (
-                          <ToolLink
-                            key={tool.name}
-                            tool={tool}
-                            onClick={closeMenu}
-                            style={{
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: "6px",
-                              padding: "8px 14px",
-                              borderRadius: "999px",
-                              border: "1px solid rgba(163,230,53,0.3)",
-                              background: "rgba(163,230,53,0.08)",
-                              color: "var(--color-accent)",
-                              fontSize: "14px",
-                              fontWeight: 600,
-                              textDecoration: "none",
-                            }}
-                          >
-                            {tool.name}
-                            <ArrowUpRight size={10} />
-                          </ToolLink>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </React.Fragment>
-              );
-            })}
-          </nav>
+                      />
+                    </span>
+                  </ToolLink>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div
             ref={overlayFooterRef}
             style={{
               display: "flex",
-              alignItems: "flex-end",
+              alignItems: "center",
               justifyContent: "space-between",
-              paddingTop: "24px",
+              gap: "16px",
+              marginTop: "16px",
+              paddingTop: "16px",
               borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)"}`,
             }}
           >

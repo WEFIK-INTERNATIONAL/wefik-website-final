@@ -215,7 +215,7 @@ export default async function BlogPostPage({ params }) {
         <div className="relative mx-auto max-w-3xl px-6">
           <PortableTextContent value={post.body} />
         </div>
-        <div className="bg-accent/5 pointer-events-none absolute bottom-0 left-1/2 h-[500px] w-[500px] -translate-x-1/2 blur-[120px]" />
+        <div className="bg-accent/5 pointer-events-none absolute bottom-0 left-1/2 h-[min(500px,100vw)] w-[min(500px,100vw)] -translate-x-1/2 blur-[120px]" />
       </section>
 
       <footer className="border-t border-white/5 py-16 md:py-24">

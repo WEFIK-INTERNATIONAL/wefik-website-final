@@ -89,7 +89,7 @@ export default function Introduction() {
           <Tag>This is Wefik</Tag>
         </div>
 
-        <div className="mx-auto max-w-7xl text-center text-[clamp(2rem,6vw,3.5rem)] leading-[1.2] font-bold tracking-tight lg:leading-[1.15] lg:font-extrabold lg:-tracking-[0.03em]">
+        <div className="font-big mx-auto max-w-6xl text-center text-[clamp(2rem,6vw,3.75rem)] leading-[1] font-black tracking-tight uppercase">
           <span className="text-text-primary">
             Culture-driven, creative and competitive.{" "}
           </span>

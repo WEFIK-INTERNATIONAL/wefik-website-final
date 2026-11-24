@@ -5,7 +5,7 @@ import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import { useLoader } from "@/components/ui/LoaderProvider";
 
-export default function BlogHero() {
+export default function BlogHero({ postCount = 0, topicCount = 0 }) {
   const { canPlayEntrance } = useLoader();
   const containerRef = useRef(null);
   const tagRef = useRef(null);
@@ -60,50 +60,65 @@ export default function BlogHero() {
   return (
     <section
       ref={containerRef}
-      className="bg-bg-primary font-body relative w-full overflow-hidden pt-32 pb-16 md:pt-48 md:pb-24"
+      className="bg-bg-primary relative w-full overflow-hidden pt-32 pb-12 md:pt-44 md:pb-16"
     >
-      <div className="pointer-events-none absolute inset-0">
-        <div className="border-border/30 absolute top-0 left-1/2 h-full w-px -translate-x-1/2 border-l border-dashed" />
-        <div className="border-border/10 absolute top-[40%] left-0 h-px w-full border-t" />
-      </div>
-
       <div className="relative mx-auto max-w-7xl px-6">
-        <div className="max-w-4xl">
-          <div
-            ref={tagRef}
-            className="anim-el flex items-center gap-4 opacity-0"
-          >
-            <div className="bg-accent/20 h-px w-16" />
-            <span className="text-accent text-xs font-bold tracking-[0.2em] uppercase">
-              Insights & Stories
-            </span>
-          </div>
-          <h1
-            ref={headlineRef}
-            className="font-display mt-8 text-5xl leading-[0.9] font-black tracking-tighter md:text-8xl lg:text-9xl"
-          >
-            <div className="mr-[0.2em] inline-block overflow-hidden">
-              <span className="split-word anim-el inline-block">Thought</span>
-            </div>
-            <div
-              className="mr-[0.2em] inline-block overflow-hidden"
-              style={{ color: "var(--color-accent)" }}
-            >
-              <span className="split-word anim-el inline-block pr-[0.12em] italic">
-                Leadership
+        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-3xl">
+            <div ref={tagRef} className="anim-el opacity-0">
+              <span className="text-accent mb-5 block text-xs font-bold tracking-[0.3em] uppercase">
+                Insights &amp; Stories
               </span>
             </div>
-            <div className="inline-block overflow-hidden">
-              <span className="split-word anim-el inline-block">& Updates</span>
-            </div>
-          </h1>
-          <p
+            <h1
+              ref={headlineRef}
+              className="text-text-primary text-6xl leading-[0.88] tracking-tighter md:text-8xl lg:text-9xl"
+            >
+              <div className="mr-[0.2em] inline-block overflow-hidden">
+                <span className="split-word anim-el inline-block">The</span>
+              </div>
+              <div className="inline-block overflow-hidden">
+                <span className="split-word anim-el inline-block">Wefik</span>
+              </div>
+              <br />
+              <div className="text-accent inline-block overflow-hidden">
+                <span className="split-word anim-el inline-block">
+                  Journal.
+                </span>
+              </div>
+            </h1>
+          </div>
+          <div
             ref={sublineRef}
-            className="border-accent/10 text-text-muted anim-el mt-8 max-w-xl border-l-2 pl-6 text-lg opacity-0 md:text-xl"
+            className="anim-el flex flex-col gap-6 opacity-0 md:max-w-sm md:items-end md:text-right"
           >
-            Explore our latest thoughts on digital innovation, design trends,
-            and the future of web experiences.
-          </p>
+            <p className="text-text-muted text-base leading-relaxed">
+              Our latest thoughts on digital innovation, design trends and the
+              future of web experiences.
+            </p>
+            {postCount > 0 && (
+              <div className="flex gap-8">
+                <div>
+                  <div className="font-big text-text-primary text-4xl leading-none font-black">
+                    {postCount}
+                  </div>
+                  <div className="text-text-subtle mt-1 text-[11px] font-semibold tracking-[0.15em] uppercase">
+                    {postCount === 1 ? "Article" : "Articles"}
+                  </div>
+                </div>
+                {topicCount > 0 && (
+                  <div>
+                    <div className="font-big text-text-primary text-4xl leading-none font-black">
+                      {topicCount}
+                    </div>
+                    <div className="text-text-subtle mt-1 text-[11px] font-semibold tracking-[0.15em] uppercase">
+                      {topicCount === 1 ? "Topic" : "Topics"}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>

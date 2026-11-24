@@ -4,108 +4,170 @@ import React from "react";
 import Image from "next/image";
 import TransitionLink from "../ui/TransitionLink";
 import { format } from "date-fns";
+import { ArrowUpRight } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
-import Tag from "@/components/ui/Tag";
 import ShareButton from "@/components/blog/ShareButton";
 import { canonical } from "@/lib/seo";
 
-export default function BlogCard({ post }) {
+function AuthorMeta({ author, date, dateTime }) {
+  return (
+    <div className="flex min-w-0 items-center gap-3">
+      {author?.image?.asset ? (
+        <Image
+          src={urlFor(author.image).width(80).height(80).auto("format").url()}
+          alt={author.name}
+          width={32}
+          height={32}
+          className="border-text-primary/10 h-8 w-8 shrink-0 rounded-full border object-cover"
+        />
+      ) : (
+        <span className="bg-accent/15 text-accent flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold">
+          {(author?.name || "W").charAt(0)}
+        </span>
+      )}
+      <div className="min-w-0 leading-tight">
+        <div className="text-text-primary truncate text-sm font-semibold">
+          {author?.name || "Wefik Team"}
+        </div>
+        <time dateTime={dateTime} className="text-text-subtle text-xs">
+          {date}
+        </time>
+      </div>
+    </div>
+  );
+}
+
+export default function BlogCard({ post, featured = false }) {
   const publishedDate = post.publishedAt
     ? new Date(post.publishedAt)
     : new Date();
+  const date = format(publishedDate, "MMM d, yyyy");
+  const href = `/blogs/${post.slug.current}`;
+  const postUrl = canonical(href);
+  const category = post.categories?.[0]?.title;
 
-  const postUrl = canonical(`/blogs/${post.slug.current}`);
+  const cover = post.coverImage?.asset ? (
+    <Image
+      src={urlFor(post.coverImage)
+        .width(featured ? 1400 : 900)
+        .height(featured ? 875 : 563)
+        .auto("format")
+        .url()}
+      alt={post.coverImage.alt || post.title}
+      fill
+      {...(post.coverImage?.asset?.metadata?.lqip
+        ? {
+            placeholder: "blur",
+            blurDataURL: post.coverImage.asset.metadata.lqip,
+          }
+        : {})}
+      sizes={
+        featured
+          ? "(max-width: 1024px) 100vw, 60vw"
+          : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      }
+      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+    />
+  ) : (
+    <div className="bg-accent/5 absolute inset-0" />
+  );
 
-  return (
-    <div className="group bg-bg-card border-border/10 hover:border-accent/30 relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-2">
+  const share = (
+    <div onClick={(e) => e.preventDefault()}>
+      <ShareButton
+        url={postUrl}
+        title={post.title}
+        text={post.excerpt ?? ""}
+        variant="icon"
+        alwaysVisible
+      />
+    </div>
+  );
+
+  if (featured) {
+    return (
       <TransitionLink
-        href={`/blogs/${post.slug.current}`}
-        className="flex flex-1 flex-col"
+        href={href}
+        className="group border-text-primary/10 bg-bg-card hover:border-accent/50 grid overflow-hidden rounded-3xl border p-3 transition-[border-color,box-shadow] duration-500 hover:shadow-[0_24px_60px_-30px_var(--color-accent)] lg:grid-cols-[1.4fr_1fr]"
       >
-        <div className="relative aspect-video overflow-hidden bg-neutral-900">
-          {post.coverImage?.asset && (
-            <Image
-              src={urlFor(post.coverImage).url()}
-              alt={post.coverImage.alt || post.title}
-              fill
-              {...(post.coverImage?.asset?.metadata?.lqip
-                ? {
-                    placeholder: "blur",
-                    blurDataURL: post.coverImage.asset.metadata.lqip,
-                  }
-                : {})}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            />
-          )}
-          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-60 transition-opacity group-hover:opacity-40" />
-
-          {post.categories?.[0] && (
-            <div className="absolute top-4 left-4">
-              <Tag className="bg-accent/20 border-accent/20 text-[10px] backdrop-blur-md">
-                {post.categories[0].title}
-              </Tag>
-            </div>
-          )}
+        <div className="relative aspect-16/10 overflow-hidden rounded-2xl lg:aspect-auto lg:min-h-[420px]">
+          {cover}
+          <span className="bg-bg-primary/85 text-text-primary absolute top-4 left-4 rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[0.12em] uppercase backdrop-blur-md">
+            Latest
+          </span>
         </div>
 
-        <div className="flex flex-1 flex-col p-6 md:p-8">
-          <div className="mb-4 flex items-center justify-between">
-            <span className="text-text-muted text-[10px] font-bold tracking-widest uppercase">
-              <time dateTime={post.publishedAt}>
-                {format(publishedDate, "MMMM dd, yyyy")}
-              </time>
+        <div className="flex flex-col px-3 pt-6 pb-3 lg:px-8 lg:py-8">
+          {category && (
+            <span className="text-accent mb-4 text-xs font-bold tracking-[0.12em] uppercase">
+              {category}
             </span>
-            {post.author && (
-              <span className="text-text-muted text-[10px] font-medium italic">
-                By {post.author.name}
-              </span>
-            )}
-          </div>
-
-          <h3 className="font-display group-hover:text-accent text-text-primary mb-4 line-clamp-2 text-2xl font-bold tracking-tight transition-colors md:text-3xl">
+          )}
+          <h2 className="text-text-primary text-4xl leading-[0.95] tracking-tight md:text-5xl">
             {post.title}
-          </h3>
+          </h2>
+          {post.excerpt && (
+            <p className="text-text-muted mt-5 line-clamp-4 text-base leading-relaxed">
+              {post.excerpt}
+            </p>
+          )}
 
-          <p className="text-text-muted mb-6 line-clamp-2 text-sm leading-relaxed">
-            {post.excerpt}
-          </p>
-
-          {/* Footer row: Read link + Share button */}
-          <div className="mt-auto flex items-center justify-between">
-            <span className="text-accent flex items-center gap-1.5 text-xs font-bold tracking-[0.15em] uppercase transition-all group-hover:gap-2.5">
-              Read
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="transition-transform group-hover:translate-x-0.5"
-              >
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-              </svg>
-            </span>
-
-            {/* Stop propagation so clicking share doesn't follow the card link */}
-            <div onClick={(e) => e.preventDefault()}>
-              <ShareButton
-                url={postUrl}
-                title={post.title}
-                text={post.excerpt ?? ""}
-                variant="icon"
-                alwaysVisible
-              />
+          <div className="border-text-primary/10 mt-auto flex items-center justify-between gap-4 border-t pt-6">
+            <AuthorMeta
+              author={post.author}
+              date={date}
+              dateTime={post.publishedAt}
+            />
+            <div className="flex items-center gap-2">
+              {share}
+              <span className="bg-accent text-bg-primary flex h-11 w-11 items-center justify-center rounded-full transition-transform duration-300 group-hover:rotate-45">
+                <ArrowUpRight size={18} />
+              </span>
             </div>
           </div>
-
-          <div className="bg-accent/10 absolute -right-12 -bottom-12 h-24 w-24 opacity-0 blur-[60px] transition-opacity duration-300 group-hover:opacity-100" />
         </div>
       </TransitionLink>
-    </div>
+    );
+  }
+
+  return (
+    <TransitionLink
+      href={href}
+      className="group border-text-primary/10 bg-bg-card hover:border-accent/50 flex h-full flex-col rounded-2xl border p-2.5 transition-[border-color,box-shadow,transform] duration-500 hover:-translate-y-1 hover:shadow-[0_24px_60px_-30px_var(--color-accent)]"
+    >
+      <div className="relative aspect-video overflow-hidden rounded-xl">
+        {cover}
+      </div>
+
+      <div className="flex flex-1 flex-col px-2 pt-4 pb-2">
+        {category && (
+          <span className="text-accent mb-2 text-[11px] font-bold tracking-[0.12em] uppercase">
+            {category}
+          </span>
+        )}
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="text-text-primary line-clamp-2 text-2xl leading-[0.95] tracking-tight">
+            {post.title}
+          </h3>
+          <span className="border-text-primary/15 text-text-primary group-hover:bg-accent group-hover:border-accent group-hover:text-bg-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 group-hover:rotate-45">
+            <ArrowUpRight size={16} />
+          </span>
+        </div>
+        {post.excerpt && (
+          <p className="text-text-muted mt-2 mb-4 line-clamp-2 text-[13px] leading-relaxed">
+            {post.excerpt}
+          </p>
+        )}
+
+        <div className="border-text-primary/10 mt-auto flex items-center justify-between gap-3 border-t pt-3">
+          <AuthorMeta
+            author={post.author}
+            date={date}
+            dateTime={post.publishedAt}
+          />
+          {share}
+        </div>
+      </div>
+    </TransitionLink>
   );
 }

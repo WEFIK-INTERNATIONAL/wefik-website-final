@@ -3,38 +3,49 @@
 import TransitionLink from "@/components/ui/TransitionLink";
 import { useRef } from "react";
 import Image from "next/image";
-import { ArrowRight, ArrowUpRight, MapPin, Mail, Phone } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  MapPin,
+  CalendarDays,
+  PenTool,
+  Zap,
+  Handshake,
+  RefreshCw,
+} from "lucide-react";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import ContactCTA from "@/components/ui/ContactCTA";
+import usePauseWhenHidden from "@/hooks/usePauseWhenHidden";
+import Tag from "@/components/ui/Tag";
 
 const stats = [
   { value: 3, suffix: "+", label: "Years in the game" },
   { value: 60, suffix: "+", label: "Projects delivered" },
   { value: 40, suffix: "+", label: "Happy clients" },
-  { value: 100, suffix: "%", label: "Passion guaranteed" },
+  { value: 4, suffix: "", label: "Core team members" },
 ];
 
 const values = [
   {
-    index: "01",
-    title: "Craft Over\nConvenience",
+    title: "Craft over convenience",
     body: "We never take shortcuts. Every pixel, every line of code, every campaign beat is considered and deliberate.",
+    icon: PenTool,
   },
   {
-    index: "02",
-    title: "Bold By\nDesign",
+    title: "Bold by design",
     body: "Safe is invisible. We push creative boundaries to make brands impossible to ignore.",
+    icon: Zap,
   },
   {
-    index: "03",
-    title: "Partners,\nNot Vendors",
+    title: "Partners, not vendors",
     body: "Your goals become ours. We invest in outcomes, not just deliverables.",
+    icon: Handshake,
   },
   {
-    index: "04",
-    title: "Always\nEvolving",
-    body: "Digital never stands still. Neither do we — we track, refine, and adapt relentlessly.",
+    title: "Always evolving",
+    body: "Digital never stands still. Neither do we. We track, refine, and adapt relentlessly.",
+    icon: RefreshCw,
   },
 ];
 
@@ -43,6 +54,24 @@ const team = [
   { name: "Sandip Samanta", role: "Co-Founder", since: "2022" },
   { name: "Supratik Sahis", role: "Head Designer", since: "2023" },
   { name: "Parthiv Sarker", role: "Lead Developer", since: "2023" },
+];
+
+const milestones = [
+  {
+    year: "2022",
+    title: "Founded in Kolkata",
+    body: "Wefik starts with two founders and one obsession: make things that actually work.",
+  },
+  {
+    year: "2023",
+    title: "The team grows",
+    body: "A head designer and a lead developer join, and the studio takes on brand, product and engineering work end to end.",
+  },
+  {
+    year: "Today",
+    title: "Websites, apps & brands",
+    body: "We design and build across web, product, branding and campaigns for clients across India.",
+  },
 ];
 
 const capabilities = [
@@ -56,674 +85,381 @@ const capabilities = [
   "Shopify & WordPress",
 ];
 
-function SplitWords({ text, className, style }) {
-  return (
-    <div className={className} style={style} aria-label={text}>
-      {text.split(" ").map((word, i) => (
-        <span
-          key={i}
-          className="inline-block overflow-hidden"
-          style={{ marginRight: "0.25em" }}
-        >
-          <span className="split-word inline-block">{word}</span>
-        </span>
-      ))}
-    </div>
-  );
+const initials = (name) =>
+  name
+    .replace(/^Sk\.\s*/, "")
+    .split(" ")
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("");
+
+function Ribbon({ reverse }) {
+  const items = [...capabilities, ...capabilities, ...capabilities];
+  return (reverse ? [...items].reverse() : items).map((cap, i) => (
+    <span key={i} className="flex items-center">
+      <span className="font-big px-8 text-2xl font-black tracking-tight uppercase md:text-3xl">
+        {cap}
+      </span>
+      <span aria-hidden="true" className="text-lg opacity-60">
+        ✦
+      </span>
+    </span>
+  ));
 }
 
 export default function AgencyPage() {
-  const heroRef = useRef(null);
+  const pageRef = useRef(null);
   const marqueeRef = useRef(null);
-  const manifestoRef = useRef(null);
-  const statsRef = useRef(null);
-  const valuesRef = useRef(null);
-  const teamRef = useRef(null);
-  const locationRef = useRef(null);
-  const ctaRef = useRef(null);
+  const timelineRef = useRef(null);
 
+  // Hero entrance + scroll reveals + stat counters + timeline line
   useGSAP(
     () => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      const reduce = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
 
-      tl.fromTo(
-        ".hero-ghost",
-        { yPercent: 8, opacity: 0 },
-        { yPercent: 0, opacity: 0.04, duration: 1.4 },
-        0
-      );
-      tl.fromTo(
-        ".hero-meta",
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8 },
-        0.2
-      );
-      tl.fromTo(
-        ".hero-line .split-word",
-        { yPercent: 110 },
-        { yPercent: 0, duration: 1, stagger: 0.06 },
-        0.35
-      );
-      tl.fromTo(
-        ".hero-pill",
-        { scale: 0.8, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.7)" },
-        0.7
-      );
-      tl.fromTo(
-        ".hero-footer > *",
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, stagger: 0.12 },
-        0.85
-      );
+      if (reduce) {
+        gsap.set(".hero-word, .reveal", { clearProps: "all", opacity: 1 });
+        document.querySelectorAll(".stat-number").forEach((el) => {
+          el.textContent = el.dataset.target;
+        });
+        return;
+      }
 
-      gsap.to(".hero-ghost", {
-        yPercent: -20,
-        ease: "none",
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
+      gsap
+        .timeline({ defaults: { ease: "power4.out" }, delay: 0.2 })
+        .fromTo(
+          ".hero-word",
+          { yPercent: 110 },
+          { yPercent: 0, duration: 1.1, stagger: 0.07 }
+        )
+        .fromTo(
+          ".hero-side > *",
+          { y: 24, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, stagger: 0.1 },
+          "-=0.7"
+        );
+
+      gsap.utils.toArray(".reveal").forEach((el) => {
+        gsap.fromTo(
+          el,
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.9,
+            ease: "power3.out",
+            scrollTrigger: { trigger: el, start: "top 88%" },
+          }
+        );
       });
+
+      gsap.fromTo(
+        ".banner-img",
+        { scale: 1.15 },
+        {
+          scale: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".banner",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        }
+      );
+
+      document.querySelectorAll(".stat-number").forEach((el) => {
+        const target = parseFloat(el.dataset.target);
+        const proxy = { val: 0 };
+        el.textContent = "0";
+        gsap.to(proxy, {
+          val: target,
+          duration: 1.8,
+          ease: "power2.out",
+          scrollTrigger: { trigger: el, start: "top 90%" },
+          onUpdate() {
+            el.textContent = Math.round(proxy.val);
+          },
+        });
+      });
+
+      if (timelineRef.current) {
+        gsap.fromTo(
+          ".timeline-fill",
+          { scaleY: 0 },
+          {
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: timelineRef.current,
+              start: "top 70%",
+              end: "bottom 60%",
+              scrub: 0.6,
+            },
+          }
+        );
+      }
     },
-    { scope: heroRef }
+    { scope: pageRef }
   );
 
+  // Two crossing capability ribbons (time-based loops, paused off screen)
+  const ribbonTweens = useRef([]);
   useGSAP(
     () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const inner1 = marqueeRef.current?.querySelector(".marquee-inner-1");
       const inner2 = marqueeRef.current?.querySelector(".marquee-inner-2");
       if (!inner1 || !inner2) return;
 
-      let pos1 = 0;
-      let pos2 = -(inner2.offsetWidth / 2);
-      const speed = 1.2;
-
-      const ticker = gsap.ticker.add(() => {
-        pos1 -= speed;
-        pos2 += speed;
-        if (Math.abs(pos1) >= inner1.offsetWidth / 2) pos1 = 0;
-        if (pos2 >= 0) pos2 = -(inner2.offsetWidth / 2);
-        gsap.set(inner1, { x: pos1 });
-        gsap.set(inner2, { x: pos2 });
-      });
-
-      return () => {
-        gsap.ticker.remove(ticker);
-      };
+      const half1 = inner1.scrollWidth / 3;
+      const half2 = inner2.scrollWidth / 3;
+      ribbonTweens.current = [
+        gsap.fromTo(
+          inner1,
+          { x: 0 },
+          { x: -half1, duration: 40, ease: "none", repeat: -1 }
+        ),
+        gsap.fromTo(
+          inner2,
+          { x: -half2 },
+          { x: 0, duration: 40, ease: "none", repeat: -1 }
+        ),
+      ];
     },
     { scope: marqueeRef }
   );
-
-  useGSAP(
-    () => {
-      const st = {
-        trigger: manifestoRef.current,
-        start: "top 80%",
-        toggleActions: "play none none none",
-      };
-
-      gsap.fromTo(
-        ".manifesto-label",
-        { x: -30, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 0.7,
-          ease: "power3.out",
-          scrollTrigger: st,
-        }
-      );
-
-      gsap.fromTo(
-        ".manifesto-headline .split-word",
-        { yPercent: 110 },
-        {
-          yPercent: 0,
-          duration: 1,
-          ease: "power3.out",
-          stagger: 0.05,
-          scrollTrigger: { ...st, start: "top 78%" },
-        }
-      );
-
-      gsap.fromTo(
-        ".manifesto-body",
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.9,
-          ease: "power3.out",
-          stagger: 0.15,
-          scrollTrigger: { ...st, start: "top 72%" },
-        }
-      );
-
-      gsap.fromTo(
-        ".manifesto-ghost",
-        { xPercent: -10, opacity: 0 },
-        {
-          xPercent: 0,
-          opacity: 0.03,
-          duration: 1.5,
-          ease: "power3.out",
-          scrollTrigger: { ...st, start: "top 85%" },
-        }
-      );
-
-      gsap.fromTo(
-        ".manifesto-image-container",
-        { clipPath: "inset(0% 100% 0% 0%)", opacity: 0 },
-        {
-          clipPath: "inset(0% 0% 0% 0%)",
-          opacity: 1,
-          duration: 1.2,
-          ease: "expo.out",
-          scrollTrigger: { ...st, start: "top 75%" },
-        }
-      );
-    },
-    { scope: manifestoRef }
-  );
-
-  useGSAP(
-    () => {
-      gsap.fromTo(
-        ".stat-item",
-        { y: 50, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: statsRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-            onEnter: () => {
-              document.querySelectorAll(".stat-number").forEach((el) => {
-                const target = parseFloat(el.dataset.target);
-                const proxy = { val: 0 };
-                gsap.to(proxy, {
-                  val: target,
-                  duration: 1.8,
-                  ease: "power2.out",
-                  onUpdate() {
-                    el.textContent = Math.round(proxy.val);
-                  },
-                });
-              });
-            },
-          },
-        }
-      );
-    },
-    { scope: statsRef }
-  );
-
-  useGSAP(
-    () => {
-      gsap.fromTo(
-        ".values-label",
-        { y: 20, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.7,
-          ease: "power3.out",
-          scrollTrigger: { trigger: valuesRef.current, start: "top 80%" },
-        }
-      );
-
-      gsap.fromTo(
-        ".values-headline .split-word",
-        { yPercent: 110 },
-        {
-          yPercent: 0,
-          duration: 0.9,
-          ease: "power3.out",
-          stagger: 0.05,
-          scrollTrigger: { trigger: valuesRef.current, start: "top 78%" },
-        }
-      );
-
-      gsap.fromTo(
-        ".value-card",
-        { y: 60, opacity: 0, scale: 0.96 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: valuesRef.current,
-            start: "top 70%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    },
-    { scope: valuesRef }
-  );
-
-  useGSAP(
-    () => {
-      gsap.fromTo(
-        ".team-header-content > *",
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.1,
-          scrollTrigger: { trigger: teamRef.current, start: "top 80%" },
-        }
-      );
-
-      gsap.fromTo(
-        ".team-item",
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          ease: "power3.out",
-          stagger: 0.1,
-          scrollTrigger: { trigger: teamRef.current, start: "top 75%" },
-        }
-      );
-    },
-    { scope: teamRef }
-  );
-
-  useGSAP(
-    () => {
-      gsap.fromTo(
-        ".location-item",
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.7,
-          ease: "power3.out",
-          stagger: 0.12,
-          scrollTrigger: {
-            trigger: locationRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    },
-    { scope: locationRef }
-  );
-
-  useGSAP(
-    () => {
-      const panel = ctaRef.current?.querySelector(".cta-panel");
-      if (!panel) return;
-
-      gsap.fromTo(
-        panel,
-        { y: 60, opacity: 0, scale: 0.97 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ctaRef.current,
-            start: "top 82%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-
-      gsap.fromTo(
-        ".cta-ghost",
-        { xPercent: 10, opacity: 0 },
-        {
-          xPercent: 0,
-          opacity: 1,
-          duration: 1.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ctaRef.current,
-            start: "top 75%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-
-      gsap.fromTo(
-        ".cta-content > *",
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          stagger: 0.15,
-          scrollTrigger: {
-            trigger: ctaRef.current,
-            start: "top 72%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    },
-    { scope: ctaRef }
-  );
+  usePauseWhenHidden(marqueeRef, () => ribbonTweens.current);
 
   return (
-    <main className="bg-bg-primary text-text-primary overflow-x-hidden">
-      <section
-        ref={heroRef}
-        className="relative flex min-h-screen flex-col justify-between px-5 pt-32 pb-10 md:px-10 md:pt-40 lg:px-16 lg:pt-48"
-      >
-        <div
-          className="hero-ghost font-big pointer-events-none absolute inset-x-0 top-16 leading-none font-black tracking-tighter uppercase select-none"
-          style={{
-            fontSize: "clamp(6rem, 22vw, 22rem)",
-            color: "var(--color-text-primary)",
-            opacity: 0,
-          }}
-          aria-hidden
-        >
-          WEFIK
-        </div>
-
-        <div className="hero-meta relative z-10 flex items-center justify-between opacity-0">
-          <span className="font-accent text-text-muted text-[10px] font-bold tracking-[0.35em] uppercase">
-            Kolkata, India · Est. 2022
-          </span>
-          <span className="border-border font-accent text-text-muted rounded-full border px-4 py-1.5 text-[10px] font-bold tracking-[0.3em] uppercase">
-            Digital Agency
-          </span>
-        </div>
-
-        <div className="relative z-10 mt-10 md:mt-0">
-          <SplitWords
-            text="We Build"
-            className="hero-line font-big text-text-primary leading-none font-black tracking-tight uppercase"
-            style={{ fontSize: "clamp(3.5rem, 10vw, 10rem)" }}
-          />
-          <div className="flex flex-wrap items-end gap-4 md:gap-6">
-            <SplitWords
-              text="Digital"
-              className="hero-line font-big text-text-primary leading-none font-black tracking-tight uppercase"
-              style={{ fontSize: "clamp(3.5rem, 10vw, 10rem)" }}
-            />
-            <span className="hero-pill bg-accent-bright font-accent mb-2 inline-block rounded-full px-5 py-2 text-xs font-black tracking-[0.3em] text-black uppercase opacity-0 md:mb-4 md:px-7 md:py-3 md:text-sm">
-              that matters
-            </span>
-          </div>
-          <SplitWords
-            text="Experiences"
-            className="hero-line font-big text-text-primary leading-none font-black tracking-tight uppercase"
-            style={{ fontSize: "clamp(3.5rem, 10vw, 10rem)" }}
-          />
-        </div>
-
-        <div className="hero-footer relative z-10 mt-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <p className="font-body text-text-muted max-w-sm text-base leading-snug opacity-0 md:text-lg">
-            Culture-driven, creative and competitive. We craft digital
-            experiences that make brands impossible to ignore.
-          </p>
-          <TransitionLink
-            href="/contact"
-            className="group bg-accent font-accent hover:bg-accent-hover inline-flex items-center gap-4 rounded-full px-8 py-4 text-[11px] font-bold tracking-[0.25em] text-bg-primary uppercase opacity-0 transition-all duration-300 hover:gap-6"
-          >
-            <span>Start a Project</span>
-            <ArrowRight
-              size={15}
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            />
-          </TransitionLink>
-        </div>
-      </section>
-
-      <div
-        ref={marqueeRef}
-        className="relative cursor-default"
-        style={{ height: "300px", overflow: "visible" }}
-      >
-        <div
-          className="strip-1 absolute py-5"
-          style={{
-            top: "50%",
-            left: "-50vw",
-            width: "200vw",
-            transform: "translateY(calc(-50% - 48px)) rotate(-10deg)",
-            transformOrigin: "center center",
-            zIndex: 1,
-            background: "#0f1a05",
-            borderTop: "2px solid rgba(163,230,53,0.3)",
-            borderBottom: "2px solid rgba(163,230,53,0.3)",
-          }}
-        >
-          <div className="marquee-inner-1 flex w-max items-center whitespace-nowrap will-change-transform">
-            {[...capabilities, ...capabilities, ...capabilities].map(
-              (cap, i) => (
-                <span key={i} className="flex items-center">
-                  <span className="font-big px-10 text-2xl font-black tracking-tight text-white uppercase md:text-3xl">
-                    {cap}
-                  </span>
-                  <span
-                    style={{
-                      color: "#a3e635",
-                      fontSize: "1.4rem",
-                      paddingInline: "4px",
-                    }}
-                  >
-                    ✦
-                  </span>
-                </span>
-              )
-            )}
-          </div>
-        </div>
-
-        <div
-          className="strip-2 absolute py-5"
-          style={{
-            top: "50%",
-            left: "-50vw",
-            width: "200vw",
-            transform: "translateY(calc(-50% + 48px)) rotate(10deg)",
-            transformOrigin: "center center",
-            zIndex: 2,
-            background: "#a3e635",
-            borderTop: "2px solid rgba(15,26,5,0.15)",
-            borderBottom: "2px solid rgba(15,26,5,0.15)",
-          }}
-        >
-          <div className="marquee-inner-2 flex w-max items-center whitespace-nowrap will-change-transform">
-            {[...capabilities, ...capabilities, ...capabilities]
-              .reverse()
-              .map((cap, i) => (
-                <span key={i} className="flex items-center">
-                  <span className="font-big px-10 text-2xl font-black tracking-tight text-black uppercase md:text-3xl">
-                    {cap}
-                  </span>
-                  <span
-                    style={{
-                      color: "rgba(0,0,0,0.35)",
-                      fontSize: "1.4rem",
-                      paddingInline: "4px",
-                    }}
-                  >
-                    ◆
-                  </span>
-                </span>
-              ))}
-          </div>
-        </div>
-      </div>
-      <section
-        ref={manifestoRef}
-        className="relative overflow-hidden px-5 py-24 md:px-10 md:py-36 lg:px-16"
-      >
-        <div
-          className="manifesto-ghost font-big pointer-events-none absolute top-1/2 left-0 -translate-y-1/2 font-black uppercase select-none"
-          style={{
-            fontSize: "20vw",
-            color: "var(--color-text-primary)",
-            opacity: 0,
-          }}
-        >
-          MANIFESTO
-        </div>
-
-        <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[100px_1fr_350px] lg:gap-16">
-            <div className="flex flex-row items-start gap-4 lg:flex-col">
-              <span className="manifesto-label font-accent text-text-muted text-[9px] font-bold tracking-[0.4em] uppercase opacity-0 lg:rotate-180 lg:[writing-mode:vertical-rl]">
-                Our Story
-              </span>
-              <div className="bg-border h-px flex-1 lg:h-24 lg:w-px lg:flex-none" />
+    <main
+      ref={pageRef}
+      className="bg-bg-primary text-text-primary overflow-x-hidden"
+    >
+      {/* ───────── Hero ───────── */}
+      <section className="relative px-6 pt-32 pb-14 md:pt-44 md:pb-20">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+          <div>
+            <div className="mb-7">
+              <Tag>About Wefik</Tag>
             </div>
+            <h1 className="text-text-primary text-6xl leading-[0.88] tracking-tighter md:text-8xl xl:text-9xl">
+              {[["We", "build"], ["things", "that"], ["matter."]].map(
+                (line, li) => (
+                  <div key={li} className="block">
+                    {line.map((w) => (
+                      <span
+                        key={w}
+                        className="mr-[0.22em] inline-block overflow-hidden align-top"
+                      >
+                        <span
+                          className={`hero-word inline-block ${
+                            w === "matter." ? "text-accent" : ""
+                          }`}
+                        >
+                          {w}
+                        </span>
+                      </span>
+                    ))}
+                  </div>
+                )
+              )}
+            </h1>
+          </div>
 
-            <div className="relative z-10 flex flex-col gap-8">
-              <div className="flex flex-col gap-4">
-                <span className="font-accent text-accent text-[10px] font-bold tracking-[0.3em] uppercase">
-                  Est. 2022
+          <div className="hero-side flex flex-col gap-7 lg:pb-3">
+            <p className="text-text-muted max-w-md text-base leading-relaxed md:text-lg">
+              Culture-driven, creative and competitive. We craft websites,
+              products and brands that make businesses impossible to ignore.
+            </p>
+            <div className="text-text-muted flex flex-wrap gap-x-6 gap-y-2 text-sm">
+              <span className="flex items-center gap-2">
+                <MapPin size={15} className="text-accent" /> Kolkata, India
+              </span>
+              <span className="flex items-center gap-2">
+                <CalendarDays size={15} className="text-accent" /> Est. 2022
+              </span>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <TransitionLink
+                href="/contact"
+                className="group bg-accent text-bg-primary inline-flex h-14 items-center justify-between gap-5 rounded-full pr-2 pl-7 text-[15px] font-bold shadow-[0_12px_40px_-14px_var(--color-accent)] transition-all duration-300 hover:-translate-y-0.5"
+              >
+                Start a project
+                <span className="bg-bg-primary text-accent flex h-10 w-10 items-center justify-center rounded-full transition-transform duration-300 group-hover:-rotate-45">
+                  <ArrowRight size={18} />
                 </span>
-                <SplitWords
-                  text="Culture-driven. Creative. Competitive."
-                  className="manifesto-headline font-big text-text-primary leading-[0.9] font-black tracking-tight uppercase"
-                  style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)" }}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                <p className="manifesto-body font-body text-text-muted text-base leading-relaxed opacity-0 md:text-lg">
-                  Wefik was born in Kolkata with a simple obsession — make
-                  things that actually work. Not just things that look good in a
-                  Dribbble shot, but experiences that solve real problems and
-                  move real needles.
-                </p>
-                <p className="manifesto-body font-body text-text-muted text-base leading-relaxed opacity-0 md:text-lg">
-                  We work across websites, apps, branding, and digital
-                  campaigns. Between timeless craft and cultural zeitgeist. We
-                  communicate effectively, quick-wittedly, ambitiously. This is
-                  Wefik.
-                </p>
-              </div>
-
+              </TransitionLink>
               <TransitionLink
                 href="/works"
-                className="group font-accent text-accent inline-flex w-fit items-center gap-3 text-[10px] font-bold tracking-[0.3em] uppercase transition-all hover:gap-5"
+                className="group border-text-primary/20 text-text-primary hover:border-accent hover:text-accent inline-flex h-14 items-center justify-center gap-2 rounded-full border px-7 text-[15px] font-semibold transition-colors duration-300"
               >
-                <span>See our work</span>
+                See our work
                 <ArrowUpRight
-                  size={14}
-                  className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  size={16}
+                  className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                 />
               </TransitionLink>
             </div>
-
-            <div className="manifesto-image-container relative aspect-[4/5] w-full overflow-hidden rounded-2xl opacity-0 lg:mt-12">
-              <Image
-                src="/images/agency/story_banner.png"
-                alt="Wefik Creative Vision"
-                fill
-                className="object-cover transition-transform duration-700 hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-            </div>
           </div>
         </div>
       </section>
 
-      <section
-        ref={statsRef}
-        className="border-border bg-bg-secondary border-y px-5 py-16 md:px-10 md:py-20 lg:px-16"
-      >
-        <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-2 gap-px md:grid-cols-4">
-            {stats.map((s, i) => (
+      {/* ───────── Image band with stats ───────── */}
+      <section className="px-4 md:px-6">
+        <div className="banner reveal relative mx-auto h-[62vh] min-h-[420px] max-w-7xl overflow-hidden rounded-[2rem] md:rounded-[2.5rem]">
+          <Image
+            src="/images/agency/story_banner.png"
+            alt="The Wefik studio vision"
+            fill
+            priority
+            sizes="(max-width: 1280px) 100vw, 1280px"
+            className="banner-img object-cover"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/30 to-black/10" />
+          <div className="absolute inset-x-0 bottom-0 grid grid-cols-2 gap-px p-3 md:grid-cols-4 md:p-5">
+            {stats.map((s) => (
               <div
-                key={i}
-                className="stat-item flex flex-col gap-2 px-6 py-8 opacity-0 md:px-10 md:py-10"
-                style={{
-                  borderLeft: i > 0 ? "1px solid var(--color-border)" : "none",
-                }}
+                key={s.label}
+                className="rounded-2xl bg-black/35 px-5 py-5 backdrop-blur-md md:px-6 md:py-6"
               >
-                <div
-                  className="font-big text-text-primary leading-none font-black"
-                  style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
-                >
-                  <span className="stat-number" data-target={s.value}>
-                    0
+                <div className="font-big flex items-baseline text-4xl leading-none font-black text-white md:text-6xl">
+                  <span
+                    className="stat-number tabular-nums"
+                    data-target={s.value}
+                  >
+                    {s.value}
                   </span>
-                  <span>{s.suffix}</span>
+                  <span className="text-accent-bright">{s.suffix}</span>
                 </div>
-                <span className="font-accent text-text-muted text-[9px] font-semibold tracking-[0.3em] uppercase md:text-[10px]">
+                <div className="mt-2 text-[11px] font-semibold tracking-[0.15em] text-white/70 uppercase">
                   {s.label}
-                </span>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section
-        ref={valuesRef}
-        className="px-5 py-20 md:px-10 md:py-32 lg:px-16"
+      {/* ───────── Capability ribbons ───────── */}
+      <div
+        ref={marqueeRef}
+        aria-label="Our capabilities"
+        className="relative h-[220px] overflow-hidden md:h-[260px]"
       >
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-12 flex flex-col gap-4 md:mb-16 md:flex-row md:items-end md:justify-between">
-            <div>
-              <span className="values-label font-accent text-text-muted text-[9px] font-bold tracking-[0.4em] uppercase opacity-0">
-                What We Stand For
-              </span>
-              <SplitWords
-                text="Our Core Values"
-                className="values-headline font-big text-text-primary mt-3 leading-none font-black tracking-tight uppercase"
-                style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
-              />
+        <div
+          className="bg-bg-card text-text-primary border-text-primary/10 absolute top-1/2 left-[-25vw] w-[150vw] border-y py-4"
+          style={{ transform: "translateY(calc(-50% - 40px)) rotate(-6deg)" }}
+        >
+          <div className="marquee-inner-1 flex w-max items-center whitespace-nowrap will-change-transform">
+            <Ribbon />
+          </div>
+        </div>
+        <div
+          className="bg-accent text-bg-primary absolute top-1/2 left-[-25vw] w-[150vw] py-4"
+          style={{ transform: "translateY(calc(-50% + 40px)) rotate(6deg)" }}
+        >
+          <div className="marquee-inner-2 flex w-max items-center whitespace-nowrap will-change-transform">
+            <Ribbon reverse />
+          </div>
+        </div>
+      </div>
+
+      {/* ───────── Story + timeline ───────── */}
+      <section className="px-6 py-20 md:py-28">
+        <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-2 lg:gap-20">
+          <div className="lg:sticky lg:top-32 lg:self-start">
+            <div className="reveal mb-6">
+              <Tag>Our Story</Tag>
             </div>
+            <h2 className="reveal text-text-primary text-5xl leading-[0.92] tracking-tight md:text-7xl">
+              Culture-driven.
+              <br />
+              Creative.
+              <br />
+              <span className="text-accent">Competitive.</span>
+            </h2>
+            <p className="reveal text-text-muted mt-8 max-w-lg text-base leading-relaxed md:text-lg">
+              Wefik was born in Kolkata with a simple obsession: make things
+              that actually work. Not just things that look good in a Dribbble
+              shot, but experiences that solve real problems and move real
+              needles.
+            </p>
+            <p className="reveal text-text-muted mt-5 max-w-lg text-base leading-relaxed md:text-lg">
+              We work across websites, apps, branding and digital campaigns,
+              between timeless craft and cultural zeitgeist.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div ref={timelineRef} className="relative pl-10 md:pl-12">
+            <div className="bg-text-primary/10 absolute top-2 bottom-2 left-[11px] w-[2px]" />
+            <div className="timeline-fill bg-accent absolute top-2 bottom-2 left-[11px] w-[2px] origin-top" />
+            <div className="flex flex-col gap-10 md:gap-14">
+              {milestones.map((m) => (
+                <div key={m.year} className="reveal relative">
+                  <span className="bg-bg-primary border-accent absolute top-1.5 -left-10 flex h-6 w-6 items-center justify-center rounded-full border-2 md:-left-12">
+                    <span className="bg-accent h-2 w-2 rounded-full" />
+                  </span>
+                  <div className="border-text-primary/10 bg-bg-card rounded-3xl border p-6 md:p-8">
+                    <span className="text-accent font-big text-3xl font-black md:text-4xl">
+                      {m.year}
+                    </span>
+                    <h3 className="text-text-primary mt-2 text-2xl leading-tight tracking-tight md:text-3xl">
+                      {m.title}
+                    </h3>
+                    <p className="text-text-muted mt-3 text-sm leading-relaxed md:text-base">
+                      {m.body}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── Values ───────── */}
+      <section className="border-text-primary/10 border-t px-6 py-20 md:py-28">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 flex flex-col gap-6 md:mb-16 md:flex-row md:items-end md:justify-between">
+            <div>
+              <div className="reveal mb-6">
+                <Tag>What We Stand For</Tag>
+              </div>
+              <h2 className="reveal text-text-primary text-5xl leading-[0.92] tracking-tight md:text-7xl">
+                Our core <span className="text-accent">values.</span>
+              </h2>
+            </div>
+            <p className="reveal text-text-muted max-w-sm text-base leading-relaxed">
+              Four principles that shape how we work with clients and with each
+              other.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {values.map((v, i) => (
               <div
-                key={i}
-                className={`value-card group border-border hover:border-accent/40 relative flex flex-col justify-between overflow-hidden rounded-3xl border p-7 opacity-0 transition-colors duration-500 md:p-8 ${
-                  i === 1 ? "bg-accent-bright" : "bg-bg-card"
-                }`}
+                key={v.title}
+                className="reveal group border-text-primary/10 bg-bg-card hover:border-accent/50 relative flex flex-col gap-6 rounded-3xl border p-7 transition-[border-color,box-shadow,transform] duration-500 hover:-translate-y-1 hover:shadow-[0_24px_60px_-30px_var(--color-accent)]"
               >
-                <div className="relative z-10 flex flex-col gap-5">
-                  <span
-                    className={`font-accent text-[10px] font-bold tracking-[0.3em] ${
-                      i === 1 ? "text-black/60" : "text-accent"
-                    }`}
-                  >
-                    {v.index}
+                <div className="flex items-center justify-between">
+                  <span className="bg-accent/10 text-accent group-hover:bg-accent group-hover:text-bg-primary flex h-12 w-12 items-center justify-center rounded-2xl transition-colors duration-300">
+                    <v.icon
+                      size={22}
+                      className="transition-transform duration-500 group-hover:rotate-12"
+                    />
                   </span>
-                  <div
-                    className={`font-big leading-tight font-black tracking-tight uppercase ${
-                      i === 1 ? "text-black" : "text-text-primary"
-                    }`}
-                    style={{
-                      fontSize: "clamp(1.5rem, 2.5vw, 2rem)",
-                      whiteSpace: "pre-line",
-                    }}
-                  >
+                  <span className="text-text-subtle font-big text-2xl font-black">
+                    0{i + 1}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-text-primary text-2xl leading-tight tracking-tight">
                     {v.title}
-                  </div>
-                  <p
-                    className={`font-body text-sm leading-relaxed ${i === 1 ? "text-black/75" : "text-text-muted"}`}
-                  >
+                  </h3>
+                  <p className="text-text-muted mt-3 text-sm leading-relaxed">
                     {v.body}
                   </p>
                 </div>
@@ -732,80 +468,52 @@ export default function AgencyPage() {
           </div>
         </div>
       </section>
-      {}
-      <section
-        ref={teamRef}
-        className="border-border border-t px-5 py-20 md:px-10 md:py-32 lg:px-16"
-      >
+
+      {/* ───────── Team ───────── */}
+      <section className="border-text-primary/10 border-t px-6 py-20 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <div className="team-header-content mb-16 flex flex-col gap-6 lg:mb-24 lg:flex-row lg:items-end lg:justify-between">
-            <div className="flex flex-col gap-4 lg:max-w-2xl">
-              <span className="font-accent text-accent text-[10px] font-bold tracking-[0.3em] uppercase opacity-80">
-                Wefik Culture
-              </span>
-              <h2 className="font-big text-text-primary text-4xl leading-none font-black tracking-tight uppercase md:text-6xl lg:text-7xl">
-                The Humans{" "}
-                <span className="text-accent pr-[0.12em] italic">Behind</span>{" "}
-                the Work.
+          <div className="mb-12 flex flex-col gap-6 md:mb-16 md:flex-row md:items-end md:justify-between">
+            <div>
+              <div className="reveal mb-6">
+                <Tag>The Team</Tag>
+              </div>
+              <h2 className="reveal text-text-primary text-5xl leading-[0.92] tracking-tight md:text-7xl">
+                The humans <br className="hidden md:block" />
+                behind <span className="text-accent">the work.</span>
               </h2>
             </div>
-            <p className="font-body text-text-muted max-w-md text-base leading-relaxed lg:pb-3 lg:text-lg">
-              A collective of strategists, designers, and engineers dedicated to
-              moving needles and solving real problems.
+            <p className="reveal text-text-muted max-w-sm text-base leading-relaxed">
+              A small collective of strategists, designers and engineers
+              dedicated to solving real problems.
             </p>
           </div>
 
-          <div
-            className="flex flex-col border-t"
-            style={{ borderColor: "var(--color-border)" }}
-          >
-            {team.map((member, i) => (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {team.map((m) => (
               <div
-                key={i}
-                className="team-item group border-border hover:bg-bg-secondary relative flex flex-col border-b py-8 transition-colors duration-500 md:flex-row md:items-end md:justify-between md:py-10 lg:px-6"
+                key={m.name}
+                className="reveal group border-text-primary/10 bg-bg-card hover:border-accent/50 relative overflow-hidden rounded-3xl border p-6 transition-[border-color,transform] duration-500 hover:-translate-y-1"
               >
-                <div className="flex flex-col gap-2 md:gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="font-accent text-accent text-[9px] font-bold tracking-[0.3em] uppercase opacity-60">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <div className="bg-accent h-px w-6 opacity-30" />
-                    <span className="font-accent text-text-muted text-[10px] font-bold tracking-[0.2em] uppercase">
-                      {member.role}
-                    </span>
-                  </div>
-                  <div className="flex items-baseline gap-4">
-                    <h3 className="font-big text-text-primary text-3xl leading-none font-black tracking-tighter uppercase transition-all duration-500 group-hover:pl-2 md:text-5xl lg:text-7xl">
-                      {member.name}
-                    </h3>
-                  </div>
+                <div className="relative mb-10 flex items-start justify-between">
+                  <span className="border-accent/40 bg-accent/10 text-accent group-hover:bg-accent group-hover:text-bg-primary font-big flex h-20 w-20 items-center justify-center rounded-full border text-3xl font-black transition-colors duration-500">
+                    {initials(m.name)}
+                  </span>
+                  <span className="border-text-primary/10 text-text-subtle rounded-full border px-3 py-1 text-[11px] font-semibold tabular-nums">
+                    Since {m.since}
+                  </span>
                 </div>
-
-                <div className="mt-6 flex flex-col items-start gap-4 md:mt-0 md:flex-row md:items-center md:gap-12">
-                  <div className="flex flex-col items-start gap-0.5 md:items-end">
-                    <span className="font-accent text-text-subtle text-[8px] font-bold tracking-[0.2em] uppercase">
-                      Division
-                    </span>
-                    <span className="font-body text-text-muted text-xs font-medium italic">
-                      {i % 2 === 0
-                        ? "Creative & Brand"
-                        : "Engineering & Product"}
-                    </span>
-                  </div>
-                  <div className="flex flex-col items-start gap-0.5 md:items-end">
-                    <span className="font-accent text-text-subtle text-[8px] font-bold tracking-[0.2em] uppercase">
-                      Since
-                    </span>
-                    <span className="font-body text-text-muted text-xs font-medium">
-                      {member.since}
-                    </span>
-                  </div>
-                </div>
+                <h3 className="text-text-primary text-3xl leading-[0.95] tracking-tight">
+                  {m.name}
+                </h3>
+                <p className="text-accent mt-2 text-xs font-bold tracking-[0.15em] uppercase">
+                  {m.role}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
+
       <ContactCTA />
     </main>
   );

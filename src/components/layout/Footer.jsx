@@ -140,28 +140,13 @@ const DropDownLinks = ({ allLinks }) => {
     setSelectedIndex((prev) => (prev === index ? null : index));
   };
 
-  const [contact, ...rest] = allLinks;
-
   return (
     <div className="flex max-w-6xl flex-col gap-6 md:hidden">
-      <div>
-        <h3 className="text-accent text-2xl font-semibold">{contact.title}</h3>
-        <ul className="mt-4 flex flex-col gap-2">
-          {contact.linksTo.map((sublink) => (
-            <li key={sublink.name}>
-              <a href={sublink.url} className="text-text-muted">
-                {sublink.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <hr className="border-border/10 mt-5 border-t" />
-      </div>
-      {rest.map((link, index) => (
+      {allLinks.map((link, index) => (
         <AccordionItem
           key={index}
           link={link}
-          index={index + 1}
+          index={index}
           isOpen={selectedIndex === index}
           onToggle={() => handleClick(index)}
         />

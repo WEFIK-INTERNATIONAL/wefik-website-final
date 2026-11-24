@@ -10,8 +10,7 @@ import { useViewTransition } from "@/hooks/useViewTransition";
 import TransitionLink from "@/components/ui/TransitionLink";
 import { useTheme } from "next-themes";
 
-const toTitleCase = (str) =>
-  str.replace(/\b([a-z])/g, (m) => m.toUpperCase());
+const toTitleCase = (str) => str.replace(/\b([a-z])/g, (m) => m.toUpperCase());
 
 function ProjectCard({ project, index, onProjectClick }) {
   const cardRef = useRef(null);
@@ -23,9 +22,9 @@ function ProjectCard({ project, index, onProjectClick }) {
     <div
       ref={cardRef}
       onClick={(e) => onProjectClick(e, project.slug?.current)}
-      className="project-card group border-border/50 bg-bg-card hover:border-accent/40 hover:bg-bg-secondary relative flex h-full w-[300px] shrink-0 cursor-pointer flex-col gap-4 overflow-hidden rounded-3xl border p-4 shadow-sm transition-all duration-500 hover:shadow-xl md:w-[450px] md:gap-6 md:p-6"
+      className="project-card group border-border/50 bg-bg-card hover:border-accent/40 hover:bg-bg-secondary relative flex h-full w-[300px] shrink-0 cursor-pointer flex-col gap-4 overflow-hidden rounded-3xl border p-4 shadow-sm transition-[border-color,background-color,box-shadow] duration-500 hover:shadow-xl md:w-[450px] md:gap-6 md:p-6"
     >
-      <div className="pointer-events-none relative aspect-4/3 overflow-hidden rounded-xl bg-neutral-900">
+      <div className="card-media pointer-events-none relative aspect-4/3 overflow-hidden rounded-xl bg-neutral-900">
         {hasImage && (
           <Image
             src={urlFor(project.coverImage)
@@ -73,7 +72,7 @@ function ProjectCard({ project, index, onProjectClick }) {
         </div>
       </div>
 
-      <div className="bg-accent pointer-events-none absolute top-8 right-8 flex h-10 w-10 translate-x-4 translate-y-4 items-center justify-center rounded-full text-bg-primary opacity-0 shadow-xl transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100">
+      <div className="bg-accent text-bg-primary pointer-events-none absolute top-8 right-8 flex h-10 w-10 translate-x-4 translate-y-4 items-center justify-center rounded-full opacity-0 shadow-xl transition-all duration-300 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100">
         <svg
           width="18"
           height="18"
@@ -128,21 +127,35 @@ export default function SelectedWorks({ projects = [] }) {
         }
       );
 
-      const cards = gsap.utils.toArray(".project-card");
-      gsap.fromTo(
-        cards,
-        { y: 50, opacity: 0 },
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      const slides = gsap.utils.toArray(".project-slide");
+      const media = gsap.utils.toArray(".card-media");
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: carouselRef.current, start: "top 80%" },
+      });
+      tl.fromTo(
+        slides,
+        { x: 140, opacity: 0 },
         {
-          y: 0,
+          x: 0,
           opacity: 1,
-          duration: 1,
-          stagger: 0.1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: carouselRef.current,
-            start: "top 85%",
-          },
+          duration: 1.1,
+          stagger: 0.12,
+          ease: "power4.out",
+          clearProps: "transform,opacity",
         }
+      ).fromTo(
+        media,
+        { clipPath: "inset(0% 0% 100% 0% round 12px)" },
+        {
+          clipPath: "inset(0% 0% 0% 0% round 12px)",
+          duration: 1,
+          stagger: 0.12,
+          ease: "power3.inOut",
+          clearProps: "clipPath",
+        },
+        0.15
       );
     },
     { scope: containerRef, dependencies: [projects] }
@@ -230,7 +243,7 @@ export default function SelectedWorks({ projects = [] }) {
             <div className="header-animate flex items-center gap-4">
               <button
                 onClick={scrollPrev}
-                className="group border-border/50 hover:bg-accent flex h-14 w-14 items-center justify-center rounded-full border bg-transparent transition-all hover:scale-105 hover:text-bg-primary lg:h-16 lg:w-16"
+                className="group border-border/50 hover:bg-accent hover:text-bg-primary flex h-14 w-14 items-center justify-center rounded-full border bg-transparent transition-all hover:scale-105 lg:h-16 lg:w-16"
                 aria-label="Previous project"
               >
                 <svg
@@ -249,7 +262,7 @@ export default function SelectedWorks({ projects = [] }) {
               </button>
               <button
                 onClick={scrollNext}
-                className="group border-border/50 hover:bg-accent flex h-14 w-14 items-center justify-center rounded-full border bg-transparent transition-all hover:scale-105 hover:text-bg-primary lg:h-16 lg:w-16"
+                className="group border-border/50 hover:bg-accent hover:text-bg-primary flex h-14 w-14 items-center justify-center rounded-full border bg-transparent transition-all hover:scale-105 lg:h-16 lg:w-16"
                 aria-label="Next project"
               >
                 <svg
@@ -284,7 +297,7 @@ export default function SelectedWorks({ projects = [] }) {
               projects.map((project, i) => (
                 <div
                   key={project._id || i}
-                  className="flex shrink-0 snap-center sm:snap-start"
+                  className="project-slide flex shrink-0 snap-center sm:snap-start"
                 >
                   <ProjectCard
                     project={project}
@@ -308,7 +321,7 @@ export default function SelectedWorks({ projects = [] }) {
               className="group text-text-muted hover:text-accent flex items-center gap-4 text-xs font-bold tracking-[0.2em] uppercase transition-colors"
             >
               <span>View All Projects</span>
-              <div className="border-accent/30 group-hover:bg-accent flex h-10 w-10 items-center justify-center rounded-full border transition-all group-hover:scale-110 group-hover:text-bg-primary">
+              <div className="border-accent/30 group-hover:bg-accent group-hover:text-bg-primary flex h-10 w-10 items-center justify-center rounded-full border transition-all group-hover:scale-110">
                 <svg
                   width="14"
                   height="14"
