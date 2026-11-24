@@ -3,6 +3,7 @@ import React, { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import TransitionLink from "@/components/ui/TransitionLink";
+import usePauseWhenHidden from "@/hooks/usePauseWhenHidden";
 
 export default function CallToActionCom() {
   const containerRef = useRef(null);
@@ -18,7 +19,12 @@ export default function CallToActionCom() {
       ease: "none",
       repeat: -1,
     });
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      tweenRef.current.pause();
+    }
   }, []);
+
+  usePauseWhenHidden(containerRef, () => [tweenRef.current]);
 
   const handleMouseEnter = () => {
     tweenRef.current?.timeScale(0.5);

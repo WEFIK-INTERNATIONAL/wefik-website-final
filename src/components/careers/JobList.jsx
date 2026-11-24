@@ -89,7 +89,7 @@ export default function JobList({ jobs }) {
                 <span className="font-accent text-text-primary group-hover:text-accent text-[10px] font-bold tracking-[0.2em] uppercase transition-colors">
                   View Details & Apply
                 </span>
-                <div className="bg-accent/10 group-hover:bg-accent text-accent flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300 group-hover:text-black">
+                <div className="bg-accent/10 group-hover:bg-accent text-accent flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300 group-hover:text-bg-primary">
                   <ArrowRight
                     size={18}
                     className="transition-transform group-hover:translate-x-1"

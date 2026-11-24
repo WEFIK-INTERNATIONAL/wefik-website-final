@@ -79,7 +79,6 @@ const ExpertiseCard = ({ item, setCardRef, index }) => {
       <div
         className={`pointer-events-none absolute -top-20 -right-20 h-72 w-72 rounded-full bg-linear-to-br opacity-20 blur-3xl ${item.gradient}`}
       />
-      <div className="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.035] mix-blend-overlay" />
 
       <div className="relative z-10 flex h-full flex-col justify-between p-6 sm:p-8 md:p-10 lg:hidden">
         <div className="flex items-center gap-3">
@@ -171,7 +170,7 @@ const ExpertiseCard = ({ item, setCardRef, index }) => {
             className={`group inline-flex w-fit items-center gap-4 rounded-full px-7 py-4 text-[0.7rem] font-bold tracking-[0.25em] uppercase transition-all duration-300 hover:gap-6 ${
               isVibrant
                 ? "bg-black text-white hover:bg-black/85"
-                : "bg-accent hover:bg-accent-hover text-white"
+                : "bg-accent hover:bg-accent-hover text-bg-primary"
             }`}
           >
             <span>Explore</span>
@@ -267,7 +266,7 @@ export default function Expertise() {
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div className="space-y-4 md:space-y-6">
             <Tag>Capabilities</Tag>
-            <h2 className="text-text-primary text-4xl leading-[0.9] font-black tracking-tighter uppercase sm:text-6xl md:text-8xl lg:text-[10rem]">
+            <h2 className="text-text-primary text-5xl leading-[0.9] font-black tracking-tighter uppercase sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
               Defining the <br />
               Future of{" "}
               <span className="text-accent font-accent font-light lowercase italic">
@@ -275,22 +274,43 @@ export default function Expertise() {
               </span>
             </h2>
           </div>
-          <div className="flex flex-col items-start gap-4 md:items-end">
-            <p className="text-text-muted font-accent max-w-xs text-xs leading-relaxed md:text-sm">
+          <div className="flex items-center gap-6 md:flex-col md:items-end md:gap-8 lg:flex-row lg:items-center">
+            <p className="text-text-muted max-w-xs text-sm leading-relaxed md:text-right md:text-base lg:text-left">
               We merge creativity with technical precision to build digital
               products that move the needle.
             </p>
             <TransitionLink
               href="/expertise"
-              className="text-text-muted hover:text-accent group flex items-center gap-3 text-[10px] font-bold tracking-[0.25em] uppercase transition-all md:text-xs"
+              aria-label="View all services"
+              className="group relative flex h-28 w-28 shrink-0 items-center justify-center md:h-36 md:w-36"
             >
-              <span>View Services</span>
-              <div className="border-border group-hover:border-accent flex h-9 w-9 items-center justify-center rounded-full border transition-colors">
-                <ArrowRight
-                  size={14}
-                  className="transition-transform group-hover:translate-x-1"
-                />
-              </div>
+              <svg
+                viewBox="0 0 200 200"
+                className="text-text-primary absolute inset-0 h-full w-full animate-[spin_14s_linear_infinite] motion-reduce:animate-none"
+                aria-hidden="true"
+              >
+                <defs>
+                  <path
+                    id="expertise-badge-circle"
+                    d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"
+                  />
+                </defs>
+                <text
+                  fill="currentColor"
+                  style={{ fontSize: "16px", fontWeight: 700 }}
+                >
+                  <textPath
+                    href="#expertise-badge-circle"
+                    textLength="486"
+                    lengthAdjust="spacing"
+                  >
+                    VIEW ALL SERVICES ✶ VIEW ALL SERVICES ✶
+                  </textPath>
+                </text>
+              </svg>
+              <span className="bg-accent text-bg-primary flex h-12 w-12 items-center justify-center rounded-full transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-45 md:h-16 md:w-16">
+                <ArrowRight size={22} />
+              </span>
             </TransitionLink>
           </div>
         </div>

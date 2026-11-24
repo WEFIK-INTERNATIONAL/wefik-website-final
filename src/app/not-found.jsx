@@ -30,7 +30,7 @@ export default function NotFound() {
         <div className="flex flex-col items-center gap-4 sm:flex-row">
           <Link
             href="/"
-            className="bg-accent hover:bg-accent/90 inline-flex h-14 items-center justify-center rounded-full px-10 text-sm font-bold tracking-[0.15em] text-black uppercase transition-all hover:scale-105 active:scale-95"
+            className="bg-accent hover:bg-accent/90 inline-flex h-14 items-center justify-center rounded-full px-10 text-sm font-bold tracking-[0.15em] text-bg-primary uppercase transition-all hover:scale-105 active:scale-95"
           >
             Back to Home
           </Link>

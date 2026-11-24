@@ -69,17 +69,6 @@ export default function ContactCTA() {
     <section ref={ctaRef} className="px-5 pb-24 md:px-10 md:pb-32 lg:px-16">
       <div className="mx-auto max-w-7xl">
         <div className="cta-panel bg-bg-card border-border/40 relative overflow-hidden rounded-4xl border px-8 py-16 opacity-0 shadow-2xl md:rounded-[3rem] md:px-16 md:py-24">
-          {}
-          <div
-            className="font-big text-text-primary pointer-events-none absolute -right-4 -bottom-4 leading-none font-black uppercase opacity-[0.04] select-none"
-            style={{
-              fontSize: "clamp(5rem, 16vw, 14rem)",
-            }}
-            aria-hidden
-          >
-            BOOK
-          </div>
-
           <div className="relative z-10 flex flex-col gap-10 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-col gap-3">
               <span className="font-accent text-text-muted text-[9px] font-bold tracking-[0.4em] uppercase">
@@ -99,7 +88,7 @@ export default function ContactCTA() {
             <div className="cta-actions flex flex-col gap-4">
               <BookACall>
                 <div className="group bg-accent-bright font-accent inline-flex items-center gap-5 rounded-full px-8 py-5 text-[11px] font-bold tracking-[0.25em] text-black uppercase transition-all duration-300 hover:gap-7">
-                  <span>Schedule a Call</span>
+                  <span>Book a Call</span>
                   <ArrowRight
                     size={15}
                     className="transition-transform group-hover:translate-x-1"

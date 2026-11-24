@@ -8,10 +8,6 @@ import {
   MapPin,
   Mail,
   Phone,
-  Instagram,
-  Linkedin,
-  Twitter,
-  Facebook,
 } from "lucide-react";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
@@ -36,7 +32,7 @@ const channels = [
   {
     label: "Find Us",
     value: "Kolkata, India",
-    sub: "Kestopur Salt Lake Sector V, 700114",
+    sub: "Kestopur, Salt Lake Sector V, Kolkata 700114",
     href: "https://maps.google.com",
     icon: MapPin,
   },
@@ -44,21 +40,20 @@ const channels = [
 
 const socials = [
   {
-    icon: Instagram,
-    label: "Instagram",
-    href: "https://www.instagram.com/wefik.in/",
-  },
-  {
-    icon: Linkedin,
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/company/wefik/",
-  },
-  { icon: Twitter, label: "Twitter", href: "https://x.com/wefikindia" },
-  {
-    icon: Facebook,
     label: "Facebook",
     href: "https://www.facebook.com/wefikinternational/",
   },
+  { label: "X (Twitter)", href: "https://x.com/wefikindia" },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/wefik/",
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/wefik.in/",
+  },
+  { label: "Behance", href: "https://www.behance.net/wefik" },
+  { label: "Medium", href: "https://wefikindia.medium.com/" },
 ];
 
 export default function ContactPage() {
@@ -184,7 +179,7 @@ export default function ContactPage() {
             Get in Touch
           </span>
           <span className="c-label border-border font-accent text-text-muted rounded-full border px-4 py-1.5 text-[10px] font-bold tracking-[0.3em] uppercase opacity-0">
-            Always Available
+            Replies within 24h
           </span>
         </div>
 
@@ -220,7 +215,7 @@ export default function ContactPage() {
               className="group hover:text-accent inline-flex items-center gap-3 transition-colors"
             >
               <span
-                className="font-big leading-none font-black tracking-tight uppercase"
+                className="font-big leading-none font-black tracking-tight"
                 style={{ fontSize: "clamp(1.8rem, 4vw, 4rem)" }}
               >
                 info@wefik.in
@@ -251,18 +246,10 @@ export default function ContactPage() {
                 rel="noreferrer"
                 className="channel-item group border-border bg-bg-card hover:border-accent/40 relative flex flex-col justify-between gap-8 overflow-hidden rounded-3xl border p-7 opacity-0 transition-all duration-500 hover:shadow-[0_20px_60px_-10px_rgba(0,0,0,0.08)] md:p-8"
               >
-                <span
-                  className="font-big text-text-primary pointer-events-none absolute -top-2 -right-2 leading-none font-black opacity-[0.04] select-none"
-                  style={{ fontSize: "clamp(4rem, 7vw, 6rem)" }}
-                  aria-hidden
-                >
-                  0{i + 1}
-                </span>
-
                 <div className="border-border bg-bg-primary group-hover:border-accent group-hover:bg-accent flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-300">
                   <Icon
                     size={18}
-                    className="text-accent transition-colors group-hover:text-white"
+                    className="text-accent transition-colors group-hover:text-bg-primary"
                   />
                 </div>
 
@@ -271,7 +258,9 @@ export default function ContactPage() {
                     {label}
                   </span>
                   <div
-                    className="font-big text-text-primary leading-tight font-black uppercase"
+                    className={`font-big text-text-primary leading-tight font-black ${
+                      value.includes("@") ? "" : "uppercase"
+                    }`}
                     style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)" }}
                   >
                     {value}
@@ -282,7 +271,7 @@ export default function ContactPage() {
                 <div className="border-border group-hover:border-accent group-hover:bg-accent flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-300">
                   <ArrowUpRight
                     size={14}
-                    className="text-text-muted transition-colors group-hover:text-white"
+                    className="text-text-muted transition-colors group-hover:text-bg-primary"
                   />
                 </div>
               </a>
@@ -293,17 +282,17 @@ export default function ContactPage() {
             <span className="socials-label font-accent text-text-muted text-[9px] font-bold tracking-[0.4em] uppercase opacity-0">
               Follow our journey
             </span>
-            <div className="flex gap-3">
-              {socials.map(({ icon: Icon, label, href }, i) => (
+            <div className="flex flex-wrap gap-3">
+              {socials.map(({ label, href }, i) => (
                 <a
                   key={i}
                   href={href}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label={label}
-                  className="social-btn group border-border text-text-muted hover:border-accent-bright hover:bg-accent-bright flex h-12 w-12 items-center justify-center rounded-full border opacity-0 transition-all duration-300 hover:text-black"
+                  className="social-btn group border-border text-text-muted hover:border-accent-bright hover:bg-accent-bright font-accent inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-[11px] font-bold tracking-[0.15em] uppercase opacity-0 transition-all duration-300 hover:text-black"
                 >
-                  <Icon size={18} />
+                  {label}
+                  <ArrowUpRight size={12} />
                 </a>
               ))}
             </div>

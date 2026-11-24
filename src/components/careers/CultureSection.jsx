@@ -12,7 +12,7 @@ const CULTURE_DATA = [
     index: "01",
     title: "Remote First",
     icon: Globe,
-    body: "Work from anywhere in the world. We believe in talent, not time zones. Our team spans four continents, united by a shared vision.",
+    body: "Work from anywhere in the world. We believe in talent, not time zones. Rooted in Kolkata, we collaborate with clients and teammates wherever they are, united by a shared vision.",
   },
   {
     index: "02",
@@ -80,7 +80,7 @@ export default function CultureSection() {
             Culture at <span className="text-accent italic">Wefik.</span>
           </h2>
           <p className="font-body text-text-muted mt-8 text-base leading-relaxed lg:text-lg">
-            We&apos;re building a environment where creativity thrives,
+            We&apos;re building an environment where creativity thrives,
             boundaries are pushed, and every individual is empowered to do their
             life&apos;s best work.
           </p>

@@ -1,5 +1,6 @@
 import HeroSection from "@/components/home/HeroSection";
 import TechTicker from "@/components/home/TechTicker";
+import StatsStrip from "@/components/home/StatsStrip";
 import Introduction from "@/components/home/Introduction";
 import SelectedWorks from "@/components/home/SelectedWorks";
 import Process from "@/components/home/Process";
@@ -145,11 +146,12 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <HeroSection />
-      <TechTicker />
+      <StatsStrip />
       <Introduction />
       <SelectedWorks projects={projects} />
-      <Process />
       <Expertise />
+      <Process />
+      <TechTicker />
       <Testimonials />
       <CTA />
     </>

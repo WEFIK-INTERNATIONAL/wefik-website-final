@@ -8,8 +8,7 @@ const allLinks = [
   {
     title: "Contact",
     linksTo: [
-      { name: "WEFIK", url: "/" },
-      { name: "Kestopur Salt Lake kolkata 700114", url: "#" },
+      { name: "Kestopur, Salt Lake Sector V, Kolkata 700114", url: "#" },
       { name: "info@wefik.in", url: "mailto:info@wefik.in" },
       { name: "+91 9609653522", url: "tel:+919609653522" },
     ],
@@ -20,10 +19,10 @@ const allLinks = [
       { name: "Home", url: "/" },
       { name: "Agency", url: "/agency" },
       { name: "Expertise", url: "/expertise" },
-      { name: "Work", url: "/works" },
+      { name: "Works", url: "/works" },
+      { name: "Blogs", url: "/blogs" },
+      { name: "Careers", url: "/careers" },
       { name: "Contact", url: "/contact" },
-      { name: "Blog", url: "/blogs" },
-      { name: "Career", url: "/careers" },
     ],
   },
   {
@@ -45,7 +44,7 @@ const allLinks = [
         name: "Facebook",
         url: "https://www.facebook.com/wefikinternational/",
       },
-      { name: "Twitter", url: "https://x.com/wefikindia" },
+      { name: "X (Twitter)", url: "https://x.com/wefikindia" },
       {
         name: "LinkedIn",
         url: "https://www.linkedin.com/company/wefik/",
@@ -86,9 +85,7 @@ const AccordionItem = ({ link, index, isOpen, onToggle }) => {
         onClick={onToggle}
         className="flex cursor-pointer items-center justify-between"
       >
-        <h3 className="from-accent to-accent-bright bg-linear-to-r bg-clip-text font-semibold text-transparent">
-          {link.title}
-        </h3>
+        <h3 className="text-accent text-2xl font-semibold">{link.title}</h3>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -162,8 +159,8 @@ function Footer() {
   return (
     <section className="to-bg-footer font-neue relative overflow-x-clip bg-linear-to-b from-transparent pt-24">
       <div>
-        <div className="mx-6">
-          <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex flex-col gap-2">
               <TransitionLink href="/" className="shrink-0 md:hidden lg:flex">
                 <p className="text-text-primary text-2xl font-medium md:text-4xl">
@@ -177,10 +174,10 @@ function Footer() {
             </div>
             <div className="flex-1">
               <DropDownLinks allLinks={allLinks} />
-              <div className="hidden w-full gap-20 md:flex md:justify-center lg:justify-end">
+              <div className="hidden w-full gap-12 md:flex md:justify-between lg:justify-end lg:gap-16">
                 {allLinks.map((link, index) => (
-                  <div key={index} className="flex flex-col">
-                    <h3 className="from-accent to-accent-bright bg-linear-to-r bg-clip-text font-semibold text-transparent">
+                  <div key={index} className="flex max-w-[220px] flex-col">
+                    <h3 className="text-accent text-3xl font-semibold lg:text-4xl">
                       {link.title}
                     </h3>
                     <ul className="mt-4 flex flex-col gap-2">
@@ -212,8 +209,8 @@ function Footer() {
 
           <div className="mt-20 mb-5 flex flex-col items-center gap-4 md:flex-row md:justify-between">
             <p className="text-text-subtle text-sm">
-              All rights reserved 2025 ©{" "}
-              <span className="text-accent">WEFIK</span>
+              © {new Date().getFullYear()}{" "}
+              <span className="text-accent">WEFIK</span>. All rights reserved.
             </p>
             <div className="flex gap-5">
               <TransitionLink

@@ -9,7 +9,9 @@ import { useGSAP } from "@gsap/react";
 gsap.registerPlugin(useGSAP);
 
 export function ThemeSwitcher() {
-  const { theme, setTheme } = useTheme();
+  // resolvedTheme reflects what is actually on screen (theme can be "system"),
+  // so the first click always flips the visible theme.
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
   const buttonRef = React.useRef(null);
   const ringRef = React.useRef(null);
@@ -44,7 +46,7 @@ export function ThemeSwitcher() {
     if (isAnimating.current) return;
     isAnimating.current = true;
 
-    const nextTheme = theme === "dark" ? "light" : "dark";
+    const nextTheme = resolvedTheme === "dark" ? "light" : "dark";
     const overlay = overlayRef.current;
     const x = e.clientX;
     const y = e.clientY;
@@ -54,7 +56,7 @@ export function ThemeSwitcher() {
     );
 
     overlay.style.backgroundColor =
-      nextTheme === "dark" ? "#0a0a0a" : "#f5f8ee";
+      nextTheme === "dark" ? "#0a0a0a" : "#e9eedd";
     gsap.set(overlay, { opacity: 1 });
 
     const tl = gsap.timeline({

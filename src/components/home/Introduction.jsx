@@ -6,7 +6,7 @@ import { ScrollTrigger, gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import Tag from "../ui/Tag";
 
-const text = `Our digital agency creates impact for brands. In the disciplines Websites, social media, content marketing, campaigning and branding. Between timeless and zeitgeist. When we communicate: Effectively. Quick witted. Ambitious`;
+const text = `Our digital agency creates impact for brands across websites, social media, content marketing, campaigns and branding. Between timeless and zeitgeist. How we communicate: Effectively. Quick-witted. Ambitious.`;
 
 const words = text.split(" ");
 
@@ -28,7 +28,16 @@ export default function Introduction() {
       const wordEls = wordRefs.current.filter(Boolean);
       if (!wordEls.length) return;
 
-      gsap.set(wordEls, { opacity: 0.12 });
+      const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      if (reduceMotion) {
+        gsap.set(wordEls, { opacity: 1 });
+        return;
+      }
+
+      const isMobile = window.innerWidth < 768;
+      gsap.set(wordEls, { opacity: 0.25 });
 
       gsap.to(wordEls, {
         opacity: 1,
@@ -37,18 +46,18 @@ export default function Introduction() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=150%",
+          end: isMobile ? "+=60%" : "+=90%",
           scrub: 0.8,
           pin: true,
           invalidateOnRefresh: true,
         },
       });
 
-      setTimeout(() => {
+      const refreshTimer = setTimeout(() => {
         ScrollTrigger.refresh();
       }, 100);
 
-      return () => ScrollTrigger.getAll().forEach((t) => t.kill());
+      return () => clearTimeout(refreshTimer);
     },
     { scope: sectionRef, dependencies: [] }
   );
@@ -80,7 +89,7 @@ export default function Introduction() {
           <Tag>This is Wefik</Tag>
         </div>
 
-        <div className="mx-auto max-w-7xl text-center text-[clamp(2rem,6vw,3.5rem)] leading-[1.2] font-bold tracking-tight lg:leading-[1.15] lg:font-extrabold lg:-tracking-[0.03em]">
+        <div className="font-big mx-auto max-w-6xl text-center text-[clamp(2rem,6vw,3.75rem)] leading-[1] font-black tracking-tight uppercase">
           <span className="text-text-primary">
             Culture-driven, creative and competitive.{" "}
           </span>

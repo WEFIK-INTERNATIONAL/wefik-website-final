@@ -110,13 +110,14 @@ export default async function CareersPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(careersPageSchema) }}
       />
-      <CareersHero />
+      <CareersHero openRoles={jobs.length} />
+
+      <div id="culture" className="scroll-mt-24">
+        <CultureSection />
+      </div>
 
       {}
-      <CultureSection />
-
-      {}
-      <div className="bg-bg-secondary/30">
+      <div id="open-roles" className="bg-bg-secondary/30 scroll-mt-24">
         <JobList jobs={jobs} />
       </div>
 
@@ -136,7 +137,7 @@ export default async function CareersPage() {
                 key={i}
                 className="group border-border bg-bg-secondary hover:bg-bg-primary flex flex-col gap-6 rounded-[2rem] border p-8 transition-all"
               >
-                <div className="bg-accent/5 text-accent group-hover:bg-accent flex h-12 w-12 items-center justify-center rounded-xl transition-colors group-hover:text-black">
+                <div className="bg-accent/5 text-accent group-hover:bg-accent group-hover:text-bg-primary flex h-12 w-12 items-center justify-center rounded-xl transition-colors">
                   <perk.icon size={20} />
                 </div>
                 <div className="flex flex-col gap-2">

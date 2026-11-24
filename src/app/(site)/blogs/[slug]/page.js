@@ -215,7 +215,7 @@ export default async function BlogPostPage({ params }) {
         <div className="relative mx-auto max-w-3xl px-6">
           <PortableTextContent value={post.body} />
         </div>
-        <div className="bg-accent/5 pointer-events-none absolute bottom-0 left-1/2 h-[500px] w-[500px] -translate-x-1/2 blur-[120px]" />
+        <div className="bg-accent/5 pointer-events-none absolute bottom-0 left-1/2 h-[min(500px,100vw)] w-[min(500px,100vw)] -translate-x-1/2 blur-[120px]" />
       </section>
 
       <footer className="border-t border-white/5 py-16 md:py-24">
@@ -225,7 +225,7 @@ export default async function BlogPostPage({ params }) {
           </h2>
           <TransitionLink
             href="/contact"
-            className="bg-accent hover:bg-accent/90 inline-flex h-16 items-center justify-center rounded-full px-12 text-sm font-bold tracking-[0.2em] text-black uppercase transition-all hover:scale-105 active:scale-95"
+            className="bg-accent hover:bg-accent/90 inline-flex h-16 items-center justify-center rounded-full px-12 text-sm font-bold tracking-[0.2em] text-bg-primary uppercase transition-all hover:scale-105 active:scale-95"
           >
             Start a Project
           </TransitionLink>

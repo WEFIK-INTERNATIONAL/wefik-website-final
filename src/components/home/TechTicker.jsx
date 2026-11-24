@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
+import usePauseWhenHidden from "@/hooks/usePauseWhenHidden";
 
 function NextjsIcon({ hovered }) {
   return (
@@ -174,7 +175,7 @@ function GridCell({
             ? "bg-[rgba(255,255,255,0.02)]"
             : "bg-[rgba(0,0,0,0.015)]"
           : "bg-transparent"
-      } ${isDark ? "text-[rgba(255,255,255,0.2)]" : "text-[rgba(10,20,5,0.25)]"} `}
+      } ${isDark ? "text-[rgba(255,255,255,0.45)]" : "text-[rgba(10,20,5,0.5)]"} `}
     >
       <div
         className="pointer-events-none absolute top-1/2 left-1/2 z-0 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 transition-opacity duration-500"
@@ -202,7 +203,7 @@ function MarqueeItem({ name, Icon, color, isDark }) {
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`relative inline-flex shrink-0 cursor-default flex-col items-center justify-center px-8 ${isDark ? "text-[rgba(255,255,255,0.28)]" : "text-[rgba(10,20,5,0.28)]"} `}
+      className={`relative inline-flex shrink-0 cursor-default flex-col items-center justify-center px-8 ${isDark ? "text-[rgba(255,255,255,0.45)]" : "text-[rgba(10,20,5,0.5)]"} `}
     >
       <div
         className="pointer-events-none absolute top-1/2 left-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-500"
@@ -244,8 +245,13 @@ export default function TechTicker() {
     () => {
       const track = trackRef.current;
       if (!track) return;
+      // The marquee only exists below md; on desktop the track is hidden and
+      // has zero width, so don't run a loop there at all.
+      if (window.matchMedia("(min-width: 768px)").matches) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
       const oneSet = track.scrollWidth / 4;
+      if (!oneSet) return;
       gsap.set(track, { x: 0 });
 
       tweenRef.current = gsap.to(track, {
@@ -263,9 +269,11 @@ export default function TechTicker() {
     { dependencies: [] }
   );
 
+  usePauseWhenHidden(trackRef, () => [tweenRef.current]);
+
   return (
     <section
-      className={`bg-bg-primary mt-20 w-full border-t border-b ${borderClass} `}
+      className={`bg-bg-primary w-full border-t border-b ${borderClass} `}
     >
       <div className="relative mx-auto hidden max-w-[1400px] border-r border-l border-inherit md:block">
         {[0, 1].map((row) => (
@@ -294,11 +302,11 @@ export default function TechTicker() {
           <div
             className={`flex-[2_1_0%] border-r px-8 py-12 ${borderClass} flex flex-col justify-center gap-4 bg-[rgba(163,230,53,0.015)]`}
           >
-            <p className="font-big text-text-primary m-0 text-[clamp(1.2rem,2.5vw,1.95rem)] leading-[0.9] font-black -tracking-[0.04em] uppercase">
+            <h2 className="text-text-primary m-0 text-[clamp(1.8rem,3vw,2.8rem)] leading-[0.9] -tracking-[0.02em]">
               Your stack,
               <br />
-              our expertise.
-            </p>
+              <span className="text-accent">our expertise.</span>
+            </h2>
             <div className="bg-accent h-[3px] w-10 rounded-[1px]" />
           </div>
 
@@ -328,17 +336,17 @@ export default function TechTicker() {
         <div
           className={`border-r pr-4 pl-5 ${borderClass} relative z-20 flex h-full shrink-0 flex-col justify-center`}
           style={{
-            backgroundColor: isDark ? "#0a0a0a" : "#ffffff",
+            backgroundColor: "var(--color-bg-primary)",
             boxShadow: isDark
               ? "15px 0 25px -10px rgba(0,0,0,0.8)"
               : "15px 0 25px -10px rgba(0,0,0,0.1)",
           }}
         >
-          <p className="font-big text-text-primary relative z-10 m-0 text-[12px] leading-[1.1] font-black whitespace-nowrap uppercase">
+          <h2 className="text-text-primary relative z-10 m-0 text-base leading-[1.05] whitespace-nowrap">
             Your stack,
             <br />
-            our expertise.
-          </p>
+            <span className="text-accent">our expertise.</span>
+          </h2>
         </div>
         <div
           className="relative z-10 flex h-full grow items-center overflow-hidden"

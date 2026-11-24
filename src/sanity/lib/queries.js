@@ -42,7 +42,7 @@ export async function getAllWorks() {
   return client.fetch(
     `*[_type == "work"] | order(completedAt desc){
       _type,
-      title, slug, description, tags, featured,
+      title, slug, description, tags, featured, completedAt,
       "category": category->{ title, slug },
       coverImage{
         asset->{

@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import AnimatedButton from "@/components/ui/AnimatedButton";
-import SphereAnimation from "@/components/home/SphereAnimation";
+import dynamic from "next/dynamic";
 import GridBackground from "@/components/home/GridBackground";
 import TrustedAvatar from "@/components/home/TrustedAvatar";
 import Tag from "@/components/ui/Tag";
@@ -10,6 +10,17 @@ import TransitionLink from "@/components/ui/TransitionLink";
 import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import { useLoader } from "@/components/ui/LoaderProvider";
+
+// Hero centrepiece: "blob" = 3D liquid blob, "sphere" = original SVG sphere.
+// To go back, set this to "sphere".
+const HERO_VISUAL = "blob";
+const LiquidBlob = dynamic(() => import("@/components/home/LiquidBlob"), {
+  ssr: false,
+});
+const SphereAnimation = dynamic(
+  () => import("@/components/home/SphereAnimation"),
+  { ssr: false }
+);
 
 function StarIcon() {
   return (
@@ -145,17 +156,17 @@ export default function HeroSection() {
       <div
         className="pointer-events-none absolute top-1/2 left-1/2 z-2 -translate-x-1/2 -translate-y-1/2"
         style={{
-          width: "clamp(260px, 92vw, 680px)",
+          width: "clamp(340px, 110vw, 680px)",
           opacity: 0.9,
         }}
       >
-        <SphereAnimation />
+        {HERO_VISUAL === "blob" ? <LiquidBlob /> : <SphereAnimation />}
       </div>
       <div
         className="relative z-10 flex w-full items-center justify-center"
         style={{
           minHeight: "100svh",
-          padding: "100px 20px 72px",
+          padding: "100px 20px 120px",
         }}
       >
         <div
@@ -185,13 +196,15 @@ export default function HeroSection() {
             <div className="mr-[0.2em] inline-block overflow-hidden">
               <span className="headline-word anim-el inline-block">Your</span>
             </div>
+            <br className="sm:hidden" />
             <div className="inline-block overflow-hidden">
               <span className="headline-word anim-el inline-block">Ideas</span>
             </div>
-            <br />
-            <div className="mr-[0.2em] inline-block overflow-hidden">
+            <br className="hidden sm:inline" />
+            <div className="mr-[0.2em] ml-[0.2em] inline-block overflow-hidden sm:ml-0">
               <span className="headline-word anim-el inline-block">into</span>
             </div>
+            <br className="sm:hidden" />
             <div
               className="mr-[0.2em] inline-block overflow-hidden"
               style={{ color: "var(--color-accent)" }}
@@ -212,7 +225,8 @@ export default function HeroSection() {
             className="anim-el opacity-0"
             style={{
               fontSize: "clamp(0.9rem, 8vw, 1.15rem)",
-              color: "var(--color-text-muted)",
+              color:
+                "color-mix(in srgb, var(--color-text-primary) 85%, transparent)",
               maxWidth: "520px",
               lineHeight: 1.72,
               margin: 0,
@@ -228,7 +242,7 @@ export default function HeroSection() {
             style={{ gap: "16px", width: "100%" }}
           >
             <TransitionLink href="/contact">
-              <AnimatedButton>Book A Call</AnimatedButton>
+              <AnimatedButton>Book a Call</AnimatedButton>
             </TransitionLink>
             <div className="flex items-center" style={{ gap: "12px" }}>
               <TrustedAvatar />
@@ -247,8 +261,8 @@ export default function HeroSection() {
                 </div>
                 <p
                   style={{
-                    fontSize: "11px",
-                    color: "var(--color-text-subtle)",
+                    fontSize: "12px",
+                    color: "var(--color-text-muted)",
                     marginTop: "2px",
                     whiteSpace: "nowrap",
                   }}
@@ -263,7 +277,7 @@ export default function HeroSection() {
 
       <div
         ref={scrollIndicatorRef}
-        className="anim-el absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center opacity-0"
+        className="anim-el hero-scroll-hint absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center opacity-0"
         style={{ gap: "6px" }}
       >
         <span
