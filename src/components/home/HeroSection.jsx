@@ -11,11 +11,10 @@ import { gsap } from "@/lib/gsap";
 import { useGSAP } from "@gsap/react";
 import { useLoader } from "@/components/ui/LoaderProvider";
 
-// Hero centrepiece. 3D options: "liquid", "glass", "particles", "wire",
-// "metaballs". "sphere" = the original SVG sphere. Change this one line to
-// switch. In dev you can preview any 3D option with ?hero=<name> in the URL.
+// Hero centrepiece: "glass" = 3D glass bubble, "sphere" = original SVG sphere.
+// To go back, set this to "sphere".
 const HERO_VISUAL = "glass";
-const LiquidBlob = dynamic(() => import("@/components/home/LiquidBlob"), {
+const GlassBlob = dynamic(() => import("@/components/home/GlassBlob"), {
   ssr: false,
 });
 const SphereAnimation = dynamic(
@@ -161,11 +160,7 @@ export default function HeroSection() {
           opacity: 0.9,
         }}
       >
-        {HERO_VISUAL === "sphere" ? (
-          <SphereAnimation />
-        ) : (
-          <LiquidBlob variant={HERO_VISUAL} />
-        )}
+        {HERO_VISUAL === "sphere" ? <SphereAnimation /> : <GlassBlob />}
       </div>
       <div
         className="relative z-10 flex w-full items-center justify-center"
