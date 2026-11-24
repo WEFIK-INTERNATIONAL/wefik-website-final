@@ -15,21 +15,23 @@ body {
 }
 
 @theme {
-  --color-bg-primary: #f5f8ee;
-  --color-bg-secondary: #eef4de;
-  --color-bg-card: #ffffff;
-  --color-bg-footer: #e8f2cc;
+  /* Light theme: soft sage page with off-white cards, so surfaces separate
+     clearly instead of everything reading as near-white. */
+  --color-bg-primary: #e9eedd;
+  --color-bg-secondary: #dfe6cd;
+  --color-bg-card: #f9fbf3;
+  --color-bg-footer: #d8e1c0;
 
   --color-text-primary: #0f1a05;
-  --color-text-muted: #5a6e3a;
-  --color-text-subtle: #8fa060;
+  --color-text-muted: #44562a;
+  --color-text-subtle: #5f7040;
 
-  --color-accent: #51731a;
+  --color-accent: #4a6b14;
   --color-accent-bright: #a3e635;
-  --color-accent-hover: #3a5212;
+  --color-accent-hover: #354d0e;
   --color-accent-subtle: #d4f07a;
 
-  --color-border: #dde8c0;
+  --color-border: #c8d4a8;
 
   --z-preloader: 10000;
   --z-transition: 9999;
@@ -41,11 +43,11 @@ body {
   --color-bg-primary: #0a0a0a;
   --color-bg-secondary: #111111;
   --color-bg-card: #141414;
-  --color-bg-footer: #0d1b2e;
+  --color-bg-footer: #10160a;
 
   --color-text-primary: #ffffff;
   --color-text-muted: #c8ccd4;
-  --color-text-subtle: #666666;
+  --color-text-subtle: #8a8a8a;
 
   --color-accent: #a3e635;
   --color-accent-bright: #bef264;
@@ -107,6 +109,8 @@ html.skip-preloader #preloader-container {
   display: none !important;
 }
 
+/* Heading typeface stays unlayered (it is the site-wide heading look).
+   Sizes/spacing live in @layer base so Tailwind text-* utilities can override them. */
 h1,
 h2,
 h3,
@@ -114,97 +118,108 @@ h4 {
   text-transform: uppercase;
   font-family: var(--font-big-shoulders);
   font-weight: 900;
-  line-height: 0.9;
-  letter-spacing: -0.125rem;
-}
-
-h1 {
-  font-size: 8rem;
-}
-h2 {
-  font-size: 6rem;
-  letter-spacing: -0.2rem;
-}
-h3 {
-  font-size: 5rem;
-  letter-spacing: -0.15rem;
-}
-h4 {
-  font-size: 4rem;
-  letter-spacing: -0.1rem;
 }
 
 p {
   font-family: var(--font-neue);
-  font-size: 1.25rem;
   font-weight: 400;
-  line-height: 1.2;
 }
 
-p.lg {
-  font-size: 1.75rem;
-  font-weight: 400;
-  line-height: 1.15;
-}
-
-p.sm,
-a.sm {
-  text-decoration: none;
-  text-transform: uppercase;
-  font-family: var(--font-accent);
-  font-size: 0.85rem;
-  font-weight: 500;
-  line-height: 1.15;
-  color: var(--base-300);
-  letter-spacing: 0.1rem;
-}
-
-p.cap {
-  text-transform: uppercase;
-  font-family: var(--font-pangram);
-  font-size: 0.9rem;
-  font-weight: 900;
-  -webkit-font-smoothing: antialiased;
-}
-
-@media (max-width: 1000px) {
-  h1 {
-    font-size: 3rem;
-  }
-  h2 {
-    font-size: 2rem;
-  }
-  h3 {
-    font-size: 1.5rem;
-  }
-  h4 {
-    font-size: 1rem;
-  }
-
+@layer base {
   h1,
   h2,
   h3,
   h4 {
-    letter-spacing: 0 !important;
+    line-height: 0.9;
+    letter-spacing: -0.125rem;
+  }
+
+  h1 {
+    font-size: 8rem;
+  }
+  h2 {
+    font-size: 6rem;
+    letter-spacing: -0.2rem;
+  }
+  h3 {
+    font-size: 5rem;
+    letter-spacing: -0.15rem;
+  }
+  h4 {
+    font-size: 4rem;
+    letter-spacing: -0.1rem;
+  }
+
+  p {
+    font-size: 1.25rem;
+    line-height: 1.2;
   }
 
   p.lg {
-    font-size: 1.125rem;
+    font-size: 1.75rem;
+    font-weight: 400;
+    line-height: 1.15;
   }
 
-  p.sm {
-    font-size: 0.8rem;
-    letter-spacing: 0.05rem;
+  p.sm,
+  a.sm {
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: var(--font-accent);
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--base-300);
+    letter-spacing: 0.1rem;
   }
 
-  .container {
-    padding: 1.25rem;
+  p.cap {
+    text-transform: uppercase;
+    font-family: var(--font-pangram);
+    font-size: 0.9rem;
+    font-weight: 900;
+    -webkit-font-smoothing: antialiased;
   }
-}
 
-@media (min-width: 2400px) {
-  h1 {
-    font-size: 10rem;
+  @media (max-width: 1000px) {
+    h1 {
+      font-size: 3rem;
+    }
+    h2 {
+      font-size: 2rem;
+    }
+    h3 {
+      font-size: 1.5rem;
+    }
+    h4 {
+      font-size: 1rem;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      letter-spacing: 0 !important;
+    }
+
+    p.lg {
+      font-size: 1.125rem;
+    }
+
+    p.sm {
+      font-size: 0.8rem;
+      letter-spacing: 0.05rem;
+    }
+
+    .container {
+      padding: 1.25rem;
+    }
+  }
+
+  @media (min-width: 2400px) {
+    h1 {
+      font-size: 10rem;
+    }
   }
 }
 
@@ -219,4 +234,15 @@ p.cap {
 
 .anchor-offset {
   scroll-margin-top: 96px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

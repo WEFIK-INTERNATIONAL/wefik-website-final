@@ -136,7 +136,7 @@ export default async function CareersPage() {
                 key={i}
                 className="group border-border bg-bg-secondary hover:bg-bg-primary flex flex-col gap-6 rounded-[2rem] border p-8 transition-all"
               >
-                <div className="bg-accent/5 text-accent group-hover:bg-accent flex h-12 w-12 items-center justify-center rounded-xl transition-colors group-hover:text-black">
+                <div className="bg-accent/5 text-accent group-hover:bg-accent flex h-12 w-12 items-center justify-center rounded-xl transition-colors group-hover:text-bg-primary">
                   <perk.icon size={20} />
                 </div>
                 <div className="flex flex-col gap-2">

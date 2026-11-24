@@ -87,7 +87,7 @@ export default function CTA() {
             <div className="flex flex-col items-center justify-center gap-8 md:flex-row">
               <BookACall>
                 <MagneticButton>
-                  <div className="group bg-accent hover:shadow-accent/30 relative inline-flex items-center gap-4 rounded-full px-8 py-4 font-bold tracking-widest text-black uppercase shadow-2xl transition-all duration-300 hover:bg-white active:scale-95">
+                  <div className="group bg-accent hover:shadow-accent/30 relative inline-flex items-center gap-4 rounded-full px-8 py-4 font-bold tracking-widest text-bg-primary uppercase shadow-2xl transition-all duration-300 hover:bg-white hover:text-black active:scale-95">
                     <span className="text-sm">Start a Project</span>
                     <div className="group-hover:bg-accent flex h-8 w-8 items-center justify-center rounded-full bg-black/10 transition-colors">
                       <ArrowRight size={16} />

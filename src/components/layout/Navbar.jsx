@@ -13,15 +13,240 @@ import BookACall from "../ui/BookACall";
 
 gsap.registerPlugin(useGSAP);
 
+// `mobileOnly` links are hidden from the desktop navbar to keep it short:
+// the logo already goes home and "Book a Call" covers Contact.
+// They still appear in the full-screen mobile menu.
 const NAV_LINKS = [
-  { label: "Home", href: "/" },
+  { label: "Home", href: "/", mobileOnly: true },
   { label: "Agency", href: "/agency" },
   { label: "Expertise", href: "/expertise" },
   { label: "Works", href: "/works" },
   { label: "Blogs", href: "/blogs" },
   { label: "Careers", href: "/careers" },
-  { label: "Contact", href: "/contact" },
+  { label: "Contact", href: "/contact", mobileOnly: true },
 ];
+
+// Tools made by Wefik. Add a new entry here to list it in the navbar
+// (desktop dropdown + mobile menu). Use `external: true` for links that
+// live outside this site so they open in a new tab.
+const TOOLS = [
+  {
+    name: "WeClip",
+    description: "Our in-house clipping tool.",
+    href: "https://weclip.wefik.in", // TODO: confirm the real WeClip URL
+    external: true,
+  },
+];
+
+// The Tools item is shown right after this link in the desktop nav.
+const TOOLS_AFTER_HREF = "/works";
+
+function ChevronDown({ open }) {
+  return (
+    <svg
+      width="10"
+      height="10"
+      viewBox="0 0 10 10"
+      fill="none"
+      aria-hidden="true"
+      style={{
+        marginLeft: "6px",
+        transition: "transform 0.25s ease",
+        transform: open ? "rotate(180deg)" : "none",
+      }}
+    >
+      <path
+        d="M2 3.5L5 6.5L8 3.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function ToolLink({ tool, children, ...props }) {
+  if (tool.external) {
+    return (
+      <a href={tool.href} target="_blank" rel="noopener noreferrer" {...props}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <TransitionLink href={tool.href} {...props}>
+      {children}
+    </TransitionLink>
+  );
+}
+
+function ToolsDropdown({ isDark, linkStyle }) {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef(null);
+  const closeTimer = useRef(null);
+
+  const show = () => {
+    clearTimeout(closeTimer.current);
+    setOpen(true);
+  };
+  // Small delay so the panel doesn't vanish while the pointer crosses the gap.
+  const hide = () => {
+    clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpen(false), 120);
+  };
+
+  useEffect(() => () => clearTimeout(closeTimer.current), []);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    const onClick = (e) => {
+      if (!wrapperRef.current?.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onClick);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onClick);
+    };
+  }, [open]);
+
+  return (
+    <div
+      ref={wrapperRef}
+      style={{ position: "relative" }}
+      onMouseEnter={show}
+      onMouseLeave={hide}
+    >
+      <button
+        type="button"
+        aria-haspopup="true"
+        aria-expanded={open}
+        aria-controls="nav-tools-panel"
+        // Open-only: on touch screens the tap also fires mouseenter, so a
+        // toggle here would close the panel immediately. Escape / outside
+        // click / pointer leave close it.
+        onClick={show}
+        onFocus={show}
+        style={{
+          ...linkStyle(open),
+          border: "none",
+          cursor: "pointer",
+          fontFamily: "inherit",
+        }}
+      >
+        Tools
+        <ChevronDown open={open} />
+      </button>
+
+      <div
+        id="nav-tools-panel"
+        role="menu"
+        style={{
+          position: "absolute",
+          top: "calc(100% + 14px)",
+          left: "50%",
+          marginLeft: "-150px",
+          width: "300px",
+          padding: "8px",
+          borderRadius: "14px",
+          border: isDark
+            ? "1px solid rgba(163,230,53,0.15)"
+            : "1px solid rgba(81,115,26,0.2)",
+          background: "var(--color-bg-card)",
+          boxShadow: isDark
+            ? "0 16px 48px rgba(0,0,0,0.5)"
+            : "0 16px 40px rgba(0,0,0,0.10)",
+          visibility: open ? "visible" : "hidden",
+          opacity: open ? 1 : 0,
+          transform: open ? "translateY(0)" : "translateY(-6px)",
+          transition: open
+            ? "opacity 0.25s ease, transform 0.25s ease, visibility 0s"
+            : "opacity 0.15s ease, transform 0.15s ease, visibility 0s linear 0.15s",
+          zIndex: 60,
+        }}
+      >
+        {/* Invisible bridge so hovering from the button to the panel keeps it open */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            top: "-14px",
+            left: 0,
+            right: 0,
+            height: "14px",
+          }}
+        />
+        <p
+          style={{
+            margin: 0,
+            padding: "6px 10px 8px",
+            fontSize: "10px",
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: "var(--color-text-subtle)",
+          }}
+        >
+          Made by Wefik
+        </p>
+        {TOOLS.map((tool) => (
+          <ToolLink
+            key={tool.name}
+            tool={tool}
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="group"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "12px",
+              padding: "10px",
+              borderRadius: "10px",
+              textDecoration: "none",
+              transition: "background 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = isDark
+                ? "rgba(163,230,53,0.08)"
+                : "rgba(81,115,26,0.08)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+            }}
+          >
+            <span
+              style={{ display: "flex", flexDirection: "column", gap: "3px" }}
+            >
+              <span
+                style={{
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  color: "var(--color-text-primary)",
+                }}
+              >
+                {tool.name}
+              </span>
+              <span
+                style={{
+                  fontSize: "12px",
+                  lineHeight: 1.4,
+                  color: "var(--color-text-muted)",
+                }}
+              >
+                {tool.description}
+              </span>
+            </span>
+            <span style={{ color: "var(--color-accent)", flexShrink: 0 }}>
+              <ArrowUpRight size={12} />
+            </span>
+          </ToolLink>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function WeFikLogo() {
   return (
@@ -331,10 +556,10 @@ export default function Navbar() {
   const pillBg = scrolled
     ? isDark
       ? "rgba(10,10,10,0.72)"
-      : "rgba(245,248,238,0.82)"
+      : "rgba(233,238,221,0.85)"
     : isDark
       ? "rgba(10,10,10,0.18)"
-      : "rgba(245,248,238,0.30)";
+      : "rgba(233,238,221,0.35)";
 
   const pillBorder = scrolled
     ? isDark
@@ -404,6 +629,7 @@ export default function Navbar() {
         >
           <div
             style={{
+              position: "relative",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -425,60 +651,92 @@ export default function Navbar() {
             >
               <WeFikLogo />
             </TransitionLink>
-            <nav
-              ref={navPillRef}
-              className="nav-desktop"
-              aria-label="Main navigation"
-              role="navigation"
-              style={{ alignItems: "center" }}
+            {/* Centered on the header itself (not between logo and buttons),
+                so the pill sits in the true middle of the screen even though
+                the right-hand group is wider than the logo. */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                pointerEvents: "none",
+              }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "2px",
-                  padding: "5px 6px",
-                  borderRadius: "12px",
-                  border: innerPillBorder,
-                  background: innerPillBg,
-                }}
+              <nav
+                ref={navPillRef}
+                className="nav-desktop"
+                aria-label="Main navigation"
+                role="navigation"
+                style={{ alignItems: "center", pointerEvents: "auto" }}
               >
-                {NAV_LINKS.map((link, i) => {
-                  const isActive = pathname === link.href;
-                  return (
-                    <TransitionLink
-                      key={link.href}
-                      href={link.href}
-                      ref={(el) => (deskLinkRefs.current[i] = el)}
-                      onMouseEnter={() => setHoveredIndex(i)}
-                      onMouseLeave={() => {
-                        setHoveredIndex(null);
-                        onLinkMouseLeave(deskLinkRefs.current[i]);
-                      }}
-                      onMouseMove={(e) =>
-                        onLinkMouseMove(e, deskLinkRefs.current[i])
-                      }
-                      style={getLinkStyle(i, isActive)}
-                    >
-                      {link.label}
-                      {isActive && (
-                        <span
-                          style={{
-                            position: "absolute",
-                            bottom: "5px",
-                            left: "14px",
-                            right: "14px",
-                            height: "1px",
-                            borderRadius: "999px",
-                            background: "var(--color-accent)",
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "2px",
+                    padding: "5px 6px",
+                    borderRadius: "12px",
+                    border: innerPillBorder,
+                    background: innerPillBg,
+                  }}
+                >
+                  {NAV_LINKS.map((link, i) => {
+                    if (link.mobileOnly) return null;
+                    const isActive = pathname === link.href;
+                    return (
+                      <React.Fragment key={link.href}>
+                        <TransitionLink
+                          href={link.href}
+                          ref={(el) => (deskLinkRefs.current[i] = el)}
+                          onMouseEnter={() => setHoveredIndex(i)}
+                          onMouseLeave={() => {
+                            setHoveredIndex(null);
+                            onLinkMouseLeave(deskLinkRefs.current[i]);
                           }}
-                        />
-                      )}
-                    </TransitionLink>
-                  );
-                })}
-              </div>
-            </nav>
+                          onMouseMove={(e) =>
+                            onLinkMouseMove(e, deskLinkRefs.current[i])
+                          }
+                          style={getLinkStyle(i, isActive)}
+                        >
+                          {link.label}
+                          {isActive && (
+                            <span
+                              style={{
+                                position: "absolute",
+                                bottom: "5px",
+                                left: "14px",
+                                right: "14px",
+                                height: "1px",
+                                borderRadius: "999px",
+                                background: "var(--color-accent)",
+                              }}
+                            />
+                          )}
+                        </TransitionLink>
+                        {link.href === TOOLS_AFTER_HREF && TOOLS.length > 0 && (
+                          <ToolsDropdown
+                            isDark={isDark}
+                            linkStyle={(open) => ({
+                              ...getLinkStyle(-1, false),
+                              ...(open
+                                ? {
+                                    color: "var(--color-text-primary)",
+                                    background: isDark
+                                      ? "rgba(255,255,255,0.05)"
+                                      : "rgba(0,0,0,0.05)",
+                                  }
+                                : {}),
+                            })}
+                          />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+              </nav>
+            </div>
             <div
               ref={rightRef}
               style={{
@@ -588,64 +846,126 @@ export default function Navbar() {
           >
             {NAV_LINKS.map((link, i) => {
               const isActive = pathname === link.href;
+              // Shift ref slots after the Tools block so the stagger stays in order.
+              const toolsIdx = NAV_LINKS.findIndex(
+                (l) => l.href === TOOLS_AFTER_HREF
+              );
+              const hasTools = TOOLS.length > 0 && toolsIdx !== -1;
+              const slot = hasTools && i > toolsIdx ? i + 1 : i;
               return (
-                <TransitionLink
-                  key={link.href}
-                  href={link.href}
-                  ref={(el) => (overlayLinksRef.current[i] = el)}
-                  onClick={closeMenu}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "16px 0",
-                    borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)"}`,
-                    textDecoration: "none",
-                    color: isActive
-                      ? "var(--color-accent)"
-                      : "var(--color-text-primary)",
-                    transition: "color 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive)
-                      e.currentTarget.style.color = "var(--color-accent)";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive)
-                      e.currentTarget.style.color = "var(--color-text-primary)";
-                  }}
-                >
-                  <div
+                <React.Fragment key={link.href}>
+                  <TransitionLink
+                    href={link.href}
+                    ref={(el) => (overlayLinksRef.current[slot] = el)}
+                    onClick={closeMenu}
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "12px",
+                      justifyContent: "space-between",
+                      padding: "16px 0",
+                      borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)"}`,
+                      textDecoration: "none",
+                      color: isActive
+                        ? "var(--color-accent)"
+                        : "var(--color-text-primary)",
+                      transition: "color 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive)
+                        e.currentTarget.style.color = "var(--color-accent)";
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive)
+                        e.currentTarget.style.color =
+                          "var(--color-text-primary)";
                     }}
                   >
-                    {isActive && (
-                      <span
-                        style={{
-                          width: "6px",
-                          height: "6px",
-                          borderRadius: "50%",
-                          background: "var(--color-accent)",
-                          flexShrink: 0,
-                        }}
-                      />
-                    )}
-                    <span
+                    <div
                       style={{
-                        fontSize: "clamp(1.3rem, 5vw, 1.7rem)",
-                        fontWeight: 700,
-                        letterSpacing: "-0.02em",
-                        lineHeight: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
                       }}
                     >
-                      {link.label}
-                    </span>
-                  </div>
-                  <ArrowUpRight size={16} />
-                </TransitionLink>
+                      {isActive && (
+                        <span
+                          style={{
+                            width: "6px",
+                            height: "6px",
+                            borderRadius: "50%",
+                            background: "var(--color-accent)",
+                            flexShrink: 0,
+                          }}
+                        />
+                      )}
+                      <span
+                        style={{
+                          fontSize: "clamp(1.3rem, 5vw, 1.7rem)",
+                          fontWeight: 700,
+                          letterSpacing: "-0.02em",
+                          lineHeight: 1,
+                        }}
+                      >
+                        {link.label}
+                      </span>
+                    </div>
+                    <ArrowUpRight size={16} />
+                  </TransitionLink>
+                  {hasTools && i === toolsIdx && (
+                    <div
+                      ref={(el) => (overlayLinksRef.current[i + 1] = el)}
+                      style={{
+                        padding: "16px 0",
+                        borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)"}`,
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: "block",
+                          fontSize: "clamp(1.3rem, 5vw, 1.7rem)",
+                          fontWeight: 700,
+                          letterSpacing: "-0.02em",
+                          lineHeight: 1,
+                          color: "var(--color-text-primary)",
+                        }}
+                      >
+                        Tools
+                      </span>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: "8px",
+                          marginTop: "12px",
+                        }}
+                      >
+                        {TOOLS.map((tool) => (
+                          <ToolLink
+                            key={tool.name}
+                            tool={tool}
+                            onClick={closeMenu}
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              padding: "8px 14px",
+                              borderRadius: "999px",
+                              border: "1px solid rgba(163,230,53,0.3)",
+                              background: "rgba(163,230,53,0.08)",
+                              color: "var(--color-accent)",
+                              fontSize: "14px",
+                              fontWeight: 600,
+                              textDecoration: "none",
+                            }}
+                          >
+                            {tool.name}
+                            <ArrowUpRight size={10} />
+                          </ToolLink>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </React.Fragment>
               );
             })}
           </nav>

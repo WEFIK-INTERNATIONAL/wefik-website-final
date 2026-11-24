@@ -225,7 +225,7 @@ export default async function BlogPostPage({ params }) {
           </h2>
           <TransitionLink
             href="/contact"
-            className="bg-accent hover:bg-accent/90 inline-flex h-16 items-center justify-center rounded-full px-12 text-sm font-bold tracking-[0.2em] text-black uppercase transition-all hover:scale-105 active:scale-95"
+            className="bg-accent hover:bg-accent/90 inline-flex h-16 items-center justify-center rounded-full px-12 text-sm font-bold tracking-[0.2em] text-bg-primary uppercase transition-all hover:scale-105 active:scale-95"
           >
             Start a Project
           </TransitionLink>

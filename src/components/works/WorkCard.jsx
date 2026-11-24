@@ -41,7 +41,7 @@ export default function WorkCard({ project }) {
 
       <div className="bg-bg-secondary flex flex-1 flex-col p-6 md:p-8">
         {/* Massive uppercase title matching the reference without wrapping */}
-        <h3 className="font-big text-text-primary mb-4 text-6xl leading-[0.8] font-black tracking-[-0.02em] break-keep uppercase sm:text-7xl lg:text-[5.5rem]">
+        <h3 className="font-big text-text-primary mb-4 line-clamp-2 text-5xl leading-[0.9] font-black tracking-[-0.02em] uppercase sm:text-6xl lg:text-[3.5rem]">
           {project.title}
         </h3>
 

@@ -50,8 +50,10 @@ const testimonials = [
   },
 ];
 
-const TestimonialCard = ({ item }) => (
-  <div className="bg-bg-card border-border/50 hover:border-accent/30 group hover:shadow-accent/5 mx-4 w-[350px] shrink-0 rounded-4xl border p-8 shadow-sm transition-all duration-500 md:w-[450px]">
+const TestimonialCard = ({ item, hidden }) => (
+  <div
+    aria-hidden={hidden || undefined}
+    className="bg-bg-card border-border/50 hover:border-accent/30 group hover:shadow-accent/5 mx-4 w-[350px] shrink-0 rounded-4xl border p-8 shadow-sm transition-all duration-500 md:w-[450px]">
     <div className="mb-6 flex items-center gap-4">
       <div className="border-accent/20 bg-accent/5 relative h-12 w-12 overflow-hidden rounded-full border">
         <Image
@@ -84,9 +86,7 @@ const TestimonialCard = ({ item }) => (
 export default function Testimonials() {
   const containerRef = useRef(null);
   const marquee1Ref = useRef(null);
-  const marquee2Ref = useRef(null);
   const tween1Ref = useRef(null);
-  const tween2Ref = useRef(null);
 
   useGSAP(
     () => {
@@ -99,27 +99,19 @@ export default function Testimonials() {
         repeat: -1,
       });
 
-      const m2 = marquee2Ref.current;
-      const m2Width = m2.scrollWidth / 2;
-      gsap.set(m2, { x: -m2Width });
-      tween2Ref.current = gsap.to(m2, {
-        x: 0,
-        ease: "none",
-        duration: 45,
-        repeat: -1,
-      });
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        tween1Ref.current.pause();
+      }
     },
     { scope: containerRef }
   );
 
   const handleMouseEnter = () => {
     tween1Ref.current?.timeScale(0);
-    tween2Ref.current?.timeScale(0);
   };
 
   const handleMouseLeave = () => {
     tween1Ref.current?.timeScale(1);
-    tween2Ref.current?.timeScale(1);
   };
 
   return (
@@ -137,23 +129,16 @@ export default function Testimonials() {
         </h2>
       </div>
 
-      <div
-        className="flex flex-col gap-6 md:gap-12"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
+      <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <div className="flex overflow-hidden">
+          {/* List is rendered twice so the loop is seamless; only one row is shown. */}
           <div ref={marquee1Ref} className="flex flex-nowrap">
             {[...testimonials, ...testimonials].map((item, idx) => (
-              <TestimonialCard key={`m1-${idx}`} item={item} />
-            ))}
-          </div>
-        </div>
-
-        <div className="flex overflow-hidden">
-          <div ref={marquee2Ref} className="flex flex-nowrap">
-            {[...testimonials, ...testimonials].reverse().map((item, idx) => (
-              <TestimonialCard key={`m2-${idx}`} item={item} />
+              <TestimonialCard
+                key={`m1-${idx}`}
+                item={item}
+                hidden={idx >= testimonials.length}
+              />
             ))}
           </div>
         </div>

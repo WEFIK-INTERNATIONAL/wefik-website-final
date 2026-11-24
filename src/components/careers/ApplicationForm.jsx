@@ -90,7 +90,7 @@ export default function ApplicationForm({ jobTitle, isOpen, onClose }) {
               </p>
               <button
                 onClick={onClose}
-                className="bg-accent mt-8 inline-flex h-12 items-center justify-center rounded-full px-10 text-xs font-black tracking-[0.2em] text-black uppercase transition-transform hover:scale-105"
+                className="bg-accent mt-8 inline-flex h-12 items-center justify-center rounded-full px-10 text-xs font-black tracking-[0.2em] text-bg-primary uppercase transition-transform hover:scale-105"
               >
                 Close Window
               </button>
@@ -204,7 +204,7 @@ export default function ApplicationForm({ jobTitle, isOpen, onClose }) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-accent flex h-16 w-full items-center justify-center gap-3 rounded-full text-xs font-black tracking-[0.4em] text-black uppercase transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                className="bg-accent flex h-16 w-full items-center justify-center gap-3 rounded-full text-xs font-black tracking-[0.4em] text-bg-primary uppercase transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>

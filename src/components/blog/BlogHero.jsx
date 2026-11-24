@@ -89,7 +89,7 @@ export default function BlogHero() {
               className="mr-[0.2em] inline-block overflow-hidden"
               style={{ color: "var(--color-accent)" }}
             >
-              <span className="split-word anim-el inline-block italic">
+              <span className="split-word anim-el inline-block pr-[0.12em] italic">
                 Leadership
               </span>
             </div>

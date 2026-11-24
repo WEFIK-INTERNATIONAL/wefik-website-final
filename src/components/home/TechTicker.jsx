@@ -174,7 +174,7 @@ function GridCell({
             ? "bg-[rgba(255,255,255,0.02)]"
             : "bg-[rgba(0,0,0,0.015)]"
           : "bg-transparent"
-      } ${isDark ? "text-[rgba(255,255,255,0.2)]" : "text-[rgba(10,20,5,0.25)]"} `}
+      } ${isDark ? "text-[rgba(255,255,255,0.45)]" : "text-[rgba(10,20,5,0.5)]"} `}
     >
       <div
         className="pointer-events-none absolute top-1/2 left-1/2 z-0 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 transition-opacity duration-500"
@@ -202,7 +202,7 @@ function MarqueeItem({ name, Icon, color, isDark }) {
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={`relative inline-flex shrink-0 cursor-default flex-col items-center justify-center px-8 ${isDark ? "text-[rgba(255,255,255,0.28)]" : "text-[rgba(10,20,5,0.28)]"} `}
+      className={`relative inline-flex shrink-0 cursor-default flex-col items-center justify-center px-8 ${isDark ? "text-[rgba(255,255,255,0.45)]" : "text-[rgba(10,20,5,0.5)]"} `}
     >
       <div
         className="pointer-events-none absolute top-1/2 left-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-500"

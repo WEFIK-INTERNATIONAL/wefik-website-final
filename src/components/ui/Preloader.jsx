@@ -64,8 +64,8 @@ const Preloader = ({ onComplete }) => {
           yPercent: 0,
           opacity: 1,
           rotateX: 0,
-          stagger: 0.1,
-          duration: 1.2,
+          stagger: 0.07,
+          duration: 0.9,
           ease: "power4.out",
         }
       );
@@ -75,7 +75,7 @@ const Preloader = ({ onComplete }) => {
         obj,
         {
           value: 100,
-          duration: 3,
+          duration: 1.6,
           ease: "power2.inOut",
           onUpdate: () => {
             const val = Math.floor(obj.value);
@@ -110,7 +110,7 @@ const Preloader = ({ onComplete }) => {
           containerRef.current,
           {
             clipPath: "inset(100% 0% 0% 0%)",
-            duration: 1.2,
+            duration: 0.9,
             ease: "expo.inOut",
           },
           "-=0.2"

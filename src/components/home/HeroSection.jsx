@@ -145,7 +145,7 @@ export default function HeroSection() {
       <div
         className="pointer-events-none absolute top-1/2 left-1/2 z-2 -translate-x-1/2 -translate-y-1/2"
         style={{
-          width: "clamp(260px, 92vw, 680px)",
+          width: "clamp(340px, 110vw, 680px)",
           opacity: 0.9,
         }}
       >
@@ -212,7 +212,8 @@ export default function HeroSection() {
             className="anim-el opacity-0"
             style={{
               fontSize: "clamp(0.9rem, 8vw, 1.15rem)",
-              color: "var(--color-text-muted)",
+              color:
+                "color-mix(in srgb, var(--color-text-primary) 85%, transparent)",
               maxWidth: "520px",
               lineHeight: 1.72,
               margin: 0,
@@ -228,7 +229,7 @@ export default function HeroSection() {
             style={{ gap: "16px", width: "100%" }}
           >
             <TransitionLink href="/contact">
-              <AnimatedButton>Book A Call</AnimatedButton>
+              <AnimatedButton>Book a Call</AnimatedButton>
             </TransitionLink>
             <div className="flex items-center" style={{ gap: "12px" }}>
               <TrustedAvatar />
@@ -247,8 +248,8 @@ export default function HeroSection() {
                 </div>
                 <p
                   style={{
-                    fontSize: "11px",
-                    color: "var(--color-text-subtle)",
+                    fontSize: "12px",
+                    color: "var(--color-text-muted)",
                     marginTop: "2px",
                     whiteSpace: "nowrap",
                   }}

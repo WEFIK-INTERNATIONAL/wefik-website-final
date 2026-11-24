@@ -480,7 +480,7 @@ export default function AgencyPage() {
           </p>
           <TransitionLink
             href="/contact"
-            className="group bg-accent font-accent hover:bg-accent-hover inline-flex items-center gap-4 rounded-full px-8 py-4 text-[11px] font-bold tracking-[0.25em] text-white uppercase opacity-0 transition-all duration-300 hover:gap-6"
+            className="group bg-accent font-accent hover:bg-accent-hover inline-flex items-center gap-4 rounded-full px-8 py-4 text-[11px] font-bold tracking-[0.25em] text-bg-primary uppercase opacity-0 transition-all duration-300 hover:gap-6"
           >
             <span>Start a Project</span>
             <ArrowRight
@@ -595,7 +595,7 @@ export default function AgencyPage() {
             <div className="relative z-10 flex flex-col gap-8">
               <div className="flex flex-col gap-4">
                 <span className="font-accent text-accent text-[10px] font-bold tracking-[0.3em] uppercase">
-                  Est. 2025
+                  Est. 2022
                 </span>
                 <SplitWords
                   text="Culture-driven. Creative. Competitive."
@@ -702,17 +702,14 @@ export default function AgencyPage() {
                   i === 1 ? "bg-accent-bright" : "bg-bg-card"
                 }`}
               >
-                <span
-                  className={`font-big pointer-events-none absolute -top-3 -right-3 leading-none font-black opacity-[0.06] select-none ${
-                    i === 1 ? "text-black" : "text-text-primary"
-                  }`}
-                  style={{ fontSize: "clamp(4rem, 8vw, 7rem)" }}
-                  aria-hidden
-                >
-                  {v.index}
-                </span>
-
                 <div className="relative z-10 flex flex-col gap-5">
+                  <span
+                    className={`font-accent text-[10px] font-bold tracking-[0.3em] ${
+                      i === 1 ? "text-black/60" : "text-accent"
+                    }`}
+                  >
+                    {v.index}
+                  </span>
                   <div
                     className={`font-big leading-tight font-black tracking-tight uppercase ${
                       i === 1 ? "text-black" : "text-text-primary"
@@ -729,17 +726,6 @@ export default function AgencyPage() {
                   >
                     {v.body}
                   </p>
-                </div>
-
-                <div
-                  className={`group-hover:border-accent group-hover:bg-accent relative z-10 mt-8 flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-300 ${
-                    i === 1 ? "border-black/20" : "border-border"
-                  }`}
-                >
-                  <ArrowUpRight
-                    size={14}
-                    className={`transition-all duration-300 group-hover:text-white ${i === 1 ? "text-black/60" : "text-text-muted"}`}
-                  />
                 </div>
               </div>
             ))}
@@ -758,7 +744,8 @@ export default function AgencyPage() {
                 Wefik Culture
               </span>
               <h2 className="font-big text-text-primary text-4xl leading-none font-black tracking-tight uppercase md:text-6xl lg:text-7xl">
-                The Humans <span className="text-accent italic">Behind</span>{" "}
+                The Humans{" "}
+                <span className="text-accent pr-[0.12em] italic">Behind</span>{" "}
                 the Work.
               </h2>
             </div>
@@ -805,11 +792,13 @@ export default function AgencyPage() {
                         : "Engineering & Product"}
                     </span>
                   </div>
-                  <div className="bg-accent/10 group-hover:bg-accent flex h-10 w-10 items-center justify-center rounded-full transition-all duration-500 group-hover:rotate-45 md:h-12 md:w-12">
-                    <ArrowUpRight
-                      size={20}
-                      className="text-accent group-hover:text-white"
-                    />
+                  <div className="flex flex-col items-start gap-0.5 md:items-end">
+                    <span className="font-accent text-text-subtle text-[8px] font-bold tracking-[0.2em] uppercase">
+                      Since
+                    </span>
+                    <span className="font-body text-text-muted text-xs font-medium">
+                      {member.since}
+                    </span>
                   </div>
                 </div>
               </div>

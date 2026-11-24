@@ -897,41 +897,13 @@ const SVG_COMPONENTS = [
   CreativeContentSVG,
 ];
 
-function StickyNav({ activeService, onNavClick, sectionRef }) {
-  const wrapperRef = useRef(null);
-  const innerRef = useRef(null);
-
-  useGSAP(
-    () => {
-      if (!wrapperRef.current || !innerRef.current || !sectionRef.current)
-        return;
-
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top 120px",
-        end: "bottom bottom",
-        pin: innerRef.current,
-        pinSpacing: false,
-        invalidateOnRefresh: true,
-
-        onUpdate: (self) => {
-          if (window.innerWidth < 1024) {
-            self.disable();
-          } else {
-            self.enable();
-          }
-        },
-      });
-    },
-    { scope: wrapperRef }
-  );
-
+function StickyNav({ activeService, onNavClick }) {
+  // Plain CSS sticky: stays below the fixed navbar (top 120px) for the whole
+  // services section and stops at the section's end.
   return (
-    <aside className="hidden w-48 shrink-0 lg:block xl:w-52">
-      {}
-      <div ref={wrapperRef} style={{ height: "100%", position: "relative" }}>
-        {}
-        <div ref={innerRef} style={{ willChange: "transform" }}>
+    <aside className="hidden w-48 shrink-0 self-stretch lg:block xl:w-52">
+      <div className="sticky top-[120px]">
+        <div>
           <p
             className="font-accent mb-5"
             style={{
@@ -1307,7 +1279,6 @@ export default function ExpertisePage() {
           <StickyNav
             activeService={activeService}
             onNavClick={scrollToPanel}
-            sectionRef={explorerSectionRef}
           />
 
           {}
@@ -1328,26 +1299,6 @@ export default function ExpertisePage() {
                     position: "relative",
                   }}
                 >
-                  {}
-                  <div
-                    className="panel-num pointer-events-none absolute inset-0 flex items-start justify-end overflow-hidden select-none"
-                    aria-hidden="true"
-                  >
-                    <span
-                      className="font-big"
-                      style={{
-                        fontSize: "clamp(7rem, 20vw, 17rem)",
-                        fontWeight: 900,
-                        color: "var(--color-text-primary)",
-                        opacity: 0.04,
-                        letterSpacing: "-0.05em",
-                        lineHeight: 0.85,
-                      }}
-                    >
-                      {service.num}
-                    </span>
-                  </div>
-
                   {}
                   <div
                     className="panel-line mb-8 h-px"

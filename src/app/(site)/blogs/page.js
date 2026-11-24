@@ -2,6 +2,7 @@ import React from "react";
 import { getAllBlogs } from "@/sanity/lib/queries";
 import BlogHero from "@/components/blog/BlogHero";
 import BlogCard from "@/components/blog/BlogCard";
+import ContactCTA from "@/components/ui/ContactCTA";
 import { SEO, canonical } from "@/lib/seo";
 
 export const metadata = {
@@ -87,6 +88,8 @@ export default async function BlogListingPage() {
           )}
         </div>
       </section>
+
+      <ContactCTA />
 
       <div className="pointer-events-none fixed inset-0 z-0 opacity-20">
         <div className="border-border/10 absolute top-[10%] left-0 h-px w-full border-t" />

@@ -19,7 +19,7 @@ export default function ApplySection({ jobTitle, applyUrl }) {
         <div className="flex flex-col items-center justify-center gap-6 md:flex-row">
           <button
             onClick={() => setIsFormOpen(true)}
-            className="bg-accent hover:bg-accent/90 inline-flex h-16 cursor-pointer items-center justify-center rounded-full px-12 text-sm font-black tracking-[0.2em] text-black uppercase transition-all hover:scale-105 active:scale-95"
+            className="bg-accent hover:bg-accent/90 inline-flex h-16 cursor-pointer items-center justify-center rounded-full px-12 text-sm font-black tracking-[0.2em] text-bg-primary uppercase transition-all hover:scale-105 active:scale-95"
           >
             Apply for this role
           </button>

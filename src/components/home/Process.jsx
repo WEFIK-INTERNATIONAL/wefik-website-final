@@ -157,15 +157,11 @@ export default function Process() {
                   <div className="bg-bg-primary border-accent h-4 w-4 rounded-full border-4" />
                 </div>
 
-                <div
-                  className={`w-full pl-14 md:w-[45%] md:pl-0 ${index % 2 !== 0 ? "md:text-left" : "md:text-right"}`}
-                >
+                <div className="w-full pl-14 text-left md:w-[45%] md:pl-0">
                   <div
                     className={`process-card bg-bg-card border-border/50 group relative overflow-hidden rounded-4xl border p-6 shadow-sm transition-all duration-500 md:p-8`}
                   >
-                    <div
-                      className={`mb-6 flex items-center gap-4 ${index % 2 !== 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
-                    >
+                    <div className="mb-6 flex items-center gap-4">
                       <div className="bg-accent/10 text-accent rounded-2xl p-3">
                         <item.icon size={24} />
                       </div>
@@ -186,12 +182,6 @@ export default function Process() {
                     <p className="text-text-muted text-sm leading-relaxed md:text-base">
                       {item.description}
                     </p>
-
-                    <div
-                      className={`absolute -top-4 ${index % 2 !== 0 ? "right-2 md:-left-4" : "-right-2 md:-right-4"} text-text-primary/5 pointer-events-none text-6xl font-black select-none md:text-9xl`}
-                    >
-                      {item.step}
-                    </div>
                   </div>
                 </div>
               </div>
@@ -202,8 +192,8 @@ export default function Process() {
         <div className="mt-32 text-center">
           <BookACall>
             <MagneticButton>
-              <div className="group bg-accent inline-flex items-center gap-4 rounded-full px-5 py-2.5 font-black tracking-widest text-black uppercase shadow-xl transition-all duration-300 hover:bg-white hover:text-black hover:shadow-white/10">
-                <span>Book a 30-Min Call</span>
+              <div className="group bg-accent inline-flex items-center gap-4 rounded-full px-5 py-2.5 font-black tracking-widest text-bg-primary uppercase shadow-xl transition-all duration-300 hover:bg-white hover:text-black hover:shadow-white/10">
+                <span>Book a Call</span>
                 <div className="group-hover:bg-accent flex h-8 w-8 items-center justify-center rounded-full bg-black/10 transition-colors">
                   <ArrowRight size={18} />
                 </div>

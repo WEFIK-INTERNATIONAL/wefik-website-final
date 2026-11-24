@@ -58,8 +58,8 @@ export default function WorksGallery({ initialWorks, categories }) {
             aria-label={`Filter works by ${cat}`}
             className={`rounded-full px-6 py-2.5 text-xs font-black tracking-widest uppercase transition-all duration-300 md:px-8 md:py-3 ${
               activeCategory === cat
-                ? "bg-accent shadow-accent/20 scale-105 text-black shadow-lg"
-                : "text-text-muted border border-white/5 bg-white/5 hover:bg-white/10"
+                ? "bg-accent shadow-accent/20 scale-105 text-bg-primary shadow-lg"
+                : "text-text-muted border-border bg-bg-card hover:border-accent/40 hover:text-text-primary border"
             }`}
           >
             {cat}

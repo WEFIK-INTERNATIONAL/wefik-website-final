@@ -79,7 +79,6 @@ const ExpertiseCard = ({ item, setCardRef, index }) => {
       <div
         className={`pointer-events-none absolute -top-20 -right-20 h-72 w-72 rounded-full bg-linear-to-br opacity-20 blur-3xl ${item.gradient}`}
       />
-      <div className="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.035] mix-blend-overlay" />
 
       <div className="relative z-10 flex h-full flex-col justify-between p-6 sm:p-8 md:p-10 lg:hidden">
         <div className="flex items-center gap-3">
@@ -171,7 +170,7 @@ const ExpertiseCard = ({ item, setCardRef, index }) => {
             className={`group inline-flex w-fit items-center gap-4 rounded-full px-7 py-4 text-[0.7rem] font-bold tracking-[0.25em] uppercase transition-all duration-300 hover:gap-6 ${
               isVibrant
                 ? "bg-black text-white hover:bg-black/85"
-                : "bg-accent hover:bg-accent-hover text-white"
+                : "bg-accent hover:bg-accent-hover text-bg-primary"
             }`}
           >
             <span>Explore</span>
